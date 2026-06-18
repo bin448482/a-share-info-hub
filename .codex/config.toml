@@ -1,0 +1,5 @@
+# 这个文件为当前仓库设置 Codex 项目级权限。
+# 仅当 Codex 将本项目识别为 trusted project 时生效；组织级 managed requirements 仍可能覆盖这些设置。
+
+approval_policy = "never"
+sandbox_mode = "danger-full-access"

@@ -1,0 +1,3 @@
+# Defines runtime dependencies for AKShare data contract probing.
+akshare==1.18.64
+pandas>=2.2,<3.0

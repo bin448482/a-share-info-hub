@@ -1,0 +1,398 @@
+{
+  "generated_at": "2026-06-18T18:31:40.129747+08:00",
+  "akshare_version": "1.18.64",
+  "candidate_count": 26,
+  "interfaces": [
+    {
+      "interface_id": "stock_zh_a_spot_em",
+      "function_name": "stock_zh_a_spot_em",
+      "description": "A-share realtime spot quote table.",
+      "category": "market_snapshot",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date parameter; cannot prove arbitrary historical daily access."
+    },
+    {
+      "interface_id": "stock_zh_a_spot_sina",
+      "function_name": "stock_zh_a_spot",
+      "description": "A-share realtime spot quote table from Sina.",
+      "category": "market_snapshot",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date parameter; cannot prove arbitrary historical daily access."
+    },
+    {
+      "interface_id": "stock_zh_a_hist_000001_daily",
+      "function_name": "stock_zh_a_hist",
+      "description": "Daily historical bar for sample A-share symbol 000001.",
+      "category": "daily_bar",
+      "today_params": {
+        "symbol": "000001",
+        "period": "daily",
+        "start_date": "20260618",
+        "end_date": "20260618",
+        "adjust": "",
+        "timeout": 10
+      },
+      "history_mode": "full_range",
+      "history_params": {
+        "symbol": "000001",
+        "period": "daily",
+        "start_date_param": "start_date",
+        "end_date_param": "end_date",
+        "adjust": "",
+        "timeout": 10
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": true,
+      "exclusion_note": null
+    },
+    {
+      "interface_id": "stock_zh_index_spot_em_important",
+      "function_name": "stock_zh_index_spot_em",
+      "description": "Important mainland index spot quote table.",
+      "category": "market_snapshot",
+      "today_params": {
+        "symbol": "沪深重要指数"
+      },
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date parameter; cannot prove arbitrary historical daily access."
+    },
+    {
+      "interface_id": "stock_zh_index_daily_em_sh000001",
+      "function_name": "stock_zh_index_daily_em",
+      "description": "Shanghai Composite daily historical index bars.",
+      "category": "daily_bar",
+      "today_params": {
+        "symbol": "sh000001",
+        "start_date": "20260618",
+        "end_date": "20260618"
+      },
+      "history_mode": "full_range",
+      "history_params": {
+        "symbol": "sh000001",
+        "start_date_param": "start_date",
+        "end_date_param": "end_date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": true,
+      "exclusion_note": null
+    },
+    {
+      "interface_id": "stock_zt_pool_em",
+      "function_name": "stock_zt_pool_em",
+      "description": "Daily limit-up pool.",
+      "category": "limit_pool",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Pool data can be naturally empty and is not a required daily contract field."
+    },
+    {
+      "interface_id": "stock_zt_pool_previous_em",
+      "function_name": "stock_zt_pool_previous_em",
+      "description": "Previous limit-up pool.",
+      "category": "limit_pool",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Pool data can be naturally empty and is not a required daily contract field."
+    },
+    {
+      "interface_id": "stock_zt_pool_strong_em",
+      "function_name": "stock_zt_pool_strong_em",
+      "description": "Strong limit-up pool.",
+      "category": "limit_pool",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Pool data can be naturally empty and is not a required daily contract field."
+    },
+    {
+      "interface_id": "stock_zt_pool_sub_new_em",
+      "function_name": "stock_zt_pool_sub_new_em",
+      "description": "Sub-new stock limit-up pool.",
+      "category": "limit_pool",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Pool data can be naturally empty and is not a required daily contract field."
+    },
+    {
+      "interface_id": "stock_zt_pool_zbgc_em",
+      "function_name": "stock_zt_pool_zbgc_em",
+      "description": "Limit-up broken-board pool.",
+      "category": "limit_pool",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Pool data can be naturally empty and is not a required daily contract field."
+    },
+    {
+      "interface_id": "stock_zt_pool_dtgc_em",
+      "function_name": "stock_zt_pool_dtgc_em",
+      "description": "Limit-down pool.",
+      "category": "limit_pool",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Pool data can be naturally empty and is not a required daily contract field."
+    },
+    {
+      "interface_id": "stock_lhb_detail_em",
+      "function_name": "stock_lhb_detail_em",
+      "description": "Dragon Tiger List details for a date window.",
+      "category": "event_window",
+      "today_params": {
+        "start_date": "20260618",
+        "end_date": "20260618"
+      },
+      "history_mode": "range_param",
+      "history_params": {
+        "start_param": "start_date",
+        "end_param": "end_date"
+      },
+      "data_frequency_hint": "event_window",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Event data is not expected to be non-empty every trading day."
+    },
+    {
+      "interface_id": "stock_lhb_jgmmtj_em",
+      "function_name": "stock_lhb_jgmmtj_em",
+      "description": "Institutional Dragon Tiger List buy/sell statistics.",
+      "category": "event_window",
+      "today_params": {
+        "start_date": "20260618",
+        "end_date": "20260618"
+      },
+      "history_mode": "range_param",
+      "history_params": {
+        "start_param": "start_date",
+        "end_param": "end_date"
+      },
+      "data_frequency_hint": "event_window",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Event data is not expected to be non-empty every trading day."
+    },
+    {
+      "interface_id": "stock_lhb_stock_statistic_em_month",
+      "function_name": "stock_lhb_stock_statistic_em",
+      "description": "Dragon Tiger List stock statistics for the latest month.",
+      "category": "event_window",
+      "today_params": {
+        "symbol": "近一月"
+      },
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Relative-window endpoint; not an arbitrary historical daily source."
+    },
+    {
+      "interface_id": "stock_individual_fund_flow_rank_today",
+      "function_name": "stock_individual_fund_flow_rank",
+      "description": "Individual stock capital-flow ranking for today.",
+      "category": "fund_flow",
+      "today_params": {
+        "indicator": "今日"
+      },
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Indicator is a current short-window ranking, not arbitrary historical daily data."
+    },
+    {
+      "interface_id": "stock_sector_fund_flow_rank_industry_today",
+      "function_name": "stock_sector_fund_flow_rank",
+      "description": "Industry capital-flow ranking for today.",
+      "category": "fund_flow",
+      "today_params": {
+        "indicator": "今日",
+        "sector_type": "行业资金流"
+      },
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Indicator is a current short-window ranking, not arbitrary historical daily data."
+    },
+    {
+      "interface_id": "stock_sector_fund_flow_rank_concept_today",
+      "function_name": "stock_sector_fund_flow_rank",
+      "description": "Concept capital-flow ranking for today.",
+      "category": "fund_flow",
+      "today_params": {
+        "indicator": "今日",
+        "sector_type": "概念资金流"
+      },
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Indicator is a current short-window ranking, not arbitrary historical daily data."
+    },
+    {
+      "interface_id": "stock_individual_fund_flow_600094",
+      "function_name": "stock_individual_fund_flow",
+      "description": "Individual stock capital-flow history for sample symbol 600094.",
+      "category": "fund_flow",
+      "today_params": {
+        "stock": "600094",
+        "market": "sh"
+      },
+      "history_mode": "embedded_history",
+      "history_params": {},
+      "data_frequency_hint": "embedded_history",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date-range parameters; earliest date can be observed but not requested directly."
+    },
+    {
+      "interface_id": "stock_concept_fund_flow_hist_data_element",
+      "function_name": "stock_concept_fund_flow_hist",
+      "description": "Concept capital-flow history for sample concept 数据要素.",
+      "category": "fund_flow",
+      "today_params": {
+        "symbol": "数据要素"
+      },
+      "history_mode": "embedded_history",
+      "history_params": {},
+      "data_frequency_hint": "embedded_history",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date-range parameters; earliest date can be observed but not requested directly."
+    },
+    {
+      "interface_id": "stock_board_industry_name_em",
+      "function_name": "stock_board_industry_name_em",
+      "description": "Industry board list and spot metrics.",
+      "category": "board_snapshot",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date parameter; cannot prove arbitrary historical daily access."
+    },
+    {
+      "interface_id": "stock_board_concept_name_em",
+      "function_name": "stock_board_concept_name_em",
+      "description": "Concept board list and spot metrics.",
+      "category": "board_snapshot",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date parameter; cannot prove arbitrary historical daily access."
+    },
+    {
+      "interface_id": "stock_sse_summary",
+      "function_name": "stock_sse_summary",
+      "description": "Shanghai Stock Exchange market summary.",
+      "category": "exchange_summary",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "No date parameter; cannot prove arbitrary historical daily access."
+    },
+    {
+      "interface_id": "stock_szse_summary",
+      "function_name": "stock_szse_summary",
+      "description": "Shenzhen Stock Exchange market summary by date.",
+      "category": "exchange_summary",
+      "today_params": {
+        "date": "20260618"
+      },
+      "history_mode": "date_param",
+      "history_params": {
+        "date_param": "date"
+      },
+      "data_frequency_hint": "daily_range",
+      "historical_contract_candidate": true,
+      "exclusion_note": null
+    },
+    {
+      "interface_id": "stock_info_a_code_name",
+      "function_name": "stock_info_a_code_name",
+      "description": "A-share code and name table.",
+      "category": "reference_snapshot",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Reference snapshot; not historical daily market data."
+    },
+    {
+      "interface_id": "stock_zh_a_new",
+      "function_name": "stock_zh_a_new",
+      "description": "New A-share listing table.",
+      "category": "reference_snapshot",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Reference snapshot; not historical daily market data."
+    },
+    {
+      "interface_id": "stock_xgsr_ths",
+      "function_name": "stock_xgsr_ths",
+      "description": "New-share subscription calendar.",
+      "category": "event_calendar",
+      "today_params": {},
+      "history_mode": "latest_snapshot",
+      "history_params": {},
+      "data_frequency_hint": "latest_snapshot",
+      "historical_contract_candidate": false,
+      "exclusion_note": "Calendar snapshot; not arbitrary historical daily data."
+    }
+  ]
+}

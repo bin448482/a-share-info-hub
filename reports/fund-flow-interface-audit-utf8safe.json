@@ -1,0 +1,91 @@
+{
+  "results": [
+    {
+      "case_id": "stock_individual_fund_flow_rank_today",
+      "function_name": "stock_individual_fund_flow_rank",
+      "params": {
+        "indicator": "今日"
+      },
+      "category": "fund_flow",
+      "status": "failed",
+      "row_count": 0,
+      "columns": [],
+      "sample": [],
+      "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "elapsed_seconds": 0.45
+    },
+    {
+      "case_id": "stock_individual_fund_flow_rank_5d",
+      "function_name": "stock_individual_fund_flow_rank",
+      "params": {
+        "indicator": "5日"
+      },
+      "category": "fund_flow",
+      "status": "failed",
+      "row_count": 0,
+      "columns": [],
+      "sample": [],
+      "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "elapsed_seconds": 0.508
+    },
+    {
+      "case_id": "stock_sector_fund_flow_rank_industry_today",
+      "function_name": "stock_sector_fund_flow_rank",
+      "params": {
+        "indicator": "今日",
+        "sector_type": "行业资金流"
+      },
+      "category": "fund_flow",
+      "status": "failed",
+      "row_count": 0,
+      "columns": [],
+      "sample": [],
+      "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "elapsed_seconds": 0.463
+    },
+    {
+      "case_id": "stock_sector_fund_flow_rank_concept_today",
+      "function_name": "stock_sector_fund_flow_rank",
+      "params": {
+        "indicator": "今日",
+        "sector_type": "概念资金流"
+      },
+      "category": "fund_flow",
+      "status": "failed",
+      "row_count": 0,
+      "columns": [],
+      "sample": [],
+      "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "elapsed_seconds": 0.463
+    },
+    {
+      "case_id": "stock_main_fund_flow_all",
+      "function_name": "stock_main_fund_flow",
+      "params": {
+        "symbol": "全部股票"
+      },
+      "category": "fund_flow",
+      "status": "failed",
+      "row_count": 0,
+      "columns": [],
+      "sample": [],
+      "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "elapsed_seconds": 6.629
+    },
+    {
+      "case_id": "stock_sector_fund_flow_summary_power",
+      "function_name": "stock_sector_fund_flow_summary",
+      "params": {
+        "symbol": "电源设备",
+        "indicator": "今日"
+      },
+      "category": "fund_flow",
+      "status": "failed",
+      "row_count": 0,
+      "columns": [],
+      "sample": [],
+      "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "elapsed_seconds": 7.466
+    }
+  ]
+}
