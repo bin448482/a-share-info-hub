@@ -1120,7 +1120,7 @@ def current_timestamp() -> str:
 
 
 def main() -> int:
-    """运行每日 A 股快照采集命令行入口。"""
+    """运行兼容脚本入口；日常调用优先使用顶层 CLI。"""
 
     args = parse_args()
     trade_date = parse_trade_date(args.trade_date)

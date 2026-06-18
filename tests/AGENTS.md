@@ -16,6 +16,7 @@
 - `test_daily_snapshot_normalization.py`：覆盖主表、涨跌停和龙虎榜标准化逻辑，以及 schema 变化暴露。
 - `test_daily_snapshot_status.py`：覆盖主表失败、增强空结果、增强 schema 变化和整体状态归类。
 - `test_daily_snapshot_outputs.py`：覆盖失败日志、原始落盘、状态报告、每日摘要、DuckDB 重跑替换和 mock 端到端成功路径。
+- `test_cli.py`：覆盖仓库级 CLI 的 `daily-update` 子命令、参数化日期和调用采集函数的参数传递。
 
 ## 更新要求
 

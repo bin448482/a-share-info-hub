@@ -140,22 +140,22 @@ market.duckdb
 
 ## 脚本入口建议
 
-第一版保持入口少而清晰：
+第一版保持日常入口少而清晰，统一通过仓库 CLI 调用：
 
 ```text
-scripts/collect_daily_snapshot.py
+python -m a_share_info_hub daily-update
 ```
 
 建议参数：
 
-- `--trade-date YYYY-MM-DD`：指定数据所属日期。
+- `--trade-date YYYY-MM-DD`：指定数据所属日期；不传时默认使用运行当天。
 - `--output-root .`：指定项目根目录，默认当前工作区。
 - `--request-timeout 12`：外部请求超时。
 - `--max-retries 2`：接口调用重试次数。
 - `--skip-duckdb`：仅用于定位 DuckDB 写入问题；默认不跳过。
 - `--ignore-proxy`：忽略 `HTTP_PROXY`、`HTTPS_PROXY`、`ALL_PROXY` 等环境代理；仅在代理导致 AKShare 接口失败时使用，并需在最终验证说明中注明。
 
-该脚本负责一次完整每日运行。除非实现变得明显难以维护，否则不要先拆成多个抽象入口。
+CLI 的 `daily-update` 子命令负责一次完整每日运行。内部可以复用脚本模块，但 README 和日常调度不应 hard code `scripts/collect_daily_snapshot.py`。
 
 ## 数据状态语义
 
@@ -236,8 +236,8 @@ v1 实施完成后必须同时满足：
 本实施只有在以下条件全部满足后，才能声明“目标达成”：
 
 1. 实现完成
-   - 存在一个可执行入口 `scripts/collect_daily_snapshot.py`。
-   - 入口支持指定 `--trade-date`，并能完成采集、原始落盘、标准化、DuckDB 写入和日报告生成。
+   - 存在一个可执行 CLI 入口 `python -m a_share_info_hub daily-update`。
+   - 入口支持默认当天运行，也支持通过 `--trade-date` 指定日期，并能完成采集、原始落盘、标准化、DuckDB 写入和日报告生成。
    - 新增真实承载输出的目录时，同步添加对应 `AGENTS.md` 和 `claude.md`。
 
 2. 契约满足
@@ -253,7 +253,7 @@ v1 实施完成后必须同时满足：
    - 至少有一个 mock 或 fixture 场景覆盖增强接口为空，并确认当日状态不是 `failed`。
 
 4. 验证满足
-   - `python -m py_compile scripts/collect_daily_snapshot.py` 通过。
+   - `python -m py_compile a_share_info_hub/__main__.py scripts/collect_daily_snapshot.py` 通过。
    - 单元测试命令通过。
    - 依赖导入检查通过。
    - 指定日期运行后，输出文件路径、JSON 可解析性、Parquet 可读取性和 DuckDB 查询检查通过。
@@ -334,8 +334,8 @@ python -m pytest tests
 ## 验证顺序
 
 1. 静态检查
-   - 命令：`python -m py_compile scripts/collect_daily_snapshot.py`
-   - 通过标准：脚本可编译。
+   - 命令：`python -m py_compile a_share_info_hub/__main__.py scripts/collect_daily_snapshot.py`
+   - 通过标准：CLI 和采集实现可编译。
 
 2. 单元测试
    - 命令：`python -m pytest tests` 或实施时选定的等价命令。
@@ -346,7 +346,7 @@ python -m pytest tests
    - 通过标准：所有运行依赖可导入。
 
 4. 单日运行
-   - 命令：`python scripts/collect_daily_snapshot.py --trade-date YYYY-MM-DD`
+   - 命令：`python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>`
    - 通过标准：脚本退出码为 0；若主表失败，必须生成失败状态报告并以明确错误结束。
 
 5. 输出文件检查

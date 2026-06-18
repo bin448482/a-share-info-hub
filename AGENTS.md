@@ -160,6 +160,7 @@ function normalizeQuote(raw: QuoteRecord): NormalizedQuote {
 - `.claude/`：Claude 相关本地配置目录。
 - `.codex/`：Codex 相关本地配置目录。
 - `.venv/`：项目 Python 虚拟环境，不作为代码索引对象。
+- `a_share_info_hub/`：仓库 CLI 包目录，日常每日更新入口为 `python -m a_share_info_hub daily-update`。
 - `data/`：原始数据和标准化数据目录，详见 `data/AGENTS.md`。
 - `docs/`：设计和实施文档目录，详见 `docs/AGENTS.md`。
 - `logs/`：接口状态和失败日志目录，详见 `logs/AGENTS.md`。
