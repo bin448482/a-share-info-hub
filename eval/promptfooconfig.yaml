@@ -1,0 +1,7 @@
+description: "a-share-daily-review skill eval"
+prompts:
+  - "{{user_prompt}}"
+providers:
+  - file://eval/providers/run-a-share-daily-review.js
+tests:
+  - file://docs/a-share-daily-review-skill-golden-testset.jsonl

@@ -1,0 +1,124 @@
+# A 股每日复盘研究 Skill 黄金测试集与评测方案
+
+本文档定义 `a-share-daily-review` skill 的 v2 黄金测试集和开源评测框架选型。Promptfoo 只用于黄金测试和回归评测，不进入普通用户生成日报的生产路径。
+
+## 黄金测试集
+
+黄金测试集文件：
+
+```text
+docs/a-share-daily-review-skill-golden-testset.jsonl
+```
+
+每一行是一个评测用例，采用接近 Promptfoo test case 的结构：
+
+- `description`：测试目的。
+- `vars.case_id`：稳定用例编号。
+- `vars.user_prompt`：用户会输入的提示词。
+- `vars.artifact_state`：模拟当前数据状态。
+- `vars.expected_behavior`：期望行为说明。
+- `assert`：可自动检查的输出断言。
+- `metadata.category`：用例分类，便于按 HTML、边界、安全、数据状态过滤。
+
+v2 黄金测试集覆盖：
+
+- `passed` 状态生成 `review-context.json` 和 HTML report。
+- `partial` 状态生成数据受限 HTML report。
+- `failed` 状态阻断市场结论。
+- `missing` 状态提示公开 CLI 刷新。
+- 用户要求直接建议时只输出研究建议。
+- 用户要求买卖和仓位时拒绝交易建议并改写为研究输出。
+- DuckDB 失败但 Parquet 可用时降级。
+- 刷新数据时只调用公开 CLI，不调用脚本路径。
+- HTML 输出包含用户可读的数据状态、非投资建议声明和 blocked sections。
+- HTML 正文不裸露 `analysis_mode:`、`data_status:`、`blocked_sections:` 机器字段行。
+- 输出不包含买入、卖出、仓位、目标价、止损止盈等禁用语言。
+
+## 推荐评测框架
+
+### Promptfoo，第一选择
+
+Promptfoo 适合作为第一版回归测试框架，因为它支持 YAML/JSON/JSONL 用例、`contains`、`regex`、`contains-html`、`not-contains` 和自定义 provider。它覆盖的是 skill 行为和输出边界，不替代 Python/Pydantic 的运行时校验。
+
+建议运行方式：
+
+```text
+npx promptfoo@latest eval -c eval/promptfooconfig.yaml
+```
+
+当前 provider：
+
+```text
+eval/providers/run-a-share-daily-review.js
+```
+
+Provider 会根据黄金测试集的 `artifact_state` 创建隔离临时 fixture，再调用：
+
+```text
+python -m a_share_info_hub daily-review --output-root <temp> --user-prompt "<prompt>" --render-mode deterministic
+```
+
+这样可以在没有真实 LLM 和 AKShare 网络调用的情况下验证 v2 的本地契约：
+
+- context 是否生成。
+- HTML 是否生成。
+- HTML 是否不裸露机器字段。
+- `partial` / `failed` / `missing` 是否被正确表达。
+- 禁用交易建议语言是否出现。
+- provider 是否避免污染真实 `data/`、`reports/`。
+
+正式用户报告仍应使用 evidence packet + LLM sections + Python/Pydantic validator 流程；deterministic fallback 只用于本地评测和调试。
+
+### DeepEval，第二阶段选择
+
+DeepEval 适合在后续需要 Python 组件级或 LLM judge 评测时引入。它可以测试数据读取组件、状态归类组件、LLM sections 质量和端到端输出质量。
+
+建议引入时机：
+
+- 需要把评测接入 CI。
+- 需要自定义 LLM judge 判断“是否正确拒绝交易建议”这类语义问题。
+- 需要比较不同 report prompt 的质量。
+
+### OpenAI Evals，参考方案
+
+OpenAI Evals 可以作为自定义 eval 思路参考，但第一版不作为主框架。本 skill 的首要需求是本地 artifacts、HTML、禁用词、CLI 契约和 Pydantic schema gate，Promptfoo 与 Pytest 更直接。
+
+## 第一版评测策略
+
+第一版不需要 LLM judge 先行，优先使用确定性检查：
+
+- `contains`：检查 `data_status`、`context_artifact`、`review-metadata`。
+- `contains-html`：检查 HTML 请求是否返回 HTML。
+- `regex`：检查报告路径形如 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review.html`。
+- `not-contains`：检查禁用交易建议词和旧机器字段裸露。
+- provider 检查：确认刷新说明包含 `python -m a_share_info_hub daily-update`，不包含 `scripts/collect_daily_snapshot.py`。
+
+第二阶段再引入语义评估：
+
+- 输出是否把 partial 明确降级。
+- 输出是否把“建议”改写为研究建议。
+- 输出是否把 failed/missing 正确阻断。
+- 输出是否没有从缺失数据补推断。
+
+## 验收门槛
+
+Skill v2 实施完成后，必须满足：
+
+- 黄金测试集中的核心用例全部可执行。
+- 所有 deterministic assertions 通过。
+- Pydantic context 和 LLM sections 校验有 Pytest 覆盖。
+- 任何出现交易建议禁用词的输出都视为失败。
+- `passed`、`partial`、`failed`、`missing` 四类状态都有可复查输出。
+- HTML 用例必须生成可打开的本地报告路径。
+- Promptfoo 失败应阻断合并或发布，但不作为普通用户生成日报时的 runtime gate。
+
+## 官方资料
+
+- Promptfoo intro: https://www.promptfoo.dev/docs/intro/
+- Promptfoo test cases: https://www.promptfoo.dev/docs/configuration/test-cases/
+- Promptfoo assertions: https://www.promptfoo.dev/docs/configuration/expected-outputs/
+- Promptfoo deterministic assertions: https://www.promptfoo.dev/docs/configuration/expected-outputs/deterministic/
+- DeepEval introduction: https://deepeval.com/docs/introduction
+- DeepEval datasets: https://deepeval.com/docs/evaluation-datasets
+- DeepEval CI/CD: https://deepeval.com/docs/evaluation-unit-testing-in-ci-cd
+- OpenAI Evals GitHub: https://github.com/openai/evals

@@ -8,9 +8,9 @@
     "科创板",
     "股票回购"
   ],
-  "elapsed_seconds": 0.367,
+  "elapsed_seconds": 0.543,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:08.986588+08:00",
+  "fetched_at": "2026-06-18T22:28:11.084188+08:00",
   "function_name": "stock_sse_deal_daily",
   "params": {
     "date": "20260618"

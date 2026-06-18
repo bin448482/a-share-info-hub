@@ -7,9 +7,9 @@
     "总市值",
     "流通市值"
   ],
-  "elapsed_seconds": 0.212,
+  "elapsed_seconds": 0.329,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:09.357296+08:00",
+  "fetched_at": "2026-06-18T22:28:11.632944+08:00",
   "function_name": "stock_szse_summary",
   "params": {
     "date": "20260618"

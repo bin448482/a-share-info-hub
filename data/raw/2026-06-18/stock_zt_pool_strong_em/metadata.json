@@ -18,9 +18,9 @@
     "入选理由",
     "所属行业"
   ],
-  "elapsed_seconds": 0.468,
+  "elapsed_seconds": 0.593,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:04.861166+08:00",
+  "fetched_at": "2026-06-18T22:28:05.475354+08:00",
   "function_name": "stock_zt_pool_strong_em",
   "params": {
     "date": "20260618"

@@ -18,9 +18,9 @@
     "开板次数",
     "所属行业"
   ],
-  "elapsed_seconds": 0.426,
+  "elapsed_seconds": 0.475,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:06.246679+08:00",
+  "fetched_at": "2026-06-18T22:28:07.202798+08:00",
   "function_name": "stock_zt_pool_dtgc_em",
   "params": {
     "date": "20260618"

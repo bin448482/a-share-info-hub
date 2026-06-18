@@ -18,9 +18,9 @@
     "振幅",
     "所属行业"
   ],
-  "elapsed_seconds": 0.427,
+  "elapsed_seconds": 0.484,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:05.813284+08:00",
+  "fetched_at": "2026-06-18T22:28:06.705485+08:00",
   "function_name": "stock_zt_pool_zbgc_em",
   "params": {
     "date": "20260618"

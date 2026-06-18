@@ -20,6 +20,13 @@ from scripts.collect_daily_snapshot import (
     install_default_requests_timeout,
     parse_trade_date,
 )
+from a_share_info_hub.daily_review import (
+    OUTPUT_HTML,
+    RENDER_LLM,
+    DailyReviewRequest,
+    generate_daily_review,
+    generate_daily_review_from_prompt,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -78,6 +85,58 @@ def build_parser() -> argparse.ArgumentParser:
         default=MAIN_MIN_ROWS,
         help="Minimum accepted main snapshot row count.",
     )
+    daily_review = subparsers.add_parser(
+        "daily-review",
+        help="Generate a research-only A-share daily review from existing artifacts.",
+    )
+    daily_review.add_argument(
+        "--trade-date",
+        default=None,
+        help="Trade date to review, formatted as YYYY-MM-DD. Defaults to the latest daily run.",
+    )
+    daily_review.add_argument(
+        "--output-root",
+        default=".",
+        help="Project root where data, reports, and market.duckdb are read and written.",
+    )
+    daily_review.add_argument(
+        "--output-format",
+        choices=("html", "inline", "markdown", "context"),
+        default=OUTPUT_HTML,
+        help="Review output format.",
+    )
+    daily_review.add_argument(
+        "--render-mode",
+        choices=("llm", "deterministic"),
+        default=RENDER_LLM,
+        help="Use LLM sections JSON for the final report, or deterministic fallback for local validation.",
+    )
+    daily_review.add_argument(
+        "--llm-output",
+        default=None,
+        help="Path to LLM-generated JSON sections to validate and render.",
+    )
+    daily_review.add_argument(
+        "--refresh-mode",
+        choices=("none", "daily_update"),
+        default="none",
+        help="Whether to run the public daily-update CLI before review generation.",
+    )
+    daily_review.add_argument(
+        "--ignore-proxy",
+        action="store_true",
+        help="Pass --ignore-proxy to daily-update when refresh-mode is daily_update.",
+    )
+    daily_review.add_argument(
+        "--focus",
+        default=None,
+        help="Optional review focus such as risk, data quality, market width, or HTML report.",
+    )
+    daily_review.add_argument(
+        "--user-prompt",
+        default=None,
+        help="Optional natural-language request used to infer review mode for golden tests.",
+    )
     return parser
 
 
@@ -102,6 +161,34 @@ def run_daily_update(args: argparse.Namespace) -> int:
     return 0 if outputs.overall_status in {OVERALL_PASSED, OVERALL_PARTIAL} else 1
 
 
+def run_daily_review(args: argparse.Namespace) -> int:
+    """执行每日复盘研究子命令并返回进程退出码。"""
+
+    output_root = Path(args.output_root)
+    if args.user_prompt:
+        result = generate_daily_review_from_prompt(
+            args.user_prompt,
+            output_root=output_root,
+            render_mode=args.render_mode,
+            llm_output_path=Path(args.llm_output) if args.llm_output else None,
+        )
+    else:
+        result = generate_daily_review(
+            DailyReviewRequest(
+                trade_date=args.trade_date,
+                output_root=output_root,
+                output_format=args.output_format,
+                refresh_mode=args.refresh_mode,
+                render_mode=args.render_mode,
+                llm_output_path=Path(args.llm_output) if args.llm_output else None,
+                focus=args.focus,
+                ignore_proxy=args.ignore_proxy,
+            )
+        )
+    print(result.message)
+    return 0 if result.data_status in {OVERALL_PASSED, OVERALL_PARTIAL, "blocked"} else 1
+
+
 def main() -> int:
     """运行 A Share Info Hub 顶层 CLI。"""
 
@@ -109,6 +196,8 @@ def main() -> int:
     args = parser.parse_args()
     if args.command == "daily-update":
         return run_daily_update(args)
+    if args.command == "daily-review":
+        return run_daily_review(args)
     parser.error(f"unsupported command: {args.command}")
     return 2
 

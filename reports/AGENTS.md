@@ -12,6 +12,7 @@
 
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
+- `daily-reviews/`：每日复盘研究 HTML 报告目录，按日期保存 `a-share-daily-review` 的可 review 输出。
 - `daily-runs/`：每日快照运行报告目录，按日期保存接口状态和人读摘要。
 
 ## 当前缺失的旧报告说明

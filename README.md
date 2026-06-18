@@ -39,9 +39,60 @@ python -m a_share_info_hub daily-update --ignore-proxy
 ## 验证命令
 
 ```text
-python -m py_compile a_share_info_hub/__main__.py scripts/collect_daily_snapshot.py
+python -m py_compile a_share_info_hub/__main__.py a_share_info_hub/daily_review.py scripts/collect_daily_snapshot.py
 python -m pytest tests
-python -c "import akshare, pandas, duckdb, pyarrow"
+python -c "import akshare, pandas, duckdb, pyarrow, pydantic"
 ```
 
 真实接口验证需要指定日期运行每日采集脚本；单元测试只验证本地解析、状态和落盘逻辑。
+
+## 每日复盘研究
+
+已有每日快照后，先生成 research-only evidence packet：
+
+```text
+python -m a_share_info_hub daily-review --output-format context
+```
+
+指定日期生成 `review-context.json`：
+
+```text
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --output-format context
+```
+
+输出位置：
+
+- `reports/daily-reviews/YYYY-MM-DD/review-context.json`
+- `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review.html`
+
+然后让 agent/LLM 只基于 `review-context.json` 生成：
+
+```text
+reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json
+```
+
+再由 Python 校验并渲染 HTML：
+
+```text
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format html
+```
+
+直接在终端返回研究建议或数据质量诊断时，也使用已校验的 sections：
+
+```text
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format inline
+```
+
+如需先刷新再复盘，只通过公开 CLI 子命令：
+
+```text
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --refresh-mode daily_update --output-format context
+```
+
+本地评测或 fixture 可使用 deterministic fallback：
+
+```text
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --render-mode deterministic --output-format html
+```
+
+正式用户报告应使用 `$a-share-daily-review` 的 evidence packet + LLM sections + Python/Pydantic validator 流程。该 skill 只输出研究复盘、风险观察和待验证问题；不提供买卖、仓位、目标价或止盈止损建议。

@@ -1,0 +1,27 @@
+{
+  "schema_version": "daily_review_sections.v1",
+  "headline": "2026-06-18 A 股每日复盘研究",
+  "summary": [
+    "本次数据状态为 partial，可做主表、涨跌停情绪、龙虎榜和市场汇总范围内的研究观察。",
+    "主表覆盖 5527 只证券，上涨 2023 只，下跌 3394 只，平盘 110 只，单日宽度偏弱。",
+    "涨跌停情绪池记录 713 条，龙虎榜事件记录 256 条，事件数据可用于后续交叉验证。",
+    "板块快照接口失败，board_snapshot 被列为 blocked，本报告不生成板块结构结论。"
+  ],
+  "market_breadth_review": "主表显示 5527 只证券中上涨 2023 只、下跌 3394 只、平盘 110 只；涨幅不低于 9.5% 的样本 136 只，跌幅不低于 9.5% 的样本 24 只；主表成交额合计约 33313.11 亿。这些数字只代表 2026-06-18 已落盘快照，不代表多日趋势。",
+  "sentiment_and_events_review": "涨跌停情绪池共有 713 条记录，其中 strong_limit_up 347 条、sub_new_limit_up 135 条、limit_up 91 条、previous_limit_up 86 条、broken_board 42 条、limit_down 12 条；行业记录数靠前的是半导体 68 条、通用设备 54 条、元件 47 条、汽车零部 35 条、光学光电 26 条。龙虎榜事件共有 256 条，来源分布为 stock_lhb_detail_em 102 条、stock_lhb_detail_daily_sina 99 条、stock_lhb_jgmmtj_em 55 条。这些只能作为情绪和事件观察线索，需要后续与个股和连续交易日数据交叉验证。",
+  "board_and_structure_review": "板块快照数据受限：stock_board_industry_name_em 和 stock_board_concept_name_em 均失败，board_snapshot 已被列入 blocked_sections。因此本报告不能生成板块主线、领涨板块或结构确认。",
+  "risk_observations": [
+    "数据状态为 partial，不能把本次报告表述为完整复盘。",
+    "board_snapshot 缺失会影响板块和结构观察，相关结论必须保持 blocked。",
+    "涨跌停情绪池和龙虎榜事件只能说明当日已获取记录，不能单独推导持续性。",
+    "主表宽度和成交额来自单日快照，不能直接扩展为历史趋势、胜率或预测。"
+  ],
+  "follow_up_questions": [
+    "半导体、通用设备、元件等在涨跌停情绪池中记录较多的方向，是否也在主表涨跌分布中呈现同向集中？",
+    "龙虎榜事件与极端涨跌样本是否存在重合，需要按 symbol 做交叉验证。",
+    "板块接口恢复后，board_snapshot 是否会改变本次对结构维度的限制判断？",
+    "后续连续交易日数据是否支持本日情绪观察具备持续性？"
+  ],
+  "data_boundary_note": "本报告只引用 review-context.json 中的事实；缺失或 blocked 维度不补推断。",
+  "not_investment_advice_note": "本报告仅用于研究复盘，不构成投资建议。"
+}

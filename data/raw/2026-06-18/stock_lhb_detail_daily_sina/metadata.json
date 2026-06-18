@@ -10,9 +10,9 @@
     "成交额",
     "指标"
   ],
-  "elapsed_seconds": 0.775,
+  "elapsed_seconds": 1.165,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:06.678023+08:00",
+  "fetched_at": "2026-06-18T22:28:07.684770+08:00",
   "function_name": "stock_lhb_detail_daily_sina",
   "params": {
     "date": "20260618"

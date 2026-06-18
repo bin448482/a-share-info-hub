@@ -16,9 +16,9 @@
     "成交额",
     "时间戳"
   ],
-  "elapsed_seconds": 9.785,
+  "elapsed_seconds": 21.267,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:30:54.033052+08:00",
+  "fetched_at": "2026-06-18T22:27:42.847935+08:00",
   "function_name": "stock_zh_a_spot",
   "params": {},
   "raw_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zh_a_spot\\response.json",

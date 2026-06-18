@@ -18,9 +18,9 @@
     "涨停统计",
     "所属行业"
   ],
-  "elapsed_seconds": 0.471,
+  "elapsed_seconds": 0.668,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:04.381549+08:00",
+  "fetched_at": "2026-06-18T22:28:04.798199+08:00",
   "function_name": "stock_zt_pool_previous_em",
   "params": {
     "date": "20260618"

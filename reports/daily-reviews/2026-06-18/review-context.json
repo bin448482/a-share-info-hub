@@ -1,0 +1,303 @@
+{
+  "schema_version": "daily_review_context.v1",
+  "analysis_mode": "research_only",
+  "not_investment_advice": true,
+  "trade_date": "2026-06-18",
+  "data_status": "partial",
+  "data_sources_used": [
+    "reports\\daily-runs\\2026-06-18\\interface-status.json",
+    "reports\\daily-runs\\2026-06-18\\daily-data-summary.md",
+    "data\\normalized\\daily_stock_snapshot.parquet",
+    "data\\normalized\\limit_pool_events.parquet",
+    "data\\normalized\\lhb_events.parquet",
+    "data\\normalized\\market_summary.parquet",
+    "data\\normalized\\board_snapshot.parquet",
+    "market.duckdb"
+  ],
+  "blocked_sections": [
+    "board_snapshot"
+  ],
+  "source_health": {
+    "interface_status": {
+      "name": "interface-status.json",
+      "category": "run_status",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "reports\\daily-runs\\2026-06-18\\interface-status.json",
+      "issue": null
+    },
+    "daily_data_summary": {
+      "name": "daily-data-summary.md",
+      "category": "run_summary",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "reports\\daily-runs\\2026-06-18\\daily-data-summary.md",
+      "issue": null
+    },
+    "stock_zh_a_spot": {
+      "name": "stock_zh_a_spot",
+      "category": "main",
+      "status": "success",
+      "row_count": 5527,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_em": {
+      "name": "stock_zt_pool_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 91,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_previous_em": {
+      "name": "stock_zt_pool_previous_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 86,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_strong_em": {
+      "name": "stock_zt_pool_strong_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 347,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_sub_new_em": {
+      "name": "stock_zt_pool_sub_new_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 135,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_zbgc_em": {
+      "name": "stock_zt_pool_zbgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 42,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_dtgc_em": {
+      "name": "stock_zt_pool_dtgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 12,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_detail_daily_sina": {
+      "name": "stock_lhb_detail_daily_sina",
+      "category": "lhb",
+      "status": "success",
+      "row_count": 99,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_detail_em": {
+      "name": "stock_lhb_detail_em",
+      "category": "lhb",
+      "status": "success",
+      "row_count": 102,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_jgmmtj_em": {
+      "name": "stock_lhb_jgmmtj_em",
+      "category": "lhb",
+      "status": "success",
+      "row_count": 55,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_sse_deal_daily": {
+      "name": "stock_sse_deal_daily",
+      "category": "market_summary",
+      "status": "success",
+      "row_count": 8,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_szse_summary": {
+      "name": "stock_szse_summary",
+      "category": "market_summary",
+      "status": "success",
+      "row_count": 14,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_board_industry_name_em": {
+      "name": "stock_board_industry_name_em",
+      "category": "board_snapshot",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    "stock_board_concept_name_em": {
+      "name": "stock_board_concept_name_em",
+      "category": "board_snapshot",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    "table:daily_stock_snapshot": {
+      "name": "daily_stock_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 5527,
+      "source_path": "data\\normalized\\daily_stock_snapshot.parquet",
+      "issue": null
+    },
+    "table:limit_pool_events": {
+      "name": "limit_pool_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 713,
+      "source_path": "data\\normalized\\limit_pool_events.parquet",
+      "issue": null
+    },
+    "table:lhb_events": {
+      "name": "lhb_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 256,
+      "source_path": "data\\normalized\\lhb_events.parquet",
+      "issue": null
+    },
+    "table:market_summary": {
+      "name": "market_summary",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 22,
+      "source_path": "data\\normalized\\market_summary.parquet",
+      "issue": null
+    },
+    "table:board_snapshot": {
+      "name": "board_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data\\normalized\\board_snapshot.parquet",
+      "issue": null
+    },
+    "duckdb": {
+      "name": "market.duckdb",
+      "category": "storage",
+      "status": "passed",
+      "row_count": null,
+      "source_path": null,
+      "issue": null
+    }
+  },
+  "market_breadth": {
+    "status": "available",
+    "sample_count": 5527,
+    "up_count": 2023,
+    "down_count": 3394,
+    "flat_count": 110,
+    "extreme_up_count": 136,
+    "extreme_down_count": 24,
+    "total_amount": 3331310815581.0,
+    "total_amount_display": "33313.11 亿"
+  },
+  "limit_pool": {
+    "status": "available",
+    "row_count": 713,
+    "pool_type_counts": {
+      "strong_limit_up": 347,
+      "sub_new_limit_up": 135,
+      "limit_up": 91,
+      "previous_limit_up": 86,
+      "broken_board": 42,
+      "limit_down": 12
+    },
+    "top_industries": {
+      "半导体": 68,
+      "通用设备": 54,
+      "元件": 47,
+      "汽车零部": 35,
+      "光学光电": 26,
+      "专用设备": 25,
+      "自动化设": 24,
+      "化学制品": 21
+    }
+  },
+  "lhb": {
+    "status": "available",
+    "row_count": 256,
+    "event_type_counts": {
+      "stock_lhb_detail_em": 102,
+      "stock_lhb_detail_daily_sina": 99,
+      "stock_lhb_jgmmtj_em": 55
+    }
+  },
+  "market_summary": {
+    "status": "available",
+    "row_count": 22
+  },
+  "board_snapshot": {
+    "status": "blocked",
+    "reason": "board_snapshot is listed in blocked_sections"
+  },
+  "issues": [
+    "stock_board_industry_name_em 状态为 failed：ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+    "stock_board_concept_name_em 状态为 failed：ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+  ],
+  "allowed_sections": [
+    "data_status",
+    "market_breadth",
+    "sentiment_and_events",
+    "risks",
+    "follow_up_questions"
+  ],
+  "forbidden_claims": [
+    "buy/sell/hold/position sizing/price target/stop-loss/take-profit/trading action advice",
+    "multi-day trend, backtest, win-rate, or prediction claims from a single daily snapshot",
+    "claiming the review is complete while data_status is partial",
+    "positive or complete conclusions about blocked section: 板块结构"
+  ],
+  "facts": [
+    {
+      "section": "market_breadth",
+      "description": "主表样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 5527
+    },
+    {
+      "section": "market_breadth",
+      "description": "上涨样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 2023
+    },
+    {
+      "section": "market_breadth",
+      "description": "下跌样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 3394
+    },
+    {
+      "section": "limit_pool",
+      "description": "limit_pool_events 记录数",
+      "source": "limit_pool_events",
+      "value": 713
+    },
+    {
+      "section": "lhb",
+      "description": "lhb_events 记录数",
+      "source": "lhb_events",
+      "value": 256
+    },
+    {
+      "section": "market_summary",
+      "description": "market_summary 记录数",
+      "source": "market_summary",
+      "value": 22
+    }
+  ]
+}

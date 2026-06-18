@@ -18,9 +18,9 @@
     "上榜原因",
     "上榜日期"
   ],
-  "elapsed_seconds": 0.723,
+  "elapsed_seconds": 1.148,
   "failure_reason": null,
-  "fetched_at": "2026-06-18T20:31:08.257803+08:00",
+  "fetched_at": "2026-06-18T22:28:09.922847+08:00",
   "function_name": "stock_lhb_jgmmtj_em",
   "params": {
     "end_date": "20260618",

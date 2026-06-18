@@ -7,7 +7,7 @@ from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
-from a_share_info_hub.__main__ import build_parser, run_daily_update
+from a_share_info_hub.__main__ import build_parser, run_daily_review, run_daily_update
 
 
 def test_cli_daily_update_parser_accepts_parameterized_date() -> None:
@@ -70,3 +70,65 @@ def test_run_daily_update_calls_collection_with_parsed_arguments(tmp_path: Path)
     assert call_kwargs["retry_sleep"] == 0.0
     assert call_kwargs["skip_duckdb"] is False
     assert call_kwargs["min_main_rows"] == 1
+
+
+def test_cli_daily_review_parser_accepts_output_and_refresh_mode() -> None:
+    """daily-review 子命令应接收输出格式和刷新模式参数。"""
+
+    parser = build_parser()
+    args = parser.parse_args(
+        [
+            "daily-review",
+            "--trade-date",
+            "2026-06-18",
+            "--output-format",
+            "context",
+            "--render-mode",
+            "deterministic",
+            "--llm-output",
+            "llm-review-sections.json",
+            "--refresh-mode",
+            "daily_update",
+        ]
+    )
+
+    assert args.command == "daily-review"
+    assert args.trade_date == "2026-06-18"
+    assert args.output_format == "context"
+    assert args.render_mode == "deterministic"
+    assert args.llm_output == "llm-review-sections.json"
+    assert args.refresh_mode == "daily_update"
+
+
+def test_run_daily_review_calls_review_generator(tmp_path: Path) -> None:
+    """daily-review 子命令应调用复盘生成函数并输出返回消息。"""
+
+    args = Namespace(
+        command="daily-review",
+        trade_date="2026-06-18",
+        output_root=str(tmp_path),
+        output_format="inline",
+        refresh_mode="none",
+        render_mode="llm",
+        llm_output=None,
+        ignore_proxy=False,
+        focus="风险",
+        user_prompt=None,
+    )
+    fake_result = Namespace(
+        data_status="partial",
+        message="analysis_mode: research_only\nnot_investment_advice: true",
+    )
+
+    with patch("a_share_info_hub.__main__.generate_daily_review", return_value=fake_result) as review:
+        exit_code = run_daily_review(args)
+
+    assert exit_code == 0
+    review.assert_called_once()
+    request = review.call_args.args[0]
+    assert request.trade_date == "2026-06-18"
+    assert request.output_root == tmp_path
+    assert request.output_format == "inline"
+    assert request.refresh_mode == "none"
+    assert request.render_mode == "llm"
+    assert request.llm_output_path is None

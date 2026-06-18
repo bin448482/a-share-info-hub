@@ -1,7 +1,7 @@
 {
   "duckdb_failure_reason": null,
   "duckdb_status": "written",
-  "generated_at": "2026-06-18T20:31:23.432422+08:00",
+  "generated_at": "2026-06-18T22:28:39.484959+08:00",
   "overall_status": "partial",
   "sources": [
     {
@@ -23,9 +23,9 @@
         "成交额",
         "时间戳"
       ],
-      "elapsed_seconds": 9.785,
+      "elapsed_seconds": 21.267,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:30:54.033052+08:00",
+      "fetched_at": "2026-06-18T22:27:42.847935+08:00",
       "function_name": "stock_zh_a_spot",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zh_a_spot\\metadata.json",
       "params": {},
@@ -55,9 +55,9 @@
         "连板数",
         "所属行业"
       ],
-      "elapsed_seconds": 0.436,
+      "elapsed_seconds": 0.474,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:03.937649+08:00",
+      "fetched_at": "2026-06-18T22:28:04.312755+08:00",
       "function_name": "stock_zt_pool_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_em\\metadata.json",
       "params": {
@@ -89,9 +89,9 @@
         "涨停统计",
         "所属行业"
       ],
-      "elapsed_seconds": 0.471,
+      "elapsed_seconds": 0.668,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:04.381549+08:00",
+      "fetched_at": "2026-06-18T22:28:04.798199+08:00",
       "function_name": "stock_zt_pool_previous_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_previous_em\\metadata.json",
       "params": {
@@ -123,9 +123,9 @@
         "入选理由",
         "所属行业"
       ],
-      "elapsed_seconds": 0.468,
+      "elapsed_seconds": 0.593,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:04.861166+08:00",
+      "fetched_at": "2026-06-18T22:28:05.475354+08:00",
       "function_name": "stock_zt_pool_strong_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_strong_em\\metadata.json",
       "params": {
@@ -157,9 +157,9 @@
         "涨停统计",
         "所属行业"
       ],
-      "elapsed_seconds": 0.455,
+      "elapsed_seconds": 0.588,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:05.347975+08:00",
+      "fetched_at": "2026-06-18T22:28:06.098728+08:00",
       "function_name": "stock_zt_pool_sub_new_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_sub_new_em\\metadata.json",
       "params": {
@@ -191,9 +191,9 @@
         "振幅",
         "所属行业"
       ],
-      "elapsed_seconds": 0.427,
+      "elapsed_seconds": 0.484,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:05.813284+08:00",
+      "fetched_at": "2026-06-18T22:28:06.705485+08:00",
       "function_name": "stock_zt_pool_zbgc_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_zbgc_em\\metadata.json",
       "params": {
@@ -225,9 +225,9 @@
         "开板次数",
         "所属行业"
       ],
-      "elapsed_seconds": 0.426,
+      "elapsed_seconds": 0.475,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:06.246679+08:00",
+      "fetched_at": "2026-06-18T22:28:07.202798+08:00",
       "function_name": "stock_zt_pool_dtgc_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_dtgc_em\\metadata.json",
       "params": {
@@ -251,9 +251,9 @@
         "成交额",
         "指标"
       ],
-      "elapsed_seconds": 0.775,
+      "elapsed_seconds": 1.165,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:06.678023+08:00",
+      "fetched_at": "2026-06-18T22:28:07.684770+08:00",
       "function_name": "stock_lhb_detail_daily_sina",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_lhb_detail_daily_sina\\metadata.json",
       "params": {
@@ -290,9 +290,9 @@
         "上榜后5日",
         "上榜后10日"
       ],
-      "elapsed_seconds": 0.788,
+      "elapsed_seconds": 1.05,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:07.459340+08:00",
+      "fetched_at": "2026-06-18T22:28:08.859316+08:00",
       "function_name": "stock_lhb_detail_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_lhb_detail_em\\metadata.json",
       "params": {
@@ -325,9 +325,9 @@
         "上榜原因",
         "上榜日期"
       ],
-      "elapsed_seconds": 0.723,
+      "elapsed_seconds": 1.148,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:08.257803+08:00",
+      "fetched_at": "2026-06-18T22:28:09.922847+08:00",
       "function_name": "stock_lhb_jgmmtj_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_lhb_jgmmtj_em\\metadata.json",
       "params": {
@@ -350,9 +350,9 @@
         "科创板",
         "股票回购"
       ],
-      "elapsed_seconds": 0.367,
+      "elapsed_seconds": 0.543,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:08.986588+08:00",
+      "fetched_at": "2026-06-18T22:28:11.084188+08:00",
       "function_name": "stock_sse_deal_daily",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_sse_deal_daily\\metadata.json",
       "params": {
@@ -373,9 +373,9 @@
         "总市值",
         "流通市值"
       ],
-      "elapsed_seconds": 0.212,
+      "elapsed_seconds": 0.329,
       "failure_reason": null,
-      "fetched_at": "2026-06-18T20:31:09.357296+08:00",
+      "fetched_at": "2026-06-18T22:28:11.632944+08:00",
       "function_name": "stock_szse_summary",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_szse_summary\\metadata.json",
       "params": {
@@ -387,12 +387,12 @@
       "status": "success"
     },
     {
-      "attempts": 1,
+      "attempts": 2,
       "category": "board_snapshot",
       "columns": [],
-      "elapsed_seconds": 7.097,
+      "elapsed_seconds": 14.097,
       "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "fetched_at": "2026-06-18T20:31:09.572728+08:00",
+      "fetched_at": "2026-06-18T22:28:11.967148+08:00",
       "function_name": "stock_board_industry_name_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_board_industry_name_em\\metadata.json",
       "params": {},
@@ -402,12 +402,12 @@
       "status": "failed"
     },
     {
-      "attempts": 1,
+      "attempts": 2,
       "category": "board_snapshot",
       "columns": [],
-      "elapsed_seconds": 6.57,
+      "elapsed_seconds": 13.133,
       "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "fetched_at": "2026-06-18T20:31:16.671565+08:00",
+      "fetched_at": "2026-06-18T22:28:26.066578+08:00",
       "function_name": "stock_board_concept_name_em",
       "metadata_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_board_concept_name_em\\metadata.json",
       "params": {},

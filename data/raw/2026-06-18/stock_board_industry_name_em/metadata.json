@@ -1,9 +1,9 @@
 {
-  "attempts": 1,
+  "attempts": 2,
   "columns": [],
-  "elapsed_seconds": 7.097,
+  "elapsed_seconds": 14.097,
   "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-  "fetched_at": "2026-06-18T20:31:09.572728+08:00",
+  "fetched_at": "2026-06-18T22:28:11.967148+08:00",
   "function_name": "stock_board_industry_name_em",
   "params": {},
   "raw_path": null,

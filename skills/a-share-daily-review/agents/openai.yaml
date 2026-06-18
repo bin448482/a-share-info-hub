@@ -1,0 +1,4 @@
+interface:
+  display_name: "A-Share Daily Review"
+  short_description: "Generate research-only A-share daily review reports"
+  default_prompt: "Use $a-share-daily-review to generate a research-only A-share daily review HTML report from existing daily snapshot artifacts."

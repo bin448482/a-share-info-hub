@@ -166,4 +166,6 @@ function normalizeQuote(raw: QuoteRecord): NormalizedQuote {
 - `logs/`：接口状态和失败日志目录，详见 `logs/AGENTS.md`。
 - `reports/`：每日运行报告和可 review 产物目录，详见 `reports/AGENTS.md`。
 - `scripts/`：可执行脚本目录，详见 `scripts/AGENTS.md`。
+- `skills/`：仓库内 Codex/Claude skill 源文件目录，详见 `skills/AGENTS.md`。
+- `eval/`：本地 prompt/skill 评测配置和 provider 目录，详见 `eval/AGENTS.md`。
 - `tests/`：单元测试和 fixture 目录，详见 `tests/AGENTS.md`。
