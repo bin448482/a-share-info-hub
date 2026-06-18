@@ -1,0 +1,22 @@
+{
+  "attempts": 1,
+  "columns": [
+    "单日情况",
+    "股票",
+    "主板A",
+    "主板B",
+    "科创板",
+    "股票回购"
+  ],
+  "elapsed_seconds": 0.367,
+  "failure_reason": null,
+  "fetched_at": "2026-06-18T20:31:08.986588+08:00",
+  "function_name": "stock_sse_deal_daily",
+  "params": {
+    "date": "20260618"
+  },
+  "raw_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_sse_deal_daily\\response.json",
+  "row_count": 8,
+  "source": "akshare.stock_sse_deal_daily",
+  "status": "success"
+}

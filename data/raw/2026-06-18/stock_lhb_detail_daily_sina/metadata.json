@@ -1,0 +1,24 @@
+{
+  "attempts": 1,
+  "columns": [
+    "序号",
+    "股票代码",
+    "股票名称",
+    "收盘价",
+    "对应值",
+    "成交量",
+    "成交额",
+    "指标"
+  ],
+  "elapsed_seconds": 0.775,
+  "failure_reason": null,
+  "fetched_at": "2026-06-18T20:31:06.678023+08:00",
+  "function_name": "stock_lhb_detail_daily_sina",
+  "params": {
+    "date": "20260618"
+  },
+  "raw_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_lhb_detail_daily_sina\\response.json",
+  "row_count": 99,
+  "source": "akshare.stock_lhb_detail_daily_sina",
+  "status": "success"
+}

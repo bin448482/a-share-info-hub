@@ -1,0 +1,21 @@
+{
+  "attempts": 1,
+  "columns": [
+    "证券类别",
+    "数量",
+    "成交金额",
+    "总市值",
+    "流通市值"
+  ],
+  "elapsed_seconds": 0.212,
+  "failure_reason": null,
+  "fetched_at": "2026-06-18T20:31:09.357296+08:00",
+  "function_name": "stock_szse_summary",
+  "params": {
+    "date": "20260618"
+  },
+  "raw_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_szse_summary\\response.json",
+  "row_count": 14,
+  "source": "akshare.stock_szse_summary",
+  "status": "success"
+}

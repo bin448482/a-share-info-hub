@@ -87,7 +87,9 @@
 ## 目录级规则
 
 - 每个实际存在的代码或文档目录都必须包含 `AGENTS.md` 和 `claude.md`。
-- 每个目录的 `AGENTS.md` 使用与根目录相同的规则；如需补充目录特有约束，只能追加在文件末尾，并说明适用范围。
+- 根目录 `AGENTS.md` 保存全局工作规则。
+- 子目录 `AGENTS.md` 不是重复根规则的地方，而是该目录的索引：说明目录用途、列出当前文件/子目录功能，并记录改动后需要同步更新的索引要求。
+- 如果新增、删除、改名、移动该目录下的文件或子目录，必须同步更新对应目录的 `AGENTS.md` 索引。
 - 每个目录的 `claude.md` 内容只允许是：
 
 ```text
@@ -139,3 +141,28 @@ function normalizeQuote(raw: QuoteRecord): NormalizedQuote {
 - 注释必须帮助读者理解用途、边界或业务含义。
 - 不写空泛注释，不用注释复述显而易见的语法。
 - 新增代码时先满足当前需求；不要因为“以后可能用到”添加抽象、配置或扩展点。
+
+# 根目录索引
+
+本节是仓库根目录索引。新增、删除、改名或移动顶层文件/目录时，必须同步更新这里的说明；子目录内部索引由对应目录的 `AGENTS.md` 维护。
+
+## 顶层文件
+
+- `AGENTS.md`：全局工作规则和根目录索引。
+- `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
+- `.gitignore`：本仓库忽略规则。
+- `README.md`：每日快照采集链路的使用说明和验证命令。
+- `requirements.txt`：Python 运行和测试依赖。
+- `market.duckdb`：每日快照标准化表的本地 DuckDB 分析库，由采集脚本生成。
+
+## 顶层目录
+
+- `.claude/`：Claude 相关本地配置目录。
+- `.codex/`：Codex 相关本地配置目录。
+- `.venv/`：项目 Python 虚拟环境，不作为代码索引对象。
+- `data/`：原始数据和标准化数据目录，详见 `data/AGENTS.md`。
+- `docs/`：设计和实施文档目录，详见 `docs/AGENTS.md`。
+- `logs/`：接口状态和失败日志目录，详见 `logs/AGENTS.md`。
+- `reports/`：每日运行报告和可 review 产物目录，详见 `reports/AGENTS.md`。
+- `scripts/`：可执行脚本目录，详见 `scripts/AGENTS.md`。
+- `tests/`：单元测试和 fixture 目录，详见 `tests/AGENTS.md`。

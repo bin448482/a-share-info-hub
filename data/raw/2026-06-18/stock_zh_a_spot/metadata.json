@@ -1,0 +1,28 @@
+{
+  "attempts": 1,
+  "columns": [
+    "代码",
+    "名称",
+    "最新价",
+    "涨跌额",
+    "涨跌幅",
+    "买入",
+    "卖出",
+    "昨收",
+    "今开",
+    "最高",
+    "最低",
+    "成交量",
+    "成交额",
+    "时间戳"
+  ],
+  "elapsed_seconds": 9.785,
+  "failure_reason": null,
+  "fetched_at": "2026-06-18T20:30:54.033052+08:00",
+  "function_name": "stock_zh_a_spot",
+  "params": {},
+  "raw_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zh_a_spot\\response.json",
+  "row_count": 5527,
+  "source": "akshare.stock_zh_a_spot",
+  "status": "success"
+}

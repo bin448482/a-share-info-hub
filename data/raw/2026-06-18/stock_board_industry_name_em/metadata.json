@@ -1,0 +1,13 @@
+{
+  "attempts": 1,
+  "columns": [],
+  "elapsed_seconds": 7.097,
+  "failure_reason": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+  "fetched_at": "2026-06-18T20:31:09.572728+08:00",
+  "function_name": "stock_board_industry_name_em",
+  "params": {},
+  "raw_path": null,
+  "row_count": 0,
+  "source": "akshare.stock_board_industry_name_em",
+  "status": "failed"
+}

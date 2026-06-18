@@ -1,3 +1,6 @@
-# Defines runtime dependencies for AKShare data contract probing.
+# Defines runtime dependencies for AKShare probing and daily snapshot collection.
 akshare==1.18.64
+duckdb>=1.1,<2.0
 pandas>=2.2,<3.0
+pyarrow>=18,<23
+pytest>=8,<9

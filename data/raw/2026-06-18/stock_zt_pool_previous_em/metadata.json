@@ -1,0 +1,32 @@
+{
+  "attempts": 1,
+  "columns": [
+    "序号",
+    "代码",
+    "名称",
+    "涨跌幅",
+    "最新价",
+    "涨停价",
+    "成交额",
+    "流通市值",
+    "总市值",
+    "换手率",
+    "涨速",
+    "振幅",
+    "昨日封板时间",
+    "昨日连板数",
+    "涨停统计",
+    "所属行业"
+  ],
+  "elapsed_seconds": 0.471,
+  "failure_reason": null,
+  "fetched_at": "2026-06-18T20:31:04.381549+08:00",
+  "function_name": "stock_zt_pool_previous_em",
+  "params": {
+    "date": "20260618"
+  },
+  "raw_path": "D:\\0-development\\projects\\a-share-info-hub\\data\\raw\\2026-06-18\\stock_zt_pool_previous_em\\response.json",
+  "row_count": 86,
+  "source": "akshare.stock_zt_pool_previous_em",
+  "status": "success"
+}
