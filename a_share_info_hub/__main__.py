@@ -14,6 +14,7 @@ from scripts.collect_daily_snapshot import (
     OVERALL_FAILED,
     OVERALL_PARTIAL,
     OVERALL_PASSED,
+    OVERALL_SKIPPED,
     REPORT_DATE_FMT,
     collect_daily_snapshot,
     configure_requests_proxy,
@@ -158,7 +159,7 @@ def run_daily_update(args: argparse.Namespace) -> int:
     print(f"Daily snapshot status: {outputs.overall_status}")
     for name, path in outputs.output_paths.items():
         print(f"{name}: {path}")
-    return 0 if outputs.overall_status in {OVERALL_PASSED, OVERALL_PARTIAL} else 1
+    return 0 if outputs.overall_status in {OVERALL_PASSED, OVERALL_PARTIAL, OVERALL_SKIPPED} else 1
 
 
 def run_daily_review(args: argparse.Namespace) -> int:
@@ -186,7 +187,7 @@ def run_daily_review(args: argparse.Namespace) -> int:
             )
         )
     print(result.message)
-    return 0 if result.data_status in {OVERALL_PASSED, OVERALL_PARTIAL, "blocked"} else 1
+    return 0 if result.data_status in {OVERALL_PASSED, OVERALL_PARTIAL, OVERALL_SKIPPED, "blocked"} else 1
 
 
 def main() -> int:

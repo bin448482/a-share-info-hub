@@ -72,6 +72,35 @@ def test_run_daily_update_calls_collection_with_parsed_arguments(tmp_path: Path)
     assert call_kwargs["min_main_rows"] == 1
 
 
+def test_run_daily_update_treats_skipped_as_success(tmp_path: Path) -> None:
+    """非交易日 skipped 状态应让 daily-update 正常退出。"""
+
+    args = Namespace(
+        command="daily-update",
+        trade_date="2026-06-20",
+        output_root=str(tmp_path),
+        request_timeout=12.0,
+        max_retries=1,
+        retry_sleep=0.0,
+        skip_duckdb=False,
+        ignore_proxy=False,
+        min_main_rows=1,
+    )
+    fake_outputs = Namespace(
+        overall_status="skipped",
+        output_paths={"interface_status": str(tmp_path / "interface-status.json")},
+    )
+
+    with (
+        patch("a_share_info_hub.__main__.install_default_requests_timeout"),
+        patch("a_share_info_hub.__main__.configure_requests_proxy"),
+        patch("a_share_info_hub.__main__.collect_daily_snapshot", return_value=fake_outputs),
+    ):
+        exit_code = run_daily_update(args)
+
+    assert exit_code == 0
+
+
 def test_cli_daily_review_parser_accepts_output_and_refresh_mode() -> None:
     """daily-review 子命令应接收输出格式和刷新模式参数。"""
 
@@ -132,3 +161,29 @@ def test_run_daily_review_calls_review_generator(tmp_path: Path) -> None:
     assert request.refresh_mode == "none"
     assert request.render_mode == "llm"
     assert request.llm_output_path is None
+
+
+def test_run_daily_review_treats_skipped_as_success(tmp_path: Path) -> None:
+    """非交易日 skipped 复盘结果应让 daily-review 正常退出。"""
+
+    args = Namespace(
+        command="daily-review",
+        trade_date="2026-06-20",
+        output_root=str(tmp_path),
+        output_format="inline",
+        refresh_mode="none",
+        render_mode="llm",
+        llm_output=None,
+        ignore_proxy=False,
+        focus=None,
+        user_prompt=None,
+    )
+    fake_result = Namespace(
+        data_status="skipped",
+        message="data_status: skipped",
+    )
+
+    with patch("a_share_info_hub.__main__.generate_daily_review", return_value=fake_result):
+        exit_code = run_daily_review(args)
+
+    assert exit_code == 0

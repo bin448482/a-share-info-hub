@@ -16,13 +16,15 @@ python -m a_share_info_hub daily-update
 python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 ```
 
+`daily-update` 会在采集前验证目标日期是否为 A 股交易日。非交易日返回 `skipped`，只生成 `reports/daily-runs/YYYY-MM-DD/interface-status.json` 和 `daily-data-summary.md`，不调用行情接口，也不写入原始行情、标准化表或 DuckDB。
+
 如果当前环境代理导致 AKShare 接口失败，可以显式忽略代理：
 
 ```text
 python -m a_share_info_hub daily-update --ignore-proxy
 ```
 
-主要输出：
+交易日主要输出：
 
 - `data/raw/YYYY-MM-DD/<source>/response.json`
 - `data/raw/YYYY-MM-DD/<source>/metadata.json`

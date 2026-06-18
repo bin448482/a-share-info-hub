@@ -13,6 +13,7 @@ from pydantic import ValidationError
 
 from a_share_info_hub.daily_review import (
     DATA_STATUS_MISSING,
+    DATA_STATUS_SKIPPED,
     DailyReviewRequest,
     LlmReviewSections,
     ReviewContext,
@@ -61,6 +62,36 @@ def write_status(root: Path, overall_status: str = "passed", board_failed: bool 
         json.dumps(payload, ensure_ascii=False), encoding="utf-8"
     )
     (run_dir / "daily-data-summary.md").write_text("# summary\n", encoding="utf-8")
+
+
+def write_skipped_status(root: Path) -> None:
+    """写入非交易日跳过采集的最小接口状态。"""
+
+    run_dir = root / "reports" / "daily-runs" / TRADE_DATE
+    run_dir.mkdir(parents=True)
+    payload = {
+        "trade_date": TRADE_DATE,
+        "overall_status": DATA_STATUS_SKIPPED,
+        "duckdb_status": "skipped",
+        "sources": [],
+        "table_row_counts": {
+            "daily_stock_snapshot": 0,
+            "limit_pool_events": 0,
+            "lhb_events": 0,
+            "market_summary": 0,
+            "board_snapshot": 0,
+        },
+        "trading_day_check": {
+            "status": "success",
+            "is_trading_day": False,
+            "source": "weekday",
+            "reason": "weekend is not an A-share trading day",
+        },
+    }
+    (run_dir / "interface-status.json").write_text(
+        json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+    )
+    (run_dir / "daily-data-summary.md").write_text("# skipped\n", encoding="utf-8")
 
 
 def write_tables(root: Path, with_board: bool = True) -> None:
@@ -149,6 +180,25 @@ def test_review_context_rejects_invalid_status() -> None:
                 "data_status": "almost",
             }
         )
+
+
+def test_daily_review_skipped_non_trading_day_blocks_market_review(tmp_path: Path) -> None:
+    """非交易日 skipped 应生成 context，但不误报为 failed。"""
+
+    write_skipped_status(tmp_path)
+
+    result = generate_daily_review(
+        DailyReviewRequest(trade_date=TRADE_DATE, output_root=tmp_path, output_format="inline")
+    )
+
+    assert result.data_status == DATA_STATUS_SKIPPED
+    assert result.context_artifact is not None
+    payload = json.loads(Path(result.context_artifact).read_text(encoding="utf-8"))
+    context = ReviewContext.model_validate(payload)
+    assert context.data_status == DATA_STATUS_SKIPPED
+    assert "trading_day_check" in context.source_health
+    assert "目标日期不是 A 股交易日" in result.message
+    assert "请指定最近一个 A 股交易日" in result.message
 
 
 def test_daily_review_requires_llm_output_for_default_html(tmp_path: Path) -> None:

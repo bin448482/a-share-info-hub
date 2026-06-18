@@ -29,11 +29,13 @@ SCHEMA_CHANGED = "schema_changed"
 OVERALL_PASSED = "passed"
 OVERALL_PARTIAL = "partial"
 OVERALL_FAILED = "failed"
+OVERALL_SKIPPED = "skipped"
 DUCKDB_SKIPPED = "skipped"
 DUCKDB_WRITTEN = "written"
 DUCKDB_FAILED = "failed"
 MAIN_SOURCE_KEY = "stock_zh_a_spot"
 MAIN_MIN_ROWS = 100
+TRADING_CALENDAR_SOURCE = "akshare.tool_trade_date_hist_sina"
 
 MAIN_FIELD_MAP = {
     "symbol": "代码",
@@ -209,6 +211,17 @@ class RunOutputs:
     output_paths: dict[str, str]
 
 
+@dataclass(frozen=True)
+class TradingDayCheck:
+    """记录采集前交易日验证结果和事实来源。"""
+
+    status: str
+    is_trading_day: bool
+    reason: str
+    checked_at: str
+    source: str
+
+
 def parse_args() -> argparse.Namespace:
     """解析每日快照采集脚本的命令行参数。"""
 
@@ -269,6 +282,78 @@ def parse_trade_date(value: str) -> date:
         return datetime.strptime(value, REPORT_DATE_FMT).date()
     except ValueError as exc:
         raise ValueError("trade date must be formatted as YYYY-MM-DD") from exc
+
+
+def parse_calendar_trade_date(value: Any) -> date | None:
+    """把交易日历返回的日期值解析为 date。"""
+
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    text = str(value).strip()
+    if not text or text.lower() in {"nan", "nat", "none"}:
+        return None
+    if text.endswith(".0"):
+        text = text[:-2]
+    for date_format in (AK_DATE_FMT, REPORT_DATE_FMT, "%Y/%m/%d"):
+        try:
+            return datetime.strptime(text, date_format).date()
+        except ValueError:
+            continue
+    return None
+
+
+def check_trading_day(trade_date: date, ak_module: Any) -> TradingDayCheck:
+    """验证目标日期是否为 A 股交易日，失败时阻断后续行情采集。"""
+
+    if trade_date.weekday() >= 5:
+        return TradingDayCheck(
+            status=SUCCESS,
+            is_trading_day=False,
+            reason="weekend is not an A-share trading day",
+            checked_at=current_timestamp(),
+            source="weekday",
+        )
+    try:
+        calendar = result_to_dataframe(ak_module.tool_trade_date_hist_sina())
+        if "trade_date" not in calendar.columns:
+            raise SchemaChangedError("trading calendar missing trade_date column")
+        trading_dates = {
+            parsed
+            for parsed in (
+                parse_calendar_trade_date(value)
+                for value in calendar["trade_date"].tolist()
+            )
+            if parsed is not None
+        }
+        if not trading_dates:
+            raise SchemaChangedError("trading calendar has no parseable trade dates")
+    except Exception as exc:  # noqa: BLE001 - calendar verification is an external boundary.
+        return TradingDayCheck(
+            status=FAILED,
+            is_trading_day=False,
+            reason=f"trading calendar unavailable: {format_exception(exc)}",
+            checked_at=current_timestamp(),
+            source=TRADING_CALENDAR_SOURCE,
+        )
+    if trade_date in trading_dates:
+        return TradingDayCheck(
+            status=SUCCESS,
+            is_trading_day=True,
+            reason="trade date is listed in AKShare trading calendar",
+            checked_at=current_timestamp(),
+            source=TRADING_CALENDAR_SOURCE,
+        )
+    return TradingDayCheck(
+        status=SUCCESS,
+        is_trading_day=False,
+        reason="trade date is not listed in AKShare trading calendar",
+        checked_at=current_timestamp(),
+        source=TRADING_CALENDAR_SOURCE,
+    )
 
 
 def format_ak_date(day: date) -> str:
@@ -747,6 +832,22 @@ def collect_daily_snapshot(
     """执行一次完整每日快照采集、标准化、入库和报告生成。"""
 
     output_root = output_root.resolve()
+    trading_day_check = check_trading_day(trade_date, ak_module)
+    if trading_day_check.status == FAILED:
+        return build_no_collection_outputs(
+            trade_date=trade_date,
+            output_root=output_root,
+            trading_day_check=trading_day_check,
+            overall_status=OVERALL_FAILED,
+        )
+    if not trading_day_check.is_trading_day:
+        return build_no_collection_outputs(
+            trade_date=trade_date,
+            output_root=output_root,
+            trading_day_check=trading_day_check,
+            overall_status=OVERALL_SKIPPED,
+        )
+
     raw_root = output_root / "data" / "raw"
     normalized_root = output_root / "data" / "normalized"
     logs_root = output_root / "logs"
@@ -792,6 +893,7 @@ def collect_daily_snapshot(
         duckdb_status,
         duckdb_failure,
         overall_status,
+        trading_day_check,
     )
     write_daily_summary(
         summary_path,
@@ -801,6 +903,7 @@ def collect_daily_snapshot(
         duckdb_status,
         duckdb_failure,
         overall_status,
+        trading_day_check,
     )
     output_paths = {
         "raw_root": str(raw_root / trade_date.isoformat()),
@@ -817,6 +920,51 @@ def collect_daily_snapshot(
         duckdb_failure_reason=duckdb_failure,
         overall_status=overall_status,
         output_paths=output_paths,
+    )
+
+
+def build_no_collection_outputs(
+    trade_date: date,
+    output_root: Path,
+    trading_day_check: TradingDayCheck,
+    overall_status: str,
+) -> RunOutputs:
+    """为非交易日或交易日历失败生成状态报告，不调用行情接口。"""
+
+    report_root = output_root / "reports" / "daily-runs" / trade_date.isoformat()
+    tables = build_empty_standard_tables()
+    interface_status_path = report_root / "interface-status.json"
+    summary_path = report_root / "daily-data-summary.md"
+    write_interface_status(
+        interface_status_path,
+        trade_date,
+        [],
+        tables,
+        DUCKDB_SKIPPED,
+        None,
+        overall_status,
+        trading_day_check,
+    )
+    write_daily_summary(
+        summary_path,
+        trade_date,
+        [],
+        tables,
+        DUCKDB_SKIPPED,
+        None,
+        overall_status,
+        trading_day_check,
+    )
+    return RunOutputs(
+        source_records=[],
+        tables=tables,
+        duckdb_status=DUCKDB_SKIPPED,
+        duckdb_failure_reason=None,
+        overall_status=overall_status,
+        output_paths={
+            "interface_status": str(interface_status_path),
+            "daily_summary": str(summary_path),
+        },
     )
 
 
@@ -852,6 +1000,20 @@ def build_standard_tables(
             normalized_by_table["board_snapshot"], BOARD_SNAPSHOT_COLUMNS
         ),
     }
+
+
+def build_empty_standard_tables() -> dict[str, pd.DataFrame]:
+    """生成不含数据但保留 schema 的标准化表集合。"""
+
+    return build_standard_tables(
+        {
+            "daily_stock_snapshot": [],
+            "limit_pool_events": [],
+            "lhb_events": [],
+            "market_summary": [],
+            "board_snapshot": [],
+        }
+    )
 
 
 def concat_or_empty(frames: list[pd.DataFrame], columns: list[str]) -> pd.DataFrame:
@@ -971,25 +1133,26 @@ def write_interface_status(
     duckdb_status: str,
     duckdb_failure: str | None,
     overall_status: str,
+    trading_day_check: TradingDayCheck | None = None,
 ) -> None:
     """写入机器可读的每日接口状态报告。"""
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    write_json(
-        path,
-        {
-            "trade_date": trade_date.isoformat(),
-            "generated_at": current_timestamp(),
-            "overall_status": overall_status,
-            "duckdb_status": duckdb_status,
-            "duckdb_failure_reason": duckdb_failure,
-            "table_row_counts": {
-                table_name: int(len(dataframe.index))
-                for table_name, dataframe in tables.items()
-            },
-            "sources": [asdict(record) for record in source_records],
+    payload = {
+        "trade_date": trade_date.isoformat(),
+        "generated_at": current_timestamp(),
+        "overall_status": overall_status,
+        "duckdb_status": duckdb_status,
+        "duckdb_failure_reason": duckdb_failure,
+        "table_row_counts": {
+            table_name: int(len(dataframe.index))
+            for table_name, dataframe in tables.items()
         },
-    )
+        "sources": [asdict(record) for record in source_records],
+    }
+    if trading_day_check is not None:
+        payload["trading_day_check"] = asdict(trading_day_check)
+    write_json(path, payload)
 
 
 def write_daily_summary(
@@ -1000,6 +1163,7 @@ def write_daily_summary(
     duckdb_status: str,
     duckdb_failure: str | None,
     overall_status: str,
+    trading_day_check: TradingDayCheck | None = None,
 ) -> None:
     """写入面向 review 的每日数据摘要报告。"""
 
@@ -1014,8 +1178,57 @@ def write_daily_summary(
         f"- 当日整体状态：`{overall_status}`",
         f"- DuckDB 状态：`{duckdb_status}`",
     ]
+    if trading_day_check is not None:
+        lines.extend(
+            [
+                f"- 交易日检查状态：`{trading_day_check.status}`",
+                f"- 是否交易日：`{trading_day_check.is_trading_day}`",
+                f"- 交易日检查来源：`{trading_day_check.source}`",
+                f"- 交易日检查说明：`{trading_day_check.reason}`",
+            ]
+        )
     if duckdb_failure:
         lines.append(f"- DuckDB 失败原因：`{duckdb_failure}`")
+    if trading_day_check is not None and overall_status == OVERALL_SKIPPED:
+        lines.extend(
+            [
+                "",
+                "## 采集跳过",
+                "",
+                "- 目标日期不是 A 股交易日，本运行未调用行情接口。",
+                "- 本运行不写入原始行情、标准化表或 DuckDB。",
+                "",
+                "## 边界",
+                "",
+                "- 本运行不生成预测。",
+                "- 本运行不生成交易建议。",
+                "- 非交易日跳过不代表接口失败。",
+                "",
+            ]
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(lines), encoding="utf-8")
+        return
+    if trading_day_check is not None and trading_day_check.status == FAILED:
+        lines.extend(
+            [
+                "",
+                "## 采集阻断",
+                "",
+                "- 交易日历验证失败，本运行未调用行情接口。",
+                "- 需要先恢复交易日历验证，再执行行情采集。",
+                "",
+                "## 边界",
+                "",
+                "- 本运行不生成预测。",
+                "- 本运行不生成交易建议。",
+                "- 未确认交易日时不能把行情接口结果当作有效每日数据包。",
+                "",
+            ]
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(lines), encoding="utf-8")
+        return
     lines.extend(
         [
             "",
@@ -1138,7 +1351,7 @@ def main() -> int:
     print(f"Daily snapshot status: {outputs.overall_status}")
     for name, path in outputs.output_paths.items():
         print(f"{name}: {path}")
-    return 0 if outputs.overall_status in {OVERALL_PASSED, OVERALL_PARTIAL} else 1
+    return 0 if outputs.overall_status in {OVERALL_PASSED, OVERALL_PARTIAL, OVERALL_SKIPPED} else 1
 
 
 if __name__ == "__main__":

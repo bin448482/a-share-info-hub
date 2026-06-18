@@ -10,9 +10,11 @@ import duckdb
 import pandas as pd
 
 from scripts.collect_daily_snapshot import (
+    DUCKDB_SKIPPED,
     DUCKDB_WRITTEN,
     FAILED,
     OVERALL_PASSED,
+    OVERALL_SKIPPED,
     SUCCESS,
     SourceRecord,
     append_status_log,
@@ -194,6 +196,12 @@ def test_collect_daily_snapshot_with_mock_module_reaches_passed(tmp_path: Path) 
         """提供每日快照脚本需要的最小 AKShare 函数集合。"""
 
         @staticmethod
+        def tool_trade_date_hist_sina() -> pd.DataFrame:
+            """返回包含目标日期的交易日历 fixture。"""
+
+            return pd.DataFrame([{"trade_date": "2026-06-18"}])
+
+        @staticmethod
         def stock_zh_a_spot() -> pd.DataFrame:
             """返回主表成功 fixture。"""
 
@@ -282,3 +290,111 @@ def test_collect_daily_snapshot_with_mock_module_reaches_passed(tmp_path: Path) 
     assert Path(outputs.output_paths["interface_status"]).exists()
     assert Path(outputs.output_paths["daily_summary"]).exists()
     assert Path(outputs.output_paths["duckdb"]).exists()
+
+
+def test_collect_daily_snapshot_skips_weekend_without_source_calls(tmp_path: Path) -> None:
+    """周末应直接标记 skipped，不能调用行情接口或写行情数据。"""
+
+    class WeekendAk:
+        """提供会在行情接口被调用时失败的 mock。"""
+
+        @staticmethod
+        def stock_zh_a_spot() -> pd.DataFrame:
+            """如果周末仍调用主表接口，测试应失败。"""
+
+            raise AssertionError("market source should not be called")
+
+    weekend = date(2026, 6, 20)
+    outputs = collect_daily_snapshot(
+        trade_date=weekend,
+        output_root=tmp_path,
+        ak_module=WeekendAk,
+        max_retries=1,
+        retry_sleep=0,
+        skip_duckdb=False,
+        min_main_rows=1,
+    )
+
+    status = json.loads(Path(outputs.output_paths["interface_status"]).read_text(encoding="utf-8"))
+    summary = Path(outputs.output_paths["daily_summary"]).read_text(encoding="utf-8")
+    assert outputs.overall_status == OVERALL_SKIPPED
+    assert outputs.duckdb_status == DUCKDB_SKIPPED
+    assert outputs.source_records == []
+    assert status["overall_status"] == OVERALL_SKIPPED
+    assert status["sources"] == []
+    assert status["trading_day_check"]["is_trading_day"] is False
+    assert status["trading_day_check"]["source"] == "weekday"
+    assert "本运行未调用行情接口" in summary
+    assert not (tmp_path / "data" / "raw" / weekend.isoformat()).exists()
+
+
+def test_collect_daily_snapshot_skips_calendar_non_trading_day(tmp_path: Path) -> None:
+    """工作日不在交易日历中时，应标记 skipped 且不调用行情接口。"""
+
+    class HolidayAk:
+        """提供不包含目标日期的交易日历 mock。"""
+
+        @staticmethod
+        def tool_trade_date_hist_sina() -> pd.DataFrame:
+            """返回不包含目标日期的交易日历。"""
+
+            return pd.DataFrame([{"trade_date": "2026-06-18"}])
+
+        @staticmethod
+        def stock_zh_a_spot() -> pd.DataFrame:
+            """如果非交易日仍调用主表接口，测试应失败。"""
+
+            raise AssertionError("market source should not be called")
+
+    holiday = date(2026, 6, 22)
+    outputs = collect_daily_snapshot(
+        trade_date=holiday,
+        output_root=tmp_path,
+        ak_module=HolidayAk,
+        max_retries=1,
+        retry_sleep=0,
+        skip_duckdb=False,
+        min_main_rows=1,
+    )
+
+    status = json.loads(Path(outputs.output_paths["interface_status"]).read_text(encoding="utf-8"))
+    assert outputs.overall_status == OVERALL_SKIPPED
+    assert status["trading_day_check"]["source"] == "akshare.tool_trade_date_hist_sina"
+    assert status["trading_day_check"]["is_trading_day"] is False
+    assert status["sources"] == []
+
+
+def test_collect_daily_snapshot_blocks_when_calendar_unavailable(tmp_path: Path) -> None:
+    """交易日历不可用时，应失败并阻断行情接口调用。"""
+
+    class BrokenCalendarAk:
+        """提供会让交易日历失败的 mock。"""
+
+        @staticmethod
+        def tool_trade_date_hist_sina() -> pd.DataFrame:
+            """模拟 AKShare 交易日历不可用。"""
+
+            raise RuntimeError("calendar unavailable")
+
+        @staticmethod
+        def stock_zh_a_spot() -> pd.DataFrame:
+            """如果日历失败后仍调用主表接口，测试应失败。"""
+
+            raise AssertionError("market source should not be called")
+
+    outputs = collect_daily_snapshot(
+        trade_date=TRADE_DATE,
+        output_root=tmp_path,
+        ak_module=BrokenCalendarAk,
+        max_retries=1,
+        retry_sleep=0,
+        skip_duckdb=False,
+        min_main_rows=1,
+    )
+
+    status = json.loads(Path(outputs.output_paths["interface_status"]).read_text(encoding="utf-8"))
+    summary = Path(outputs.output_paths["daily_summary"]).read_text(encoding="utf-8")
+    assert outputs.overall_status == FAILED
+    assert status["overall_status"] == FAILED
+    assert status["trading_day_check"]["status"] == FAILED
+    assert "交易日历验证失败" in summary

@@ -8,7 +8,7 @@
 
 - 读取每日采集 artifacts，包括 `interface-status.json`、`daily-data-summary.md`、Parquet 标准化表和 `market.duckdb`。
 - 生成 `reports/daily-reviews/YYYY-MM-DD/review-context.json`，作为 LLM 唯一事实输入。
-- 判断数据状态是 `passed`、`partial`、`failed` 还是 `missing`。
+- 判断数据状态是 `passed`、`partial`、`skipped`、`failed` 还是 `missing`。
 - 让 LLM 只基于 `review-context.json` 生成 `llm-review-sections.json`。
 - 使用 Python/Pydantic 校验 LLM 输出和业务边界。
 - 在校验通过后生成本地 HTML report，并返回报告路径。
@@ -139,7 +139,7 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 预期结果：
 
 - 输出每个关键 artifact 的存在性和可读性。
-- 说明整体状态是 `missing`、`failed` 还是 `partial`。
+- 说明整体状态是 `missing`、`failed`、`skipped` 还是 `partial`。
 - 给出下一步修复命令或需要人工检查的文件。
 
 ### 解释 partial 数据

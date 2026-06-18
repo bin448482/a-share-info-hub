@@ -23,6 +23,7 @@ SECTIONS_SCHEMA_VERSION = "daily_review_sections.v1"
 REPORT_SCHEMA_VERSION = "daily_review_report.v1"
 DATA_STATUS_PASSED = "passed"
 DATA_STATUS_PARTIAL = "partial"
+DATA_STATUS_SKIPPED = "skipped"
 DATA_STATUS_FAILED = "failed"
 DATA_STATUS_MISSING = "missing"
 DATA_STATUS_BLOCKED = "blocked"
@@ -133,7 +134,7 @@ class ReviewContext(BaseModel):
     analysis_mode: Literal["research_only"] = ANALYSIS_MODE
     not_investment_advice: Literal[True] = True
     trade_date: str
-    data_status: Literal["passed", "partial", "failed", "missing"]
+    data_status: Literal["passed", "partial", "skipped", "failed", "missing"]
     data_sources_used: list[str] = Field(default_factory=list)
     blocked_sections: list[str] = Field(default_factory=list)
     source_health: dict[str, SourceHealth] = Field(default_factory=dict)
@@ -397,7 +398,7 @@ def generate_daily_review(
 
     if output_format == OUTPUT_CONTEXT:
         return render_context_result(context, context_path, output_format, request.render_mode)
-    if context.data_status in {DATA_STATUS_FAILED, DATA_STATUS_MISSING}:
+    if context.data_status in {DATA_STATUS_SKIPPED, DATA_STATUS_FAILED, DATA_STATUS_MISSING}:
         return render_blocked_context_result(context, context_path, output_format, request.render_mode)
 
     if request.render_mode == RENDER_LLM and request.llm_output_path is None:
@@ -552,6 +553,10 @@ def collect_review_state(output_root: Path, trade_date: str) -> ReviewState:
     )
     if state.summary_path:
         state.data_sources_used.append(str(state.summary_path))
+    if state.data_status == DATA_STATUS_SKIPPED:
+        apply_skipped_status_rules(state)
+        dedupe_state_lists(state)
+        return state
 
     load_normalized_tables(output_root, state)
     inspect_duckdb(output_root, state)
@@ -630,6 +635,8 @@ def apply_status_rules(state: ReviewState) -> None:
     )
     if state.data_status == DATA_STATUS_MISSING:
         return
+    if state.data_status == DATA_STATUS_SKIPPED:
+        return
     if state.status_payload.get("overall_status") == DATA_STATUS_FAILED:
         state.data_status = DATA_STATUS_FAILED
     if main_source.get("status") != "success" or main_table.empty:
@@ -659,8 +666,28 @@ def apply_status_rules(state: ReviewState) -> None:
         state.data_status = DATA_STATUS_PARTIAL
     if state.status_payload.get("overall_status") == DATA_STATUS_PARTIAL:
         state.data_status = DATA_STATUS_PARTIAL
-    if state.data_status not in {DATA_STATUS_FAILED, DATA_STATUS_PARTIAL, DATA_STATUS_MISSING}:
+    if state.data_status not in {DATA_STATUS_FAILED, DATA_STATUS_PARTIAL, DATA_STATUS_SKIPPED, DATA_STATUS_MISSING}:
         state.data_status = DATA_STATUS_PASSED
+
+
+def apply_skipped_status_rules(state: ReviewState) -> None:
+    """把非交易日跳过状态转换为复盘可解释的阻断边界。"""
+
+    check = state.status_payload.get("trading_day_check", {})
+    reason = str(check.get("reason") or "目标日期不是 A 股交易日。")
+    state.data_status = DATA_STATUS_SKIPPED
+    state.duckdb_status = str(state.status_payload.get("duckdb_status") or DATA_STATUS_SKIPPED)
+    state.blocked_sections.extend(
+        [
+            "market_width",
+            "limit_pool_events",
+            "lhb_events",
+            "market_summary",
+            "board_snapshot",
+            "duckdb",
+        ]
+    )
+    state.issues.append(f"非交易日跳过采集：{reason}")
 
 
 def dedupe_state_lists(state: ReviewState) -> None:
@@ -717,6 +744,14 @@ def build_source_health(state: ReviewState) -> dict[str, SourceHealth]:
             category="run_summary",
             status="readable",
             source_path=str(state.summary_path),
+        )
+    trading_day_check = state.status_payload.get("trading_day_check")
+    if isinstance(trading_day_check, dict):
+        health["trading_day_check"] = SourceHealth(
+            name="trading_day_check",
+            category="run_status",
+            status=str(trading_day_check.get("status") or "unknown"),
+            issue=trading_day_check.get("reason"),
         )
     for source in state.status_payload.get("sources", []):
         key = str(source.get("source_key") or source.get("category") or "unknown")
@@ -807,6 +842,8 @@ def add_fact(facts: list[ReviewFact], section: str, description: str, source: st
 def derive_allowed_sections(state: ReviewState) -> list[str]:
     """根据数据状态推导 LLM 允许生成的报告章节。"""
 
+    if state.data_status == DATA_STATUS_SKIPPED:
+        return ["non_trading_day_note", "data_boundary"]
     if state.data_status in {DATA_STATUS_FAILED, DATA_STATUS_MISSING}:
         return ["data_quality_diagnosis", "repair_steps"]
     sections = ["data_status", "market_breadth", "sentiment_and_events", "risks", "follow_up_questions"]
@@ -824,6 +861,8 @@ def derive_forbidden_claims(state: ReviewState) -> list[str]:
     ]
     if state.data_status == DATA_STATUS_PARTIAL:
         claims.append("claiming the review is complete while data_status is partial")
+    if state.data_status == DATA_STATUS_SKIPPED:
+        claims.append("market conclusions for a non-trading day")
     for section in state.blocked_sections:
         display = SECTION_DISPLAY_NAMES.get(section, section)
         claims.append(f"positive or complete conclusions about blocked section: {display}")
@@ -1106,10 +1145,16 @@ def render_blocked_context_result(
     output_format: str,
     render_mode: str,
 ) -> DailyReviewResult:
-    """返回 failed 或 missing 状态下的阻断结果。"""
+    """返回 skipped、failed 或 missing 状态下的阻断结果。"""
 
     command = render_public_daily_update_command(context.trade_date)
     issue_lines = "\n".join(f"- {issue}" for issue in (context.issues or ["缺少可用于复盘的关键数据。"]))
+    if context.data_status == DATA_STATUS_SKIPPED:
+        action_line = "目标日期不是 A 股交易日，已跳过行情采集和市场复盘。"
+        next_step_line = "如需复盘，请指定最近一个 A 股交易日。"
+    else:
+        action_line = "已阻断完整市场复盘。"
+        next_step_line = f"可先运行：{command}"
     message = "\n".join(
         [
             "analysis_mode: research_only",
@@ -1119,11 +1164,11 @@ def render_blocked_context_result(
             f"context_artifact: {context_path}",
             "report_artifact: null",
             "",
-            "已阻断完整市场复盘。",
+            action_line,
             "阻断原因：",
             issue_lines,
             "",
-            f"可先运行：{command}",
+            next_step_line,
         ]
     )
     return DailyReviewResult(

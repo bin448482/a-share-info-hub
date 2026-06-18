@@ -12,12 +12,15 @@
 2. 将主表和增强数据标准化为独立表。
 3. 将标准化表写入本地 Parquet/CSV 和 `market.duckdb`。
 4. 记录成功、失败、空结果和字段变化。
-5. 生成每日可读摘要，说明当天数据包是否满足 v1 验收标准。
+5. 采集前验证目标日期是否为 A 股交易日，非交易日不调用行情接口。
+6. 生成每日可读摘要，说明当天数据包是否满足 v1 验收标准。
 
 ## 核心假设
 
 - 项目 Python 环境可安装并导入 `akshare`、`pandas`、`duckdb` 和 `pyarrow`。
-- 每日运行日期默认使用本地日期，交易日判断不由本阶段实现复杂日历服务。
+- 每日运行日期默认使用本地日期；指定 `--trade-date` 时按指定日期验证是否为 A 股交易日。
+- 交易日判断使用本地周末规则和 AKShare 交易日历接口；非交易日必须跳过行情采集。
+- 交易日历不可用或字段异常时，当日整体状态为 `failed`，且不能继续调用行情接口。
 - `stock_zh_a_spot` 是 v1 主表入口；若该接口失败或主表为空，当日快照状态必须标记为失败。
 - 增强接口失败不阻断主表落盘，但必须进入接口状态报告和失败日志。
 - 原始数据文件是审计依据，DuckDB 只是查询和分析层，不是唯一事实来源。
@@ -32,15 +35,23 @@
    - 风险：只为规范创建空目录会违反仓库规则。
    - 验证：目录只在有真实输出或说明用途时创建；每个新增目录都有规则文件。
 
-2. 外部接口调用和原始落盘
+2. 交易日门禁
+   - 输入：目标日期、AKShare 交易日历。
+   - 输出：`trading_day_check` 状态，写入 `interface-status.json` 和 `daily-data-summary.md`。
+   - 依赖：依赖安装完成。
+   - 触碰模块：每日采集入口和状态报告。
+   - 风险：把非交易日误当成接口失败，或在交易日历不可验证时继续采集。
+   - 验证：周末或交易日历未列出的日期返回 `skipped`，不调用行情接口；交易日历异常返回 `failed`，不调用行情接口。
+
+3. 外部接口调用和原始落盘
    - 输入：交易日期、v1 固定接口清单。
    - 输出：`data/raw/YYYY-MM-DD/<source>/response.*` 和 `metadata.json`。
-   - 依赖：依赖安装完成。
+   - 依赖：交易日门禁确认目标日期为交易日。
    - 触碰模块：新增每日采集脚本。
    - 风险：接口失败、空返回、网络超时、字段变化。
    - 验证：每个接口都有 `status`、`row_count`、`columns`、`failure_reason` 和 `fetched_at`；失败不静默吞掉。
 
-3. 主表标准化
+4. 主表标准化
    - 输入：`stock_zh_a_spot` 原始返回和元数据。
    - 输出：`data/normalized/daily_stock_snapshot.parquet`。
    - 依赖：主表原始落盘成功且非空。
@@ -48,7 +59,7 @@
    - 风险：原始字段缺失、列名变化、数值类型不可解析。
    - 验证：标准字段包含 `trade_date`、`symbol`、`name`、价格、成交、`snapshot_time`、`fetched_at`、`source`；主表为空或关键字段缺失时阻断当日成功状态。
 
-4. 增强表标准化
+5. 增强表标准化
    - 输入：涨跌停池、龙虎榜、市场汇总、板块快照原始返回。
    - 输出：`limit_pool_events.parquet`、`lhb_events.parquet`、`market_summary.parquet`、`board_snapshot.parquet`。
    - 依赖：对应接口已尝试调用并写入状态。
@@ -56,7 +67,7 @@
    - 风险：事件型数据自然为空；不同来源字段不一致。
    - 验证：空事件集记录为 `success_empty` 或等价状态，不补齐到主表；每条增强记录保留 `trade_date`、来源和可关联键。
 
-5. DuckDB 分析库注册
+6. DuckDB 分析库注册
    - 输入：标准化 Parquet/CSV 输出。
    - 输出：`market.duckdb` 中可查询的标准化表。
    - 依赖：标准化文件生成完成。
@@ -64,7 +75,7 @@
    - 风险：重复运行导致重复行或旧数据覆盖不清晰。
    - 验证：同一 `trade_date` 重跑采用明确的替换策略；可查询主表和增强表行数。
 
-6. 失败日志和接口状态报告
+7. 失败日志和接口状态报告
    - 输入：每个接口调用结果、解析结果和标准化结果。
    - 输出：`logs/external-interface-failures.jsonl`、`reports/daily-runs/YYYY-MM-DD/interface-status.json`。
    - 依赖：接口调用和标准化已完成。
@@ -72,7 +83,7 @@
    - 风险：把真实空结果、调用失败和解析失败混成一种状态。
    - 验证：状态至少区分 `success`、`success_empty`、`failed`、`schema_changed`；失败日志包含 `raw_path` 或明确说明无原始文件。
 
-7. 每日摘要报告
+8. 每日摘要报告
    - 输入：接口状态、主表统计、增强表统计、失败日志摘要。
    - 输出：`reports/daily-runs/YYYY-MM-DD/daily-data-summary.md`。
    - 依赖：接口状态报告完成。
@@ -80,7 +91,7 @@
    - 风险：报告把未获取数据写成可用，或隐藏增强接口失败。
    - 验证：摘要明确主表是否成功、每类增强是否成功/为空/失败、当日是否满足 v1 验收标准。
 
-8. 端到端验证
+9. 端到端验证
    - 输入：一个指定 `trade_date` 的完整运行。
    - 输出：验证记录和可复查命令。
    - 依赖：前 7 项完成。
@@ -97,6 +108,7 @@
 - 关联键：个股增强用 `trade_date + symbol`，市场增强用 `trade_date`，板块增强用 `trade_date + board_code/board_name`。
 - 状态契约：接口状态必须区分成功、空结果、失败和字段变化。
 - 存储契约：原始返回先落盘，标准化数据再写入分析层。
+- 交易日契约：只有交易日门禁确认目标日期为交易日，才允许调用行情接口。
 - 运行契约：主表失败阻断当日快照成功；增强失败不阻断主表，但必须暴露。
 
 ## 建议文件结构
@@ -170,6 +182,7 @@ CLI 的 `daily-update` 子命令负责一次完整每日运行。内部可以复
 
 - `passed`：主表成功非空，标准化和 DuckDB 写入成功，增强接口状态全部可解释。
 - `partial`：主表成功，但一个或多个增强接口失败或字段变化。
+- `skipped`：目标日期已验证为非交易日；未调用行情接口，未写入原始行情、标准化表或 DuckDB。
 - `failed`：主表失败、主表为空、主表关键字段缺失，或标准化主表无法写入。
 
 ## 异常处理
@@ -182,6 +195,15 @@ CLI 的 `daily-update` 子命令负责一次完整每日运行。内部可以复
 - 失败接口必须记录 `function_name`、`params`、异常类型、异常摘要、重试次数和 `fetched_at`。
 - 如果调用前已经创建了原始目录但没有有效响应文件，`metadata.json` 必须写明 `raw_path: null` 或等价字段。
 - 主表接口失败时，当日整体状态为 `failed`；增强接口失败时，当日整体状态最高只能是 `partial`。
+
+### 交易日验证异常
+
+- `daily-update` 必须先验证目标日期是否为 A 股交易日，再调用主表或增强接口。
+- 周末日期直接视为非交易日；工作日需通过 AKShare 交易日历确认。
+- 目标日期不是交易日时，当日整体状态为 `skipped`，退出码为 0，只生成 `interface-status.json` 和 `daily-data-summary.md`。
+- `skipped` 状态下不得创建目标日期的原始行情目录，不得写入标准化表或 DuckDB。
+- 交易日历接口失败、缺少 `trade_date` 字段或无法解析日期时，当日整体状态为 `failed`，退出码为 1，且不得继续调用行情接口。
+- `interface-status.json` 必须包含 `trading_day_check`，说明检查状态、是否交易日、来源和原因。
 
 ### 空结果异常
 
@@ -221,6 +243,7 @@ CLI 的 `daily-update` 子命令负责一次完整每日运行。内部可以复
 v1 实施完成后必须同时满足：
 
 - 能用一个脚本执行指定日期的每日采集。
+- 非交易日运行应返回 `skipped`，并确认没有调用行情接口。
 - `stock_zh_a_spot` 原始返回和元数据保存到 `data/raw/YYYY-MM-DD/stock_zh_a_spot/`。
 - 主表标准化结果写入 `data/normalized/daily_stock_snapshot.parquet`。
 - 涨跌停池、龙虎榜、市场汇总、板块快照分别写入独立标准化表。
@@ -237,13 +260,16 @@ v1 实施完成后必须同时满足：
 
 1. 实现完成
    - 存在一个可执行 CLI 入口 `python -m a_share_info_hub daily-update`。
-   - 入口支持默认当天运行，也支持通过 `--trade-date` 指定日期，并能完成采集、原始落盘、标准化、DuckDB 写入和日报告生成。
+   - 入口支持默认当天运行，也支持通过 `--trade-date` 指定日期。
+   - 交易日能完成采集、原始落盘、标准化、DuckDB 写入和日报告生成。
+   - 非交易日能生成 `skipped` 状态报告，并且不调用行情接口。
    - 新增真实承载输出的目录时，同步添加对应 `AGENTS.md` 和 `claude.md`。
 
 2. 契约满足
    - 主表只由 `stock_zh_a_spot` 生成。
    - 增强数据保持独立表，不覆盖主表字段。
    - 接口状态清楚区分 `success`、`success_empty`、`failed` 和 `schema_changed`。
+   - 当日整体状态清楚区分 `passed`、`partial`、`skipped` 和 `failed`。
    - 原始数据、标准化数据、DuckDB、失败日志和每日摘要之间可以互相追溯。
 
 3. 测试满足
@@ -251,6 +277,8 @@ v1 实施完成后必须同时满足：
    - 单元测试不依赖真实 AKShare 网络调用。
    - 至少有一个 mock 或 fixture 场景覆盖主表失败，并确认当日状态为 `failed`。
    - 至少有一个 mock 或 fixture 场景覆盖增强接口为空，并确认当日状态不是 `failed`。
+   - 至少有一个 mock 或 fixture 场景覆盖非交易日，并确认状态为 `skipped` 且行情接口未被调用。
+   - 至少有一个 mock 或 fixture 场景覆盖交易日历不可用，并确认状态为 `failed` 且行情接口未被调用。
 
 4. 验证满足
    - `python -m py_compile a_share_info_hub/__main__.py scripts/collect_daily_snapshot.py` 通过。
@@ -307,19 +335,27 @@ tests/
    - 输入：缺少可关联字段的增强 fixture。
    - 断言：该增强来源状态为 `schema_changed`；主表成功时当日整体状态为 `partial`。
 
-6. 失败日志写入
+6. 非交易日跳过
+   - 输入：周末日期，或工作日但交易日历不包含该日期。
+   - 断言：当日整体状态为 `skipped`；`trading_day_check.is_trading_day` 为 `false`；主表和增强接口均未调用；不写原始行情目录。
+
+7. 交易日历不可用
+   - 输入：交易日历接口抛错、缺少 `trade_date` 字段或日期不可解析。
+   - 断言：当日整体状态为 `failed`；主表和增强接口均未调用；摘要写明交易日历验证失败。
+
+8. 失败日志写入
    - 输入：模拟接口异常。
    - 断言：`external-interface-failures.jsonl` 追加一行 JSON；包含 `trade_date`、`function_name`、`failure_type`、`failure_reason` 和 `raw_path`。
 
-7. 原始文件和元数据落盘
+9. 原始文件和元数据落盘
    - 输入：成功 fixture 和失败 fixture。
    - 断言：成功接口写入响应文件和 `metadata.json`；失败接口写入失败元数据；关键 JSON 可解析。
 
-8. DuckDB 重跑替换
+10. DuckDB 重跑替换
    - 输入：同一 `trade_date` 两次写入不同 fixture。
    - 断言：第二次运行后指定日期没有重复行，查询结果与第二次 fixture 一致。
 
-9. 每日摘要生成
+11. 每日摘要生成
    - 输入：混合状态的 `interface-status.json` fixture。
    - 断言：摘要包含主表状态、增强失败项、空事件项、整体状态和“不做预测/交易建议”边界。
 
@@ -347,7 +383,7 @@ python -m pytest tests
 
 4. 单日运行
    - 命令：`python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>`
-   - 通过标准：脚本退出码为 0；若主表失败，必须生成失败状态报告并以明确错误结束。
+   - 通过标准：交易日脚本退出码为 0；非交易日脚本退出码为 0 且状态为 `skipped`；若主表失败或交易日历无法验证，必须生成失败状态报告并以明确错误结束。
 
 5. 输出文件检查
    - 检查：原始文件、元数据、标准化文件、失败日志、接口状态和每日摘要是否存在。
@@ -362,6 +398,7 @@ python -m pytest tests
 遇到以下情况应停止声明当日运行成功：
 
 - 主表接口调用失败。
+- 交易日历无法验证目标日期是否为交易日。
 - 主表返回空结果。
 - 主表关键字段缺失或无法标准化。
 - 主表标准化文件无法写入。
@@ -374,6 +411,11 @@ python -m pytest tests
 - 任一增强接口字段变化导致无法标准化。
 - 事件型增强接口返回空。
 - 板块或市场背景接口失败。
+
+遇到以下情况不进入行情采集，也不视为失败：
+
+- 目标日期是周末。
+- 目标日期不在 AKShare 交易日历中。
 
 ## 不做事项
 

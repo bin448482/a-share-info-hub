@@ -28,11 +28,13 @@ function writeFixture(root, artifactState) {
     || normalizedState.includes("duckdb 不可用");
   const status = normalizedState.startsWith("missing")
     ? "missing"
-    : normalizedState.startsWith("failed")
-      ? "failed"
-      : normalizedState.startsWith("partial") || duckdbFailed || normalizedState.includes("board_snapshot failed")
-        ? "partial"
-        : "passed";
+    : normalizedState.startsWith("skipped")
+      ? "skipped"
+      : normalizedState.startsWith("failed")
+        ? "failed"
+        : normalizedState.startsWith("partial") || duckdbFailed || normalizedState.includes("board_snapshot failed")
+          ? "partial"
+          : "passed";
 
   if (status === "missing") {
     return tradeDate;
@@ -41,6 +43,31 @@ function writeFixture(root, artifactState) {
   const runDir = join(root, "reports", "daily-runs", tradeDate);
   const normalizedDir = join(root, "data", "normalized");
   mkdirSync(runDir, { recursive: true });
+
+  if (status === "skipped") {
+    writeJson(join(runDir, "interface-status.json"), {
+      trade_date: tradeDate,
+      overall_status: "skipped",
+      duckdb_status: "skipped",
+      sources: [],
+      table_row_counts: {
+        daily_stock_snapshot: 0,
+        limit_pool_events: 0,
+        lhb_events: 0,
+        market_summary: 0,
+        board_snapshot: 0,
+      },
+      trading_day_check: {
+        status: "success",
+        is_trading_day: false,
+        source: "weekday",
+        reason: "weekend is not an A-share trading day",
+      },
+    });
+    writeFileSync(join(runDir, "daily-data-summary.md"), "# fixture skipped\n", "utf8");
+    return tradeDate;
+  }
+
   mkdirSync(normalizedDir, { recursive: true });
 
   const boardFailed = status === "partial";
