@@ -13,7 +13,8 @@
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
 - `__init__.py`：Python 包初始化文件。
 - `daily_review.py`：每日复盘研究模块，读取已有 daily run、Parquet、DuckDB 和可选 external background JSON，生成 `review-context.json`，校验 LLM sections，并输出 research-only HTML、技术参考 Markdown 或 inline 报告。
-- `__main__.py`：顶层 CLI 入口；当前提供 `daily-update` 和 `daily-review` 子命令，分别负责每日采集和每日复盘研究，`daily-review` 支持可选 `--external-background`。
+- `external_background.py`：每日复盘外部背景 fixture/validation helper，从 `review-context.json` 抽取固定 6 个本地 topic，派发可注入 runner，并汇总为 `external_background_fusion.v1` 及审计中间产物；不代表生产 `$daily-financial-briefing` skill 调用。
+- `__main__.py`：顶层 CLI 入口；当前提供 `daily-update`、`daily-review` 和 `daily-review-external-background` 子命令，分别负责每日采集、每日复盘研究和外部背景 fixture/validation helper，`daily-review` 支持可选 `--external-background`。
 
 ## 更新要求
 

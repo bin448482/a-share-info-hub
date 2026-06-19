@@ -11,7 +11,7 @@
 
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
-- `daily-review-workflow.md`：每日复盘 skill 的 context 生成、可选 external background 接入、LLM sections、HTML 渲染、安全边界和验证规则。
+- `daily-review-workflow.md`：每日复盘 skill 的 context 生成、6 子 Agent external background 接入、Python fixture helper 边界、LLM sections、HTML 渲染、安全边界和验证规则。
 - `report-prompt.md`：LLM 将 `review-context.json` 转换为可校验 sections JSON 的提示词约束，包含 external background 字段边界。
 
 ## 更新要求

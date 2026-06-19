@@ -70,18 +70,13 @@
 ## external_background
 
 - status: passed
-- input_path: reports\daily-reviews\2026-06-18\external-background-passed-simulated.json
+- input_path: reports\daily-reviews\2026-06-18\external-background-fusion.json
 - briefing_date: 2026-06-18
 - source_skill: daily-financial-briefing
 
 ### 引用来源
 
-- Federal Reserve: https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm
-- BLS: https://www.bls.gov/news.release/cpi.nr0.htm
-- CME Group: https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html
-- Goldman Sachs: https://www.goldmansachs.com/insights/outlooks/2026-outlooks
-- Citi: https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap
-- UBS: https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html
+- Federal Reserve: https://www.federalreserve.gov/example
 
 ### 降级或拒绝原因
 

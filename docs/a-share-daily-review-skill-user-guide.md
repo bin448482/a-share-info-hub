@@ -92,13 +92,16 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 
 ```text
 调用 a-share-daily-review，使用 2026-06-18 已有 A 股数据生成 HTML report。
-同时接入 external_background JSON：<path-to-external-background.json>。
+先生成 review-context.json；如果没有现成 external-background-fusion.json，就由父 agent spawn 6 个并行子 Agent，每个子 Agent 使用 daily-financial-briefing 处理一个本地主题，再把 fusion JSON 接入复盘。
 要求：外部背景只作为宏观和机构观点背景，不能覆盖本地 A 股快照结论；HTML 只能把它融入大盘观察、风险观察和待验证问题，参考来源写入技术参考 Markdown。
 ```
 
 预期结果：
 
-- agent 先用 `--external-background <path>` 生成 `review-context.json`。
+- agent 先生成 `review-context.json`，抽取固定 6 个本地 topic：大盘定性、大盘结构、市场宽度、情绪与事件、板块和结构、风险观察。
+- 父 agent 并行 spawn 6 个子 Agent；每个子 Agent 独立使用 `$daily-financial-briefing`，只返回对应 topic 的 `TopicResult` JSON。
+- 父 agent 汇总 6 个结果，写出 `external-background-topic-results.json` 和 `external-background-fusion.json`；审计行应区分 `external_background_source: parallel_agent_skill`。
+- agent 再用 `--external-background <external-background-fusion.json>` 重新生成 `review-context.json` 和 HTML。
 - `review-context.json.external_background` 独立记录状态、核心点、引用、信息缺口和降级原因。
 - LLM sections 可以使用兼容的外部背景字段，但最终只能合并进主报告已有 sections，不渲染独立外部背景章节。
 - Python 校验通过后，HTML 只保留一个 `风险观察` 和一个 `下一步研究问题`，外部风险和待验证问题合并表达。

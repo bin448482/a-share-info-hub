@@ -15,7 +15,7 @@
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
 - `promptfooconfig.daily-financial-briefing.yaml`：当日财经信息总结 skill 的 Promptfoo 配置，读取对应黄金测试集并调用本地 fixture provider，不访问真实财经网站。
 - `promptfooconfig.yaml`：每日复盘 skill 的 Promptfoo 配置草案，读取 docs 下的黄金测试集。
-- `providers/`：Promptfoo 本地 provider 目录；本地 fixture 覆盖 passed、partial、skipped、failed、missing、external background passed/blocked/invalid citation、HTML 正文边界、技术参考 Markdown 和刷新契约场景。
+- `providers/`：Promptfoo 本地 provider 目录；本地 fixture 覆盖 passed、partial、skipped、failed、missing、external background parallel_agent_skill 审计、fixture_smoke 区分、blocked/invalid citation、HTML 正文边界、技术参考 Markdown 和刷新契约场景。
 
 ## 更新要求
 

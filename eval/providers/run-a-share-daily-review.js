@@ -181,6 +181,76 @@ function writeExternalBackgroundFixture(root, externalBackgroundState) {
   return path;
 }
 
+function runExternalBackgroundOrchestration(root, tradeDate) {
+  const python = resolvePython();
+  const reviewDir = join(root, "reports", "daily-reviews", tradeDate);
+  const contextResult = spawnSync(
+    python,
+    [
+      "-m",
+      "a_share_info_hub",
+      "daily-review",
+      "--output-root",
+      root,
+      "--trade-date",
+      tradeDate,
+      "--output-format",
+      "context",
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: process.env,
+    },
+  );
+  if (contextResult.status !== 0) {
+    throw new Error(`failed to generate review context: ${contextResult.stderr || contextResult.stdout}`);
+  }
+  const contextPath = join(reviewDir, "review-context.json");
+  const outputPath = join(reviewDir, "external-background-fusion.json");
+  const orchestrationResult = spawnSync(
+    python,
+    [
+      "-m",
+      "a_share_info_hub",
+      "daily-review-external-background",
+      "--context",
+      contextPath,
+      "--output",
+      outputPath,
+      "--runner",
+      "fixture",
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: process.env,
+    },
+  );
+  if (orchestrationResult.status !== 0) {
+    throw new Error(`failed to orchestrate external background: ${orchestrationResult.stderr || orchestrationResult.stdout}`);
+  }
+  return {
+    path: outputPath,
+    audit: `${orchestrationResult.stdout || ""}${orchestrationResult.stderr || ""}`.trim(),
+  };
+}
+
+function renderParallelAgentAudit(orchestrationAudit) {
+  const topicsMatch = orchestrationAudit.match(/external_background_orchestration_topics:\s*(\d+)/);
+  const resultsMatch = orchestrationAudit.match(/external_background_orchestration_results:\s*(\d+)/);
+  const schemaMatch = orchestrationAudit.match(/external_background_schema:\s*(\S+)/);
+  const topicCount = topicsMatch ? topicsMatch[1] : "0";
+  const resultCount = resultsMatch ? resultsMatch[1] : "0";
+  const schema = schemaMatch ? schemaMatch[1] : "unknown";
+  return [
+    "external_background_source: parallel_agent_skill",
+    `external_background_parallel_agents: ${topicCount}`,
+    `external_background_topic_results: ${resultCount}`,
+    `external_background_schema: ${schema}`,
+  ].join("\n");
+}
+
 class AShareDailyReviewProvider {
   id() {
     return "a-share-daily-review-local";
@@ -208,8 +278,22 @@ class AShareDailyReviewProvider {
       };
     }
     const root = mkdtempSync(join(tmpdir(), "a-share-daily-review-eval-"));
-    writeFixture(root, vars.artifact_state || "");
-    const externalBackgroundPath = writeExternalBackgroundFixture(root, vars.external_background_state || "");
+    const tradeDate = writeFixture(root, vars.artifact_state || "");
+    const externalBackgroundState = vars.external_background_state || "";
+    let orchestrationAudit = "";
+    let externalBackgroundPath = null;
+    const normalizedExternalState = externalBackgroundState.trim().toLowerCase();
+    if (normalizedExternalState.startsWith("parallel_agent_skill")) {
+      const orchestration = runExternalBackgroundOrchestration(root, tradeDate);
+      externalBackgroundPath = orchestration.path;
+      orchestrationAudit = renderParallelAgentAudit(orchestration.audit);
+    } else if (normalizedExternalState.startsWith("fixture_smoke")) {
+      const orchestration = runExternalBackgroundOrchestration(root, tradeDate);
+      externalBackgroundPath = orchestration.path;
+      orchestrationAudit = orchestration.audit;
+    } else {
+      externalBackgroundPath = writeExternalBackgroundFixture(root, externalBackgroundState);
+    }
     const args = [
       "-m",
       "a_share_info_hub",
@@ -234,6 +318,9 @@ class AShareDailyReviewProvider {
       },
     );
     let output = `${result.stdout || ""}${result.stderr || ""}`.trim();
+    if (orchestrationAudit) {
+      output = `${output}\n${orchestrationAudit}`;
+    }
     const artifactMatch = output.match(/report_artifact:\s*(.+a-share-daily-review\.html)/);
     const notesMatch = output.match(/data_notes_artifact:\s*(.+a-share-daily-review-data-notes\.md)/);
     if (artifactMatch && existsSync(artifactMatch[1].trim())) {
@@ -298,7 +385,13 @@ class AShareDailyReviewProvider {
           "external_background",
           externalBackgroundPath,
         ];
-        if (externalState.includes("blocked")) {
+        if (orchestrationAudit) {
+          requiredExternalDiagnostics = requiredExternalDiagnostics.concat([
+            "status: passed",
+            "Federal Reserve",
+            "https://www.federalreserve.gov/example",
+          ]);
+        } else if (externalState.includes("blocked")) {
           requiredExternalDiagnostics = requiredExternalDiagnostics.concat([
             "status: blocked",
             "公开来源不可用",

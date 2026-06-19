@@ -6,6 +6,7 @@
 
 - 保存每日 A 股复盘研究 skill 的源文件。
 - Skill 通过仓库 CLI `python -m a_share_info_hub daily-review` 先生成 `review-context.json` evidence packet，再让 LLM 生成 sections JSON，并由 Python 校验后渲染 HTML。
+- 如需生成外部财经背景，生产 workflow 必须由父 agent spawn 6 个并行子 Agent，每个子 Agent 使用 `$daily-financial-briefing` 处理一个本地 topic，再汇总为 `external_background_fusion.v1`。
 - 必要时通过公开 `daily-update` 子命令刷新数据；输出必须保持 `analysis_mode: research_only` 和 `not_investment_advice: true` 边界。
 
 ## 文件和子目录索引

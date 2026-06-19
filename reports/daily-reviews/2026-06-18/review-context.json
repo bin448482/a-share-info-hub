@@ -304,127 +304,104 @@
     "status": "passed",
     "briefing_date": "2026-06-18",
     "source_skill": "daily-financial-briefing",
-    "input_path": "reports\\daily-reviews\\2026-06-18\\external-background-passed-simulated.json",
+    "input_path": "reports\\daily-reviews\\2026-06-18\\external-background-fusion.json",
     "core_points": [
       {
-        "text": "[模拟同日] Fed 在 2026-06-17 FOMC 声明中维持联邦基金目标区间 3.50%-3.75%，同时表示通胀相对 2% 目标仍偏高。",
-        "type": "fact",
-        "a_share_relevance": "外部贴现率和美元利率预期仍是成长、出口链和汇率敏感资产的候选风险观察，不能直接推出 A 股方向。",
+        "text": "大盘定性相关的外部利率预期仍可能约束全球风险偏好。",
+        "type": "market_expectation",
+        "a_share_relevance": "主表覆盖 5527 只证券，上涨 2023 只，下跌 3394 只，平盘 110 只。 仍需用 A 股行情、板块和情绪数据验证。",
         "citations": [
           {
             "source_name": "Federal Reserve",
-            "title": "Federal Reserve issues FOMC statement",
-            "published_at": "2026-06-17",
+            "title": "Policy statement",
+            "published_at": "2026-06-18",
             "accessed_at": "2026-06-18",
-            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+            "url": "https://www.federalreserve.gov/example"
           }
         ]
       },
       {
-        "text": "[模拟同日] BLS 的 CPI 发布显示 2026 年 5 月 CPI-U 同比上涨 4.2%，后续通胀数据仍会影响宽松预期。",
-        "type": "fact",
-        "a_share_relevance": "若后续通胀继续压制宽松预期，应作为外部流动性约束，而不是个股或板块交易信号。",
-        "citations": [
-          {
-            "source_name": "BLS",
-            "title": "Consumer Price Index Summary - 2026 M05 Results",
-            "published_at": "2026-06-10",
-            "accessed_at": "2026-06-18",
-            "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
-          }
-        ]
-      },
-      {
-        "text": "[模拟同日] CME FedWatch 可作为利率预期来源，但页面本身是概率工具，不是政策承诺。",
+        "text": "大盘结构相关的外部利率预期仍可能约束全球风险偏好。",
         "type": "market_expectation",
-        "a_share_relevance": "把利率预期变化转成待验证问题，例如北向风险偏好、成长估值压力、人民币汇率压力是否同步出现。",
+        "a_share_relevance": "极端上涨样本 136 只，极端下跌样本 24 只；blocked_sections=['board_snapshot']。 仍需用 A 股行情、板块和情绪数据验证。",
         "citations": [
           {
-            "source_name": "CME Group",
-            "title": "FedWatch",
-            "published_at": "",
+            "source_name": "Federal Reserve",
+            "title": "Policy statement",
+            "published_at": "2026-06-18",
             "accessed_at": "2026-06-18",
-            "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+            "url": "https://www.federalreserve.gov/example"
           }
         ]
       },
       {
-        "text": "[模拟同日] 公开投行内容更适合拆成中期观点：Goldman Sachs、Citi 和 UBS 的公开展望可作为出口韧性、制造业升级、地产拖累收敛和科技链的背景线索。",
-        "type": "bank_view",
-        "a_share_relevance": "只能作为中期主题池线索，仍需 A 股板块宽度、成交结构和业绩预期确认，不能写成当日 A 股确定性结论。",
+        "text": "市场宽度相关的外部利率预期仍可能约束全球风险偏好。",
+        "type": "market_expectation",
+        "a_share_relevance": "主表覆盖 5527 只证券，上涨 2023 只，下跌 3394 只，平盘 110 只。 仍需用 A 股行情、板块和情绪数据验证。",
         "citations": [
           {
-            "source_name": "Goldman Sachs",
-            "title": "2026 Outlooks",
-            "published_at": "",
+            "source_name": "Federal Reserve",
+            "title": "Policy statement",
+            "published_at": "2026-06-18",
             "accessed_at": "2026-06-18",
-            "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
-          },
+            "url": "https://www.federalreserve.gov/example"
+          }
+        ]
+      },
+      {
+        "text": "情绪与事件相关的外部利率预期仍可能约束全球风险偏好。",
+        "type": "market_expectation",
+        "a_share_relevance": "涨跌停情绪池记录 713 条；龙虎榜事件记录 256 条 仍需用 A 股行情、板块和情绪数据验证。",
+        "citations": [
           {
-            "source_name": "Citi",
-            "title": "2026 Outlook: Mind the Gap",
-            "published_at": "",
+            "source_name": "Federal Reserve",
+            "title": "Policy statement",
+            "published_at": "2026-06-18",
             "accessed_at": "2026-06-18",
-            "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
-          },
+            "url": "https://www.federalreserve.gov/example"
+          }
+        ]
+      },
+      {
+        "text": "板块和结构相关的外部利率预期仍可能约束全球风险偏好。",
+        "type": "market_expectation",
+        "a_share_relevance": "板块快照为 blocked，本地报告不能确认板块主线或领涨结构。 仍需用 A 股行情、板块和情绪数据验证。",
+        "citations": [
           {
-            "source_name": "UBS",
-            "title": "China Outlook 2026-27: Resilience and Rebalancing",
-            "published_at": "",
+            "source_name": "Federal Reserve",
+            "title": "Policy statement",
+            "published_at": "2026-06-18",
             "accessed_at": "2026-06-18",
-            "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+            "url": "https://www.federalreserve.gov/example"
+          }
+        ]
+      },
+      {
+        "text": "风险观察相关的外部利率预期仍可能约束全球风险偏好。",
+        "type": "market_expectation",
+        "a_share_relevance": "数据状态为 partial；blocked sections 为 ['board_snapshot']；本地问题：stock_board_industry_name_em 状态为 failed：ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))；stock_board_concept_name_em 状态为 failed：ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) 仍需用 A 股行情、板块和情绪数据验证。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Policy statement",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-18",
+            "url": "https://www.federalreserve.gov/example"
           }
         ]
       }
     ],
     "follow_up_questions": [
-      "美元利率和美债收益率变化是否同步影响人民币汇率、外资风险偏好和成长估值？",
-      "通胀和 Fed 路径是否改变国内利率敏感行业、出口链和高股息资产的相对表现？",
-      "公开投行关于中国出口、制造业、地产拖累收敛和科技链的中期观点，是否能被 A 股板块宽度、成交结构和业绩预期确认？"
+      "外部利率、通胀或投行观点是否会在 A 股市场宽度、板块和情绪数据中得到验证？"
     ],
     "information_gaps": [],
     "citations": [
       {
         "source_name": "Federal Reserve",
-        "title": "Federal Reserve issues FOMC statement",
-        "published_at": "2026-06-17",
+        "title": "Policy statement",
+        "published_at": "2026-06-18",
         "accessed_at": "2026-06-18",
-        "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
-      },
-      {
-        "source_name": "BLS",
-        "title": "Consumer Price Index Summary - 2026 M05 Results",
-        "published_at": "2026-06-10",
-        "accessed_at": "2026-06-18",
-        "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
-      },
-      {
-        "source_name": "CME Group",
-        "title": "FedWatch",
-        "published_at": "",
-        "accessed_at": "2026-06-18",
-        "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
-      },
-      {
-        "source_name": "Goldman Sachs",
-        "title": "2026 Outlooks",
-        "published_at": "",
-        "accessed_at": "2026-06-18",
-        "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
-      },
-      {
-        "source_name": "Citi",
-        "title": "2026 Outlook: Mind the Gap",
-        "published_at": "",
-        "accessed_at": "2026-06-18",
-        "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
-      },
-      {
-        "source_name": "UBS",
-        "title": "China Outlook 2026-27: Resilience and Rebalancing",
-        "published_at": "",
-        "accessed_at": "2026-06-18",
-        "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        "url": "https://www.federalreserve.gov/example"
       }
     ],
     "issues": []
