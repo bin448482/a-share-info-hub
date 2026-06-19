@@ -13,7 +13,7 @@ Do not provide buy/sell calls, position sizing, price targets, stop-loss/take-pr
 
 ## Workflow
 
-1. Read the user's request and extract `trade_date`, `refresh_mode`, `output_format`, and focus.
+1. Read the user's request and extract `trade_date`, `refresh_mode`, `output_format`, optional `external_background`, and focus.
 2. If the user asks for trading action advice, refuse that part and offer research observations instead.
 3. Generate the evidence packet with the repository CLI:
 
@@ -29,7 +29,8 @@ python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output r
 ```
 
 6. If the user asked to refresh data first, include `--refresh-mode daily_update` when generating the context. Refreshing must still use the public `daily-update` module CLI.
-7. Return the generated HTML path, technical Markdown path, context path, and the research-only boundary.
+7. If the user provides a `daily-financial-briefing` background JSON, pass it with `--external-background <path>` in both context and final render commands. Do not ask `daily-review` to browse or generate that file.
+8. Return the generated HTML path, technical Markdown path, context path, and the research-only boundary.
 
 ## Output Modes
 
@@ -38,6 +39,7 @@ python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output r
 - Technical notes: generated with HTML reports at `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md`; use for data status, blocked sections, interface failures, and repair notes.
 - Inline: use when the user asks for direct research suggestions or data-quality diagnosis.
 - Markdown: use only for debugging or prompt/eval work after sections validation.
+- External background: optional `external_background.v1` JSON from `daily-financial-briefing`; it may add a controlled HTML background section but must not enter local market data sources or complete missing A-share evidence.
 
 ## Required Boundaries
 

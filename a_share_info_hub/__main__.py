@@ -118,6 +118,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to LLM-generated JSON sections to validate and render.",
     )
     daily_review.add_argument(
+        "--external-background",
+        default=None,
+        help="Path to daily-financial-briefing external_background.v1 JSON.",
+    )
+    daily_review.add_argument(
         "--refresh-mode",
         choices=("none", "daily_update"),
         default="none",
@@ -172,6 +177,7 @@ def run_daily_review(args: argparse.Namespace) -> int:
             output_root=output_root,
             render_mode=args.render_mode,
             llm_output_path=Path(args.llm_output) if args.llm_output else None,
+            external_background_path=Path(args.external_background) if args.external_background else None,
         )
     else:
         result = generate_daily_review(
@@ -182,6 +188,7 @@ def run_daily_review(args: argparse.Namespace) -> int:
                 refresh_mode=args.refresh_mode,
                 render_mode=args.render_mode,
                 llm_output_path=Path(args.llm_output) if args.llm_output else None,
+                external_background_path=Path(args.external_background) if args.external_background else None,
                 focus=args.focus,
                 ignore_proxy=args.ignore_proxy,
             )

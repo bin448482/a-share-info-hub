@@ -116,6 +116,8 @@ def test_cli_daily_review_parser_accepts_output_and_refresh_mode() -> None:
             "deterministic",
             "--llm-output",
             "llm-review-sections.json",
+            "--external-background",
+            "external-background.json",
             "--refresh-mode",
             "daily_update",
         ]
@@ -126,6 +128,7 @@ def test_cli_daily_review_parser_accepts_output_and_refresh_mode() -> None:
     assert args.output_format == "context"
     assert args.render_mode == "deterministic"
     assert args.llm_output == "llm-review-sections.json"
+    assert args.external_background == "external-background.json"
     assert args.refresh_mode == "daily_update"
 
 
@@ -140,6 +143,7 @@ def test_run_daily_review_calls_review_generator(tmp_path: Path) -> None:
         refresh_mode="none",
         render_mode="llm",
         llm_output=None,
+        external_background=str(tmp_path / "external-background.json"),
         ignore_proxy=False,
         focus="风险",
         user_prompt=None,
@@ -161,6 +165,7 @@ def test_run_daily_review_calls_review_generator(tmp_path: Path) -> None:
     assert request.refresh_mode == "none"
     assert request.render_mode == "llm"
     assert request.llm_output_path is None
+    assert request.external_background_path == tmp_path / "external-background.json"
 
 
 def test_run_daily_review_treats_skipped_as_success(tmp_path: Path) -> None:
@@ -174,6 +179,7 @@ def test_run_daily_review_treats_skipped_as_success(tmp_path: Path) -> None:
         refresh_mode="none",
         render_mode="llm",
         llm_output=None,
+        external_background=None,
         ignore_proxy=False,
         focus=None,
         user_prompt=None,

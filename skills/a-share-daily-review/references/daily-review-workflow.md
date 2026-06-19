@@ -9,6 +9,7 @@
 - `output_format`：`context`、`html`、`inline` 或 `markdown`。默认用户报告走 `html`，但必须先生成 context。
 - `render_mode`：`llm` 或 `deterministic`。默认 `llm`。
 - `llm_output`：LLM 生成的 sections JSON 路径。
+- `external_background`：可选。指向 `external_background.v1` JSON，由 `$daily-financial-briefing` 输出摘要后人工保存或 agent 生成；`daily-review` 不联网生成它。
 - `focus`：可选。用于强调风险、数据质量、市场宽度、情绪、龙虎榜或板块。
 
 ## 标准流程
@@ -58,6 +59,15 @@ reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md
 ```
 
 Python 会使用 Pydantic 校验 LLM JSON，再检查 blocked sections、禁用交易建议语言和 HTML 边界。
+
+如果需要把 `$daily-financial-briefing` 的外部宏观和机构观点背景纳入 HTML，先把简报摘要保存为 `external_background.v1` JSON，再在生成 context 和最终 HTML 时都传入同一路径：
+
+```text
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --external-background <path-to-json> --output-format context
+python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --external-background <path-to-json> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format html
+```
+
+`external_background` 只进入 `review-context.json.external_background`，不进入 `data_sources_used`，也不能补全本地行情、板块、情绪或龙虎榜缺口。
 
 ## 刷新数据
 
@@ -124,6 +134,8 @@ data_sources_used:
 
 机器 metadata 应放入 `<script type="application/json" id="review-metadata">` 或数据边界折叠区。
 
+有合格外部背景时，HTML 在本地市场结构之后、风险观察之前展示 `外部宏观与机构观点背景`。该章节只能展示摘要、风险观察、待验证问题、边界说明和参考来源；不能覆盖 `1.1 大盘`、市场宽度、情绪事件或板块结构结论。
+
 ## 技术参考 Markdown
 
 每次生成 HTML 时，同时生成：
@@ -140,6 +152,7 @@ reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md
 - failed source key 和失败原因
 - normalized table 行数
 - DuckDB 状态
+- external_background 输入路径、状态、引用来源、信息缺口和降级原因
 - 重跑或排障建议
 
 普通投资者主报告不展示这些技术细节，只提示可查看同目录技术参考文件。

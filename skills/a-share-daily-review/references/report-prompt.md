@@ -26,6 +26,9 @@
 - `allowed_sections`
 - `forbidden_claims`
 - `facts`
+- `external_background`
+
+`external_background` 是可选的外部宏观与机构观点背景包。它不属于本地 A 股行情证据，不能覆盖、补全或改写 `market_breadth`、`limit_pool`、`lhb`、`market_summary`、`board_snapshot` 中的本地事实。
 
 ## 输出格式
 
@@ -43,6 +46,10 @@
   "board_and_structure_review": "",
   "risk_observations": [],
   "follow_up_questions": [],
+  "external_background_review": "",
+  "external_background_risks": [],
+  "external_background_follow_up_questions": [],
+  "external_background_boundary_note": "",
   "data_boundary_note": "",
   "not_investment_advice_note": ""
 }
@@ -60,6 +67,12 @@
 - `board_and_structure_review` 只能基于 `board_snapshot`。如果板块维度证据不足，只能用读者语言说明“板块层面的确认依据不足”，不能写板块主线、领涨板块或结构确认。
 - `risk_observations` 必须包含单日快照限制、证据不足对判断的影响或后续验证风险。
 - `follow_up_questions` 只能是研究问题或后续验证问题，不能是交易指令。
+- `external_background.status=passed|partial` 时，可以在 `external_background_review` 中写 2-4 条外部背景摘要，但必须保留“仍需用 A 股行情、板块和情绪数据验证”的边界。
+- `external_background_risks` 只能写外部背景带来的风险观察，不能写交易方向、仓位、目标价或确定性主线。
+- `external_background_follow_up_questions` 只能写需要本地行情、板块、情绪或事件数据验证的问题。
+- `external_background_boundary_note` 必须说明外部背景来自 `daily-financial-briefing` 受控摘要，只能作为背景，不构成投资建议。
+- `external_background.status=not_provided` 时，外部背景字段保持空值。
+- `external_background.status=blocked|invalid` 时，不输出外部结论正文，只能在 `external_background_boundary_note` 中写可读缺口说明。
 - `data_boundary_note` 必须说明只引用已生成的复盘证据包，并提示详细数据状态和接口说明见同目录技术参考文件。
 - `not_investment_advice_note` 必须说明不构成投资建议。
 
@@ -92,6 +105,8 @@
 - 可以写：“板块层面的确认依据不足，因此本报告不把涨跌停情绪中的行业集中直接上升为市场主线。”
 - 不要写：“board_snapshot 已被列入 blocked_sections。”
 - 不要写：“stock_board_industry_name_em 和 stock_board_concept_name_em 均失败。”
+- 不要写：“外部背景确认 A 股主线。”
+- 不要写：“机构观点建议加仓。”
 
 ## 禁止输出
 

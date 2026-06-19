@@ -128,6 +128,59 @@ if not ${duckdbFailed ? "True" : "False"}:
   return tradeDate;
 }
 
+function writeExternalBackgroundFixture(root, externalBackgroundState) {
+  const normalizedState = (externalBackgroundState || "").trim().toLowerCase();
+  if (!normalizedState) {
+    return null;
+  }
+  const path = join(root, "external-background.json");
+  const blocked = normalizedState.includes("blocked");
+  const missingUrl = normalizedState.includes("invalid citation") || normalizedState.includes("missing url");
+  const briefingDate = normalizedState.includes("non-trade-date") ? "2026-06-17" : "2026-06-18";
+  writeJson(path, {
+    schema_version: "external_background.v1",
+    source_skill: "daily-financial-briefing",
+    briefing_date: briefingDate,
+    scope: ["US Macro", "Investment Bank Views"],
+    not_investment_advice: true,
+    core_points: [
+      {
+        text: "美国利率预期仍是全球风险资产背景变量。",
+        type: "market_expectation",
+        a_share_relevance: "需要观察 A 股行情、板块和情绪数据是否出现共振。",
+        citations: [
+          {
+            source_name: "Federal Reserve",
+            title: "Policy statement",
+            published_at: "2026-06-18",
+            accessed_at: "2026-06-18",
+            url: missingUrl ? "" : "https://www.federalreserve.gov/example",
+          },
+        ],
+      },
+      {
+        text: "某投行观点认为中国资产仍需盈利验证。",
+        type: "bank_view",
+        a_share_relevance: "只作为机构观点背景，不作为事实结论。",
+        citations: [
+          {
+            source_name: "Example Bank",
+            title: "China strategy note",
+            published_at: "2026-06-18",
+            accessed_at: "2026-06-18",
+            url: "https://example.com/china-strategy",
+          },
+        ],
+      },
+    ],
+    follow_up_questions: ["外部利率预期是否对应到 A 股风险偏好变化？"],
+    information_gaps: [],
+    blocked,
+    blocked_reason: blocked ? "公开来源不可用" : "",
+  });
+  return path;
+}
+
 class AShareDailyReviewProvider {
   id() {
     return "a-share-daily-review-local";
@@ -156,19 +209,24 @@ class AShareDailyReviewProvider {
     }
     const root = mkdtempSync(join(tmpdir(), "a-share-daily-review-eval-"));
     writeFixture(root, vars.artifact_state || "");
+    const externalBackgroundPath = writeExternalBackgroundFixture(root, vars.external_background_state || "");
+    const args = [
+      "-m",
+      "a_share_info_hub",
+      "daily-review",
+      "--output-root",
+      root,
+      "--user-prompt",
+      userPrompt,
+      "--render-mode",
+      "deterministic",
+    ];
+    if (externalBackgroundPath) {
+      args.push("--external-background", externalBackgroundPath);
+    }
     const result = spawnSync(
       resolvePython(),
-      [
-        "-m",
-        "a_share_info_hub",
-        "daily-review",
-        "--output-root",
-        root,
-        "--user-prompt",
-        userPrompt,
-        "--render-mode",
-        "deterministic",
-      ],
+      args,
       {
         cwd: process.cwd(),
         encoding: "utf8",
@@ -207,6 +265,15 @@ class AShareDailyReviewProvider {
       ];
       const hasRequiredDiagnostics = requiredTerms.every((term) => notes.includes(term));
       output = `${output}\ndata_notes_diagnostics_present: ${hasRequiredDiagnostics ? "true" : "false"}`;
+      if (externalBackgroundPath) {
+        const hasExternalDiagnostics = [
+          "external_background",
+          externalBackgroundPath,
+          "Example Bank",
+          "https://example.com/china-strategy",
+        ].every((term) => notes.includes(term));
+        output = `${output}\nexternal_background_diagnostics_present: ${hasExternalDiagnostics ? "true" : "false"}`;
+      }
     }
     output = output.replace(/\\/g, "/");
     return {
