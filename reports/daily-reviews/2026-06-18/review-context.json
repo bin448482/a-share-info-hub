@@ -301,16 +301,294 @@
     }
   ],
   "external_background": {
-    "status": "invalid",
-    "briefing_date": null,
-    "source_skill": null,
+    "status": "partial",
+    "briefing_date": "2026-06-18",
+    "source_skill": "daily-financial-briefing",
     "input_path": "reports\\daily-reviews\\2026-06-18\\external-background-fusion.json",
-    "core_points": [],
-    "follow_up_questions": [],
-    "information_gaps": [],
-    "citations": [],
-    "issues": [
-      "外部背景文件不存在：reports\\daily-reviews\\2026-06-18\\external-background-fusion.json"
-    ]
+    "core_points": [
+      {
+        "text": "6月18日A股极致分化：上证跌0.43%失守4100点，科创50大涨3.84%、创业板指涨2.05%均创历史新高。全市场超3300只个股下跌，上涨仅约2018-2023只。成交额3.31万亿元放量约2183亿元。中际旭创市值超越贵州茅台成为A股新股王。美联储FOMC鹰派转向（点阵图暗示年内加息，利率中值从3.4%上调至3.8%）导致金融板块重挫。机构定性为「K形演化」——资金从传统蓝筹大规模迁移至科技成长股。",
+        "type": "fact",
+        "a_share_relevance": "确认本地全市场5527样本中61.4%下跌、36.6%上涨的普跌格局，成交额33313亿元高度吻合。解释了「下跌面广但科创强势」的分化。",
+        "citations": [
+          {
+            "source_name": "华尔街见闻",
+            "title": "上证指数收报4090.48点，跌0.43%",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://wallstreetcn.com/livenews/3121487"
+          },
+          {
+            "source_name": "每日经济新闻",
+            "title": "收评：极致分化！科创50大涨3.84%，超3300只个股下跌",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "http://www.nbd.com.cn/articles/2026-06-18/4430694.html"
+          },
+          {
+            "source_name": "中国金融信息网",
+            "title": "鹰派点阵图冲击短端美债 沃什首秀开启美联储沟通新纪元",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://www.cnfin.com/zs-lb/detail/20260618/4428565_1.html"
+          }
+        ]
+      },
+      {
+        "text": "31个申万一级行业仅9个收涨、22个收跌。通信（+3.79%）、电子（+3.04%）领涨；非银金融（-3.92%）、银行（-2.59%）、公用事业（-2.95%）领跌。涨停集中在AI硬件方向。机构认为结构性分化是今年全球股市明显特征，AI资本开支扩张周期驱动硬科技赛道独立上行，传统行业受制于业绩复苏缓慢。方正证券燕翔指出行业估值达到历史极致分位。",
+        "type": "fact",
+        "a_share_relevance": "外部行业分布直接验证本地「下跌面广、局部做多」的结构判断。涨停池活跃（713条）集中在科技方向得到确认。本地板块快照缺失的信息得到外部补充。",
+        "citations": [
+          {
+            "source_name": "东方财富",
+            "title": "A股极致分化 投资者如何应对？",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://finance.eastmoney.com/a/202606183776526341.html"
+          },
+          {
+            "source_name": "天天基金网",
+            "title": "A股收评：超3300只个股飘绿，深指、创业板指收涨",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://fund.eastmoney.com/a/202606183776105172.html"
+          }
+        ]
+      },
+      {
+        "text": "涨跌比约1:1.68，超六成个股收跌，属典型的「赚指数不赚钱」行情。成交额连续5个交易日维持3万亿上方。主力资金全天净流出约178亿元，北向资金小幅净流入约28.3亿元逆势流入算力与半导体方向。东北证券指出A股极致抱团科技已达极值，短期可能进入阶段性再平衡。",
+        "type": "fact",
+        "a_share_relevance": "外部涨跌比与本地1.68倍精确吻合，验证本地数据可靠。市场宽度偏弱非恐慌性普跌，而是资金在科技与传统板块间剧烈迁移。",
+        "citations": [
+          {
+            "source_name": "东方财富",
+            "title": "沪指跌0.43%，创指涨2.05%：半导体、算力硬件产业链再度大涨",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://fund.eastmoney.com/a/202606183776106489.html"
+          },
+          {
+            "source_name": "东北证券",
+            "title": "点石1号-股市正阳：美联储利率不变但偏鹰、横盘震荡中的结构轮动",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://www.nesc.cn/main/a/20260618/86321.shtml"
+          }
+        ]
+      },
+      {
+        "text": "工信部6月17日发布《AI算力芯片创新发展三年行动计划》，明确2028年国产AI芯片市占率突破40%，设立400亿元专项研发补贴。次日字节跳动火山引擎启动120亿元AI算力芯片集采，国产占比首次超50%。龙虎榜机构高位分歧：34只个股机构合计净买入11.19亿元（净买入19只、净卖出15只）。高盛维持A股增持评级并将沪深300十二个月预期点位从5300上调至5500；摩根士丹利认为中国AI生态有潜力创造3-4万亿美元增量市值。科技板块拥挤度突破45%阈值，历史规律显示超45%后大概率触发明显调整。",
+        "type": "bank_view",
+        "a_share_relevance": "AI芯片政策直接解释本地涨停池半导体68条高居第一。龙虎榜256条、机构55条的量级与外部一致，机构高位分歧解释了开板回封42条。投行集中看多科技方向与本地涨停方向一致。",
+        "citations": [
+          {
+            "source_name": "财联社",
+            "title": "14点快评：黄白线分化明显 科技线持续走强",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://www.cls.cn/detail/2403425"
+          },
+          {
+            "source_name": "东方财富",
+            "title": "龙虎榜动向：4股获机构及北向资金集体净买入",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://finance.eastmoney.com/a/202606183776482959.html"
+          },
+          {
+            "source_name": "证券时报",
+            "title": "A股中长期回报仍由科技贡献！摩根士丹利、野村、瑞银、高盛最新观点出炉",
+            "published_at": "2026-06-19",
+            "accessed_at": "2026-06-19",
+            "url": "https://stcn.com/article/detail/3970021.html"
+          }
+        ]
+      },
+      {
+        "text": "半导体板块涨2.29%，主力资金净流入36.69亿元，AI算力芯片、CPO、PCB等多细分方向全面爆发。通用设备涨1.29%、自动化设备涨1.43%，受成都人形机器人5000台采购订单催化。元件（PCB/CCL）涨1.92%，建滔积层板第5次涨价。汽车零部件6只涨停，与专用设备并列领先，叠加机器人概念。大金融（保险-6.05%、银行、券商）和传统能源（煤炭-3.26%、电力-3.87%）遭大幅抽血。涨停91只、炸板42只、封板率68%。",
+        "type": "fact",
+        "a_share_relevance": "外部板块数据确认了本地涨停池行业集中线索：半导体68、通用设备54、元件47、汽车零部件35、光学光电26。同时揭示了本地缺失的下跌板块信息（保险-6.05%、煤炭-3.26%、电力-3.87%）。炸板42只与本地开板回封42条精确匹配。",
+        "citations": [
+          {
+            "source_name": "东方财富",
+            "title": "每日收评：科创50放量涨近4%，AI硬件与半导体持续火爆",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://finance.eastmoney.com/a/202606183776193115.html"
+          },
+          {
+            "source_name": "金融界",
+            "title": "6月18日涨跌停分析：101股涨停34股跌停，汽车零部件、专用设备表现活跃",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://finance.jrj.com.cn/2026/06/18160157513529.shtml"
+          },
+          {
+            "source_name": "新浪财经",
+            "title": "焦点复盘：极致两极分化行情再现，硬科技方向多点开花，大金融板块全线重挫",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://finance.sina.cn/2026-06-18/detail-inicvmmr3316803.d.html"
+          }
+        ]
+      },
+      {
+        "text": "美联储FOMC超预期鹰派：点阵图显示9位官员认为年内至少加息一次，利率中值从3.4%上调至3.8%，核心PCE通胀预期从2.7%上调至3.3%。美股三大指数下跌、美债收益率上行、美元反弹。科技板块拥挤度达92%分位，TMT自由流通市值占全A超40%，公募AI仓位接近50%，融资余额2.92万亿元（92.55%分位）。77家上市公司6月17日晚集中发布风险提示公告。知名策略师张弛指出科技股面临「内外逆风共振」——外部美联储鹰派抬升全球贴现率，内部证监会强调严查蹭热点炒概念。",
+        "type": "market_expectation",
+        "a_share_relevance": "外部鹰派转向解释了金融板块重挫和全市场风险偏好受压。拥挤度92%分位和77家公司集中风险提示为本地极端上涨136 vs 极端下跌24的分化提供了风险背景——一旦科技方向松动，市场缺乏其他板块承接。",
+        "citations": [
+          {
+            "source_name": "华夏时报",
+            "title": "美联储超预期鹰派！知名分析师：科技股调整风险加大，要谨慎",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://www.chinatimes.net.cn/article/153600.html"
+          },
+          {
+            "source_name": "21世纪经济报道",
+            "title": "炒作退潮！77家公司深夜「泼冷水」，多只热门大牛股重挫",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "http://www.21jingji.com/article/20260618/herald/a1d5686e49cdc2e76ef860561c3b78d5.html"
+          },
+          {
+            "source_name": "EdgeN技术分析",
+            "title": "A股科技板块拥挤度达92%分位，风格轮动临近均衡点",
+            "published_at": "2026-06-18",
+            "accessed_at": "2026-06-19",
+            "url": "https://www.edgen.tech/zh/news/post/a-share-tech-crowding-at-92-percentile-as-style-rotation-nears-equilibrium"
+          }
+        ]
+      }
+    ],
+    "follow_up_questions": [
+      "端午节后首个交易日（6月23日），科技板块拥挤度是否从92%分位回落？北向资金是否延续逆势流入科技方向？",
+      "美联储鹰派转向后，中国央行是否维持适度宽松基调？中美政策方向分化对A股资金面的综合影响需持续跟踪",
+      "AI算力芯片三年行动计划发布后，半导体涨停潮能否在节后延续？还是出现「利好兑现」式回调？",
+      "77家公司的风险提示公告效应是否会扩散？节后是否出现更多高位科技股发布异动公告或停牌核查？"
+    ],
+    "information_gaps": [
+      "本地板块快照维度缺失，外部板块数据（申万一级行业涨跌、资金流向）来自财经媒体转述，非交易所原始数据",
+      "WebFetch工具对中国财经域名不可用，所有引用基于WebSearch返回的文章摘要，未经全文逐字核验",
+      "未找到高盛、摩根士丹利、摩根大通等国际顶级投行针对6月18日A股当日行情的直接公开报告原文，引用来自证券时报等媒体转述",
+      "光学光电、化学制品两个本地涨停集中行业在外部来源中缺乏独立板块专题覆盖",
+      "美联储鹰派转向对A股的具体传导强度缺乏可量化的当日公开数据支撑",
+      "端午节前最后一个交易日的节前效应在外部来源中仅有定性判断，缺乏可量化的节前效应指标"
+    ],
+    "citations": [
+      {
+        "source_name": "华尔街见闻",
+        "title": "上证指数收报4090.48点，跌0.43%",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://wallstreetcn.com/livenews/3121487"
+      },
+      {
+        "source_name": "每日经济新闻",
+        "title": "收评：极致分化！科创50大涨3.84%，超3300只个股下跌",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "http://www.nbd.com.cn/articles/2026-06-18/4430694.html"
+      },
+      {
+        "source_name": "中国金融信息网",
+        "title": "鹰派点阵图冲击短端美债 沃什首秀开启美联储沟通新纪元",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://www.cnfin.com/zs-lb/detail/20260618/4428565_1.html"
+      },
+      {
+        "source_name": "东方财富",
+        "title": "A股极致分化 投资者如何应对？",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://finance.eastmoney.com/a/202606183776526341.html"
+      },
+      {
+        "source_name": "天天基金网",
+        "title": "A股收评：超3300只个股飘绿，深指、创业板指收涨",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://fund.eastmoney.com/a/202606183776105172.html"
+      },
+      {
+        "source_name": "东方财富",
+        "title": "沪指跌0.43%，创指涨2.05%：半导体、算力硬件产业链再度大涨",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://fund.eastmoney.com/a/202606183776106489.html"
+      },
+      {
+        "source_name": "东北证券",
+        "title": "点石1号-股市正阳：美联储利率不变但偏鹰、横盘震荡中的结构轮动",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://www.nesc.cn/main/a/20260618/86321.shtml"
+      },
+      {
+        "source_name": "财联社",
+        "title": "14点快评：黄白线分化明显 科技线持续走强",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://www.cls.cn/detail/2403425"
+      },
+      {
+        "source_name": "东方财富",
+        "title": "龙虎榜动向：4股获机构及北向资金集体净买入",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://finance.eastmoney.com/a/202606183776482959.html"
+      },
+      {
+        "source_name": "证券时报",
+        "title": "A股中长期回报仍由科技贡献！摩根士丹利、野村、瑞银、高盛最新观点出炉",
+        "published_at": "2026-06-19",
+        "accessed_at": "2026-06-19",
+        "url": "https://stcn.com/article/detail/3970021.html"
+      },
+      {
+        "source_name": "东方财富",
+        "title": "每日收评：科创50放量涨近4%，AI硬件与半导体持续火爆",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://finance.eastmoney.com/a/202606183776193115.html"
+      },
+      {
+        "source_name": "金融界",
+        "title": "6月18日涨跌停分析：101股涨停34股跌停，汽车零部件、专用设备表现活跃",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://finance.jrj.com.cn/2026/06/18160157513529.shtml"
+      },
+      {
+        "source_name": "新浪财经",
+        "title": "焦点复盘：极致两极分化行情再现，硬科技方向多点开花，大金融板块全线重挫",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://finance.sina.cn/2026-06-18/detail-inicvmmr3316803.d.html"
+      },
+      {
+        "source_name": "华夏时报",
+        "title": "美联储超预期鹰派！知名分析师：科技股调整风险加大，要谨慎",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://www.chinatimes.net.cn/article/153600.html"
+      },
+      {
+        "source_name": "21世纪经济报道",
+        "title": "炒作退潮！77家公司深夜「泼冷水」，多只热门大牛股重挫",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "http://www.21jingji.com/article/20260618/herald/a1d5686e49cdc2e76ef860561c3b78d5.html"
+      },
+      {
+        "source_name": "EdgeN技术分析",
+        "title": "A股科技板块拥挤度达92%分位，风格轮动临近均衡点",
+        "published_at": "2026-06-18",
+        "accessed_at": "2026-06-19",
+        "url": "https://www.edgen.tech/zh/news/post/a-share-tech-crowding-at-92-percentile-as-style-rotation-nears-equilibrium"
+      }
+    ],
+    "issues": []
   }
 }

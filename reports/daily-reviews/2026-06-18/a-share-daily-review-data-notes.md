@@ -69,22 +69,42 @@
 
 ## external_background
 
-- status: invalid
+- status: partial
 - input_path: reports\daily-reviews\2026-06-18\external-background-fusion.json
-- briefing_date: 无
-- source_skill: 无
+- briefing_date: 2026-06-18
+- source_skill: daily-financial-briefing
 
 ### 引用来源
 
-- 无
+- 华尔街见闻: https://wallstreetcn.com/livenews/3121487
+- 每日经济新闻: http://www.nbd.com.cn/articles/2026-06-18/4430694.html
+- 中国金融信息网: https://www.cnfin.com/zs-lb/detail/20260618/4428565_1.html
+- 东方财富: https://finance.eastmoney.com/a/202606183776526341.html
+- 天天基金网: https://fund.eastmoney.com/a/202606183776105172.html
+- 东方财富: https://fund.eastmoney.com/a/202606183776106489.html
+- 东北证券: https://www.nesc.cn/main/a/20260618/86321.shtml
+- 财联社: https://www.cls.cn/detail/2403425
+- 东方财富: https://finance.eastmoney.com/a/202606183776482959.html
+- 证券时报: https://stcn.com/article/detail/3970021.html
+- 东方财富: https://finance.eastmoney.com/a/202606183776193115.html
+- 金融界: https://finance.jrj.com.cn/2026/06/18160157513529.shtml
+- 新浪财经: https://finance.sina.cn/2026-06-18/detail-inicvmmr3316803.d.html
+- 华夏时报: https://www.chinatimes.net.cn/article/153600.html
+- 21世纪经济报道: http://www.21jingji.com/article/20260618/herald/a1d5686e49cdc2e76ef860561c3b78d5.html
+- EdgeN技术分析: https://www.edgen.tech/zh/news/post/a-share-tech-crowding-at-92-percentile-as-style-rotation-nears-equilibrium
 
 ### 降级或拒绝原因
 
-- 外部背景文件不存在：reports\daily-reviews\2026-06-18\external-background-fusion.json
+- 未记录 external_background 降级或拒绝原因。
 
 ### 信息缺口
 
-- 无
+- 本地板块快照维度缺失，外部板块数据（申万一级行业涨跌、资金流向）来自财经媒体转述，非交易所原始数据
+- WebFetch工具对中国财经域名不可用，所有引用基于WebSearch返回的文章摘要，未经全文逐字核验
+- 未找到高盛、摩根士丹利、摩根大通等国际顶级投行针对6月18日A股当日行情的直接公开报告原文，引用来自证券时报等媒体转述
+- 光学光电、化学制品两个本地涨停集中行业在外部来源中缺乏独立板块专题覆盖
+- 美联储鹰派转向对A股的具体传导强度缺乏可量化的当日公开数据支撑
+- 端午节前最后一个交易日的节前效应在外部来源中仅有定性判断，缺乏可量化的节前效应指标
 
 ## 诊断问题
 
