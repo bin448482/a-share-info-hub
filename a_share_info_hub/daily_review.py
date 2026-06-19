@@ -22,6 +22,7 @@ CONTEXT_SCHEMA_VERSION = "daily_review_context.v1"
 SECTIONS_SCHEMA_VERSION = "daily_review_sections.v1"
 REPORT_SCHEMA_VERSION = "daily_review_report.v1"
 EXTERNAL_BACKGROUND_SCHEMA_VERSION = "external_background.v1"
+EXTERNAL_BACKGROUND_FUSION_SCHEMA_VERSION = "external_background_fusion.v1"
 DATA_STATUS_PASSED = "passed"
 DATA_STATUS_PARTIAL = "partial"
 DATA_STATUS_SKIPPED = "skipped"
@@ -107,6 +108,10 @@ BLOCKED_SECTION_FORBIDDEN_TERMS = {
 }
 
 HTML_BODY_FORBIDDEN_TERMS = (
+    "passed",
+    "partial",
+    "blocked",
+    "invalid",
     "blocked_sections",
     "board_snapshot",
     "stock_board_industry_name_em",
@@ -123,6 +128,14 @@ HTML_BODY_FORBIDDEN_TERMS = (
     "ConnectionError",
     "RemoteDisconnected",
     "Traceback",
+    "external_background.status",
+    "external_background_status",
+    "schema_version",
+    "render_mode",
+    "fixture",
+    "模拟",
+    "模拟输入",
+    "HTML 展示形态",
 )
 
 
@@ -214,6 +227,44 @@ class ExternalBackgroundRawCorePoint(BaseModel):
     type: str = ""
     a_share_relevance: str = ""
     citations: list[ExternalBackgroundRawCitation] = Field(default_factory=list)
+
+
+class ExternalBackgroundFusionFinding(BaseModel):
+    """保存外部背景融合输入中的主题相关结论候选。"""
+
+    model_config = ConfigDict(extra="ignore")
+
+    text: str = ""
+    type: str = "inference"
+    report_usage: str = ""
+    local_relevance: str = ""
+    citations: list[ExternalBackgroundRawCitation] = Field(default_factory=list)
+
+
+class ExternalBackgroundFusionInput(BaseModel):
+    """约束 agent 汇总后的外部背景融合输入包。"""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["external_background_fusion.v1"] = EXTERNAL_BACKGROUND_FUSION_SCHEMA_VERSION
+    source_skill: Literal["daily-financial-briefing"]
+    trade_date: str
+    not_investment_advice: Literal[True]
+    topic_findings: list[ExternalBackgroundFusionFinding] = Field(default_factory=list)
+    risk_candidates: list[str] = Field(default_factory=list)
+    follow_up_candidates: list[str] = Field(default_factory=list)
+    citations: list[ExternalBackgroundRawCitation] = Field(default_factory=list)
+    information_gaps: list[str] = Field(default_factory=list)
+    issues: list[str] = Field(default_factory=list)
+
+    @field_validator("trade_date")
+    @classmethod
+    def validate_trade_date(cls, value: str) -> str:
+        """校验外部背景融合包日期格式。"""
+
+        if not REPORT_DATE_RE.fullmatch(value):
+            raise ValueError("trade_date must be formatted as YYYY-MM-DD")
+        return value
 
 
 class ExternalBackgroundInput(BaseModel):
@@ -910,6 +961,9 @@ def load_external_background_context(path: Path | None, trade_date: str) -> Exte
             input_path=str(path),
             issues=["外部背景包含交易行动语言，已阻断进入 HTML。"],
         )
+    schema_version = payload.get("schema_version") if isinstance(payload, dict) else ""
+    if schema_version == EXTERNAL_BACKGROUND_FUSION_SCHEMA_VERSION:
+        return load_external_background_fusion_context(payload, path, trade_date)
     try:
         parsed = ExternalBackgroundInput.model_validate(payload)
     except ValidationError as exc:
@@ -972,6 +1026,110 @@ def load_external_background_context(path: Path | None, trade_date: str) -> Exte
         citations=citations,
         issues=issues,
     )
+
+
+def load_external_background_fusion_context(
+    payload: dict[str, Any], path: Path, trade_date: str
+) -> ExternalBackgroundContext:
+    """读取 agent 汇总后的外部背景融合包并映射到现有 context 契约。"""
+
+    try:
+        parsed = ExternalBackgroundFusionInput.model_validate(payload)
+    except ValidationError as exc:
+        return ExternalBackgroundContext(
+            status=EXTERNAL_STATUS_INVALID,
+            input_path=str(path),
+            issues=[f"外部背景融合包结构校验失败：{exc}"],
+        )
+    accepted_points: list[ExternalBackgroundCorePoint] = []
+    rejected_reasons: list[str] = list(parsed.issues)
+    for index, finding in enumerate(parsed.topic_findings, start=1):
+        converted = coerce_external_fusion_finding(finding)
+        if converted is None:
+            rejected_reasons.append(f"第 {index} 条外部融合结论缺少正文、合法类型、来源名称或 URL。")
+        else:
+            accepted_points.append(converted)
+    inline_citations = flatten_external_citations(accepted_points)
+    standalone_citations = coerce_external_citations(parsed.citations)
+    citations = merge_external_citations(inline_citations, standalone_citations)
+    status = EXTERNAL_STATUS_PASSED
+    information_gaps = list(parsed.information_gaps)
+    if parsed.trade_date != trade_date:
+        status = EXTERNAL_STATUS_PARTIAL
+        rejected_reasons.append(f"外部背景融合包日期 {parsed.trade_date} 与复盘交易日 {trade_date} 不一致，只能作为非当日背景。")
+        information_gaps.append("仍需用当日 A 股行情、板块和情绪数据验证非当日外部背景。")
+    if not accepted_points and not parsed.risk_candidates and not parsed.follow_up_candidates:
+        status = EXTERNAL_STATUS_INVALID
+        if not rejected_reasons:
+            rejected_reasons.append("外部背景融合包没有可用主题结论、风险候选或待验证问题。")
+    elif not citations:
+        status = EXTERNAL_STATUS_INVALID
+        rejected_reasons.append("外部背景融合包没有任何带来源名称和 URL 的引用。")
+    elif rejected_reasons or information_gaps:
+        status = EXTERNAL_STATUS_PARTIAL if status == EXTERNAL_STATUS_PASSED else status
+    return ExternalBackgroundContext(
+        status=status,
+        briefing_date=parsed.trade_date,
+        source_skill=parsed.source_skill,
+        input_path=str(path),
+        core_points=accepted_points,
+        follow_up_questions=parsed.follow_up_candidates,
+        information_gaps=information_gaps,
+        citations=citations,
+        issues=rejected_reasons,
+    )
+
+
+def coerce_external_fusion_finding(
+    finding: ExternalBackgroundFusionFinding,
+) -> ExternalBackgroundCorePoint | None:
+    """把融合包主题结论转换为受控核心点。"""
+
+    raw_point = ExternalBackgroundRawCorePoint(
+        text=finding.text,
+        type=finding.type,
+        a_share_relevance=finding.local_relevance,
+        citations=finding.citations,
+    )
+    return coerce_external_core_point(raw_point)
+
+
+def coerce_external_citations(
+    raw_citations: list[ExternalBackgroundRawCitation],
+) -> list[ExternalBackgroundCitation]:
+    """把融合包顶层引用转换为带来源和 URL 的引用列表。"""
+
+    citations: list[ExternalBackgroundCitation] = []
+    for citation in raw_citations:
+        if not citation.source_name.strip() or not citation.url.strip():
+            continue
+        citations.append(
+            ExternalBackgroundCitation(
+                source_name=citation.source_name.strip(),
+                title=citation.title.strip(),
+                published_at=citation.published_at.strip(),
+                accessed_at=citation.accessed_at.strip(),
+                url=citation.url.strip(),
+            )
+        )
+    return citations
+
+
+def merge_external_citations(
+    first: list[ExternalBackgroundCitation],
+    second: list[ExternalBackgroundCitation],
+) -> list[ExternalBackgroundCitation]:
+    """按来源和 URL 合并两组外部引用。"""
+
+    merged: list[ExternalBackgroundCitation] = []
+    seen: set[tuple[str, str]] = set()
+    for citation in [*first, *second]:
+        key = (citation.source_name, citation.url)
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append(citation)
+    return merged
 
 
 def flatten_external_citations(points: list[ExternalBackgroundCorePoint]) -> list[ExternalBackgroundCitation]:
@@ -1248,7 +1406,7 @@ def build_deterministic_sections(context: ReviewContext, focus: str | None = Non
 
 
 def render_market_overview_assessment(context: ReviewContext) -> str:
-    """生成每日复盘中“1.1 大盘 / 大盘定性”的 fallback 文本。"""
+    """生成每日复盘中“大盘观察 / 大盘定性”的 fallback 文本。"""
 
     payload = context.market_breadth
     if payload.get("status") != "available":
@@ -1265,7 +1423,7 @@ def render_market_overview_assessment(context: ReviewContext) -> str:
 
 
 def render_market_overview_structure(context: ReviewContext) -> str:
-    """生成每日复盘中“1.1 大盘 / 大盘结构”的 fallback 文本。"""
+    """生成每日复盘中“大盘观察 / 大盘结构”的 fallback 文本。"""
 
     payload = context.market_breadth
     if payload.get("status") != "available":
@@ -1400,13 +1558,94 @@ def build_validated_report(
 ) -> ValidatedReviewReport:
     """执行业务规则校验并返回可渲染报告。"""
 
-    validate_report_business_rules(context, sections)
+    prepared_sections = prepare_sections_for_public_report(context, sections)
+    validate_report_business_rules(context, prepared_sections)
     return ValidatedReviewReport(
         context=context,
-        sections=sections,
+        sections=prepared_sections,
         report_artifact=report_artifact,
         render_mode=render_mode,  # type: ignore[arg-type]
     )
+
+
+def prepare_sections_for_public_report(context: ReviewContext, sections: LlmReviewSections) -> LlmReviewSections:
+    """把兼容的外部背景字段融合进主报告 section，并清空旧独立字段。"""
+
+    validate_external_background_sections(context, sections)
+    background = context.external_background
+    clear_external_fields = {
+        "external_background_review": "",
+        "external_background_risks": [],
+        "external_background_follow_up_questions": [],
+        "external_background_boundary_note": "",
+    }
+    if background.status not in {EXTERNAL_STATUS_PASSED, EXTERNAL_STATUS_PARTIAL}:
+        return sections.model_copy(update=clear_external_fields)
+
+    external_review = clean_public_external_text(sections.external_background_review)
+    external_risks = [
+        ensure_local_validation_semantics(item)
+        for item in sections.external_background_risks
+        if clean_public_external_text(item)
+    ]
+    external_questions = [
+        ensure_local_validation_semantics(item)
+        for item in sections.external_background_follow_up_questions
+        if clean_public_external_text(item)
+    ]
+    update: dict[str, Any] = dict(clear_external_fields)
+    if external_review:
+        update["market_overview_structure"] = merge_paragraphs(
+            sections.market_overview_structure,
+            f"外部背景只作为待验证变量：{external_review}",
+        )
+    update["risk_observations"] = merge_unique_texts(sections.risk_observations, external_risks)
+    update["follow_up_questions"] = merge_unique_texts(sections.follow_up_questions, external_questions)
+    return sections.model_copy(update=update)
+
+
+def clean_public_external_text(text: str) -> str:
+    """返回可进入用户正文的外部背景文本，含工程词时丢弃。"""
+
+    stripped = text.strip()
+    if not stripped:
+        return ""
+    if any(term in stripped for term in HTML_BODY_FORBIDDEN_TERMS):
+        return ""
+    return stripped
+
+
+def ensure_local_validation_semantics(text: str) -> str:
+    """确保外部背景候选被表达成需要本地数据验证的观察。"""
+
+    markers = ("A 股", "本地", "市场宽度", "板块", "情绪", "行情", "汇率", "利率", "风险偏好", "验证")
+    if any(marker in text for marker in markers):
+        return text
+    return f"仍需用本地 A 股数据验证：{text}"
+
+
+def merge_paragraphs(first: str, second: str) -> str:
+    """合并两个段落并避免空文本产生多余空格。"""
+
+    if not first.strip():
+        return second.strip()
+    if not second.strip():
+        return first.strip()
+    return f"{first.strip()} {second.strip()}"
+
+
+def merge_unique_texts(primary: list[str], secondary: list[str]) -> list[str]:
+    """合并列表文本并保持原顺序去重。"""
+
+    merged: list[str] = []
+    seen: set[str] = set()
+    for item in [*primary, *secondary]:
+        normalized = item.strip()
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        merged.append(normalized)
+    return merged
 
 
 def validate_report_business_rules(context: ReviewContext, sections: LlmReviewSections) -> None:
@@ -1427,7 +1666,6 @@ def validate_report_business_rules(context: ReviewContext, sections: LlmReviewSe
             raise ValueError("board_and_structure_review must only describe the board_snapshot data gap")
     if context.data_status == DATA_STATUS_PARTIAL and claims_complete_review(text):
         raise ValueError("partial reports must not claim to be complete")
-    validate_external_background_sections(context, sections)
 
 
 def sections_to_plain_text(sections: LlmReviewSections) -> str:
@@ -1443,10 +1681,6 @@ def sections_to_plain_text(sections: LlmReviewSections) -> str:
         sections.board_and_structure_review,
         *sections.risk_observations,
         *sections.follow_up_questions,
-        sections.external_background_review,
-        *sections.external_background_risks,
-        *sections.external_background_follow_up_questions,
-        sections.external_background_boundary_note,
         sections.data_boundary_note,
         sections.not_investment_advice_note,
     ]
@@ -1471,9 +1705,9 @@ def validate_external_background_sections(context: ReviewContext, sections: LlmR
             sections.external_background_review,
             *sections.external_background_risks,
             *sections.external_background_follow_up_questions,
-            sections.external_background_boundary_note,
         ]
     )
+    enforce_research_boundary(combined)
     if claims_external_background_overrides_local_data(combined):
         raise ValueError("external background must not override or complete local A-share evidence")
 
@@ -1809,7 +2043,7 @@ def render_markdown_from_report(report: ValidatedReviewReport) -> str:
         "## 摘要",
         *render_bullets(sections.summary),
         "",
-        "## 1.1 大盘",
+        "## 大盘观察",
         "### 大盘定性",
         sections.market_overview_assessment,
         "",
@@ -1824,18 +2058,6 @@ def render_markdown_from_report(report: ValidatedReviewReport) -> str:
         "",
         "## 板块和结构观察",
         sections.board_and_structure_review,
-        "",
-        "## 外部宏观与机构观点背景",
-        sections.external_background_review,
-        "",
-        "### 外部背景风险观察",
-        *render_bullets(sections.external_background_risks),
-        "",
-        "### 外部背景待验证问题",
-        *render_bullets(sections.external_background_follow_up_questions),
-        "",
-        "### 外部背景边界",
-        sections.external_background_boundary_note,
         "",
         "## 风险观察",
         *render_bullets(sections.risk_observations),
@@ -1864,7 +2086,6 @@ def render_html_review(report: ValidatedReviewReport) -> str:
         "trade_date": context.trade_date,
         "render_mode": report.render_mode,
         "technical_notes": "a-share-daily-review-data-notes.md",
-        "external_background_status": context.external_background.status,
     }
     metadata_json = json.dumps(metadata, ensure_ascii=False)
     return f"""<!doctype html>
@@ -1907,7 +2128,6 @@ def render_html_review(report: ValidatedReviewReport) -> str:
     {render_html_section("市场宽度观察", render_paragraph_html(sections.market_breadth_review))}
     {render_html_section("情绪与事件观察", render_paragraph_html(sections.sentiment_and_events_review))}
     {render_html_section("板块和结构观察", render_paragraph_html(sections.board_and_structure_review))}
-    {render_external_background_html(context, sections)}
     {render_html_section("风险观察", render_list_html(sections.risk_observations))}
     {render_html_section("下一步研究问题", render_list_html(sections.follow_up_questions))}
     <section>
@@ -2063,57 +2283,17 @@ def render_html_section(title: str, body: str) -> str:
 
 
 def render_market_overview_html(sections: LlmReviewSections) -> str:
-    """渲染每日复盘固定的“1.1 大盘”HTML section。"""
+    """渲染每日复盘固定的“大盘观察”HTML section。"""
 
     return (
         "<section>"
-        "<h2>1.1 大盘</h2>"
+        "<h2>大盘观察</h2>"
         "<h3>大盘定性</h3>"
         f"{render_paragraph_html(sections.market_overview_assessment)}"
         "<h3>大盘结构</h3>"
         f"{render_paragraph_html(sections.market_overview_structure)}"
         "</section>"
     )
-
-
-def render_external_background_html(context: ReviewContext, sections: LlmReviewSections) -> str:
-    """渲染外部宏观与机构观点背景章节。"""
-
-    background = context.external_background
-    if background.status == EXTERNAL_STATUS_NOT_PROVIDED:
-        return ""
-    if background.status in {EXTERNAL_STATUS_BLOCKED, EXTERNAL_STATUS_INVALID}:
-        note = sections.external_background_boundary_note or render_external_background_boundary_note(context)
-        return render_html_section("外部宏观与机构观点背景", render_paragraph_html(note))
-    body_parts = [
-        render_paragraph_html(sections.external_background_review),
-        "<h3>风险观察</h3>",
-        render_list_html(sections.external_background_risks),
-        "<h3>待验证问题</h3>",
-        render_list_html(sections.external_background_follow_up_questions),
-        "<h3>边界说明</h3>",
-        render_paragraph_html(sections.external_background_boundary_note),
-        "<h3>参考来源</h3>",
-        render_external_citations_html(background.citations),
-    ]
-    return render_html_section("外部宏观与机构观点背景", "".join(body_parts))
-
-
-def render_external_citations_html(citations: list[ExternalBackgroundCitation]) -> str:
-    """把外部背景引用渲染为 HTML 链接列表。"""
-
-    if not citations:
-        return "<p>本节无可用引用。</p>"
-    items = []
-    for citation in citations:
-        title = citation.title or citation.url
-        items.append(
-            "<li>"
-            f"{html.escape(citation.source_name)}："
-            f"<a href=\"{html.escape(citation.url, quote=True)}\">{html.escape(title)}</a>"
-            "</li>"
-        )
-    return "<ul>" + "".join(items) + "</ul>"
 
 
 def render_paragraph_html(text: str) -> str:

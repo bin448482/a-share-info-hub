@@ -20,6 +20,7 @@
 ## 当前报告索引
 
 - `2026-06-18/review-context.json`：基于当前 `2026-06-18` daily run 生成的 evidence packet；状态为 `partial`，板块快照为 blocked section。
+- `2026-06-18/external-background-passed-simulated.json`：用于验证 external background 融入主报告风险观察和下一步研究问题的 passed 状态模拟输入；文件内容显式标记为模拟同日，不代表真实同日抓取结果。
 - `2026-06-18/llm-review-sections.json`：基于 `review-context.json` 写入的 sections JSON，已通过 Python/Pydantic 校验后用于 HTML 渲染。
 - `2026-06-18/a-share-daily-review.html`：基于当前 `2026-06-18` daily run 和已校验 sections 生成的真实复盘报告。
 - `2026-06-18/a-share-daily-review-data-notes.md`：基于当前 `2026-06-18` daily run 生成的技术参考文件，记录 `partial` 状态和板块接口失败细节。

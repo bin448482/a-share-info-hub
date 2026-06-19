@@ -205,6 +205,48 @@ def write_external_background(
     path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
 
+def write_external_background_fusion(path: Path) -> None:
+    """写入每日复盘测试使用的 external_background_fusion.v1 JSON。"""
+
+    payload = {
+        "schema_version": "external_background_fusion.v1",
+        "source_skill": "daily-financial-briefing",
+        "trade_date": TRADE_DATE,
+        "not_investment_advice": True,
+        "topic_findings": [
+            {
+                "text": "外部利率预期仍可能约束全球风险偏好。",
+                "type": "market_expectation",
+                "report_usage": "risk_observation",
+                "local_relevance": "需要观察本地市场宽度、汇率和成长估值是否同步变化。",
+                "citations": [
+                    {
+                        "source_name": "Federal Reserve",
+                        "title": "Policy statement",
+                        "published_at": "2026-06-18",
+                        "accessed_at": "2026-06-18",
+                        "url": "https://www.federalreserve.gov/example",
+                    }
+                ],
+            }
+        ],
+        "risk_candidates": ["外部利率预期只能作为风险偏好约束，需要本地市场宽度验证。"],
+        "follow_up_candidates": ["人民币汇率和成长估值是否同步反映外部利率预期变化？"],
+        "citations": [
+            {
+                "source_name": "Federal Reserve",
+                "title": "Policy statement",
+                "published_at": "2026-06-18",
+                "accessed_at": "2026-06-18",
+                "url": "https://www.federalreserve.gov/example",
+            }
+        ],
+        "information_gaps": [],
+        "issues": [],
+    }
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+
 def test_daily_review_emits_pydantic_context(tmp_path: Path) -> None:
     """context 输出应生成 review-context.json 并通过 Pydantic 校验。"""
 
@@ -225,8 +267,8 @@ def test_daily_review_emits_pydantic_context(tmp_path: Path) -> None:
     assert "review-context.json" in result.message
 
 
-def test_external_background_passed_enters_context_html_and_notes(tmp_path: Path) -> None:
-    """合法外部背景应进入独立 context 字段、HTML 章节和技术参考。"""
+def test_external_background_passed_enters_context_main_sections_and_notes(tmp_path: Path) -> None:
+    """合法外部背景应进入独立 context 字段、主报告合并段落和技术参考。"""
 
     write_status(tmp_path)
     write_tables(tmp_path)
@@ -251,17 +293,19 @@ def test_external_background_passed_enters_context_html_and_notes(tmp_path: Path
     assert "Federal Reserve" not in context.data_sources_used
     html = Path(result.report_artifact).read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact).read_text(encoding="utf-8")
-    assert "外部宏观与机构观点背景" in html
+    assert "外部宏观与机构观点背景" not in html
     assert "美国利率预期仍是全球风险资产背景变量" in html
     assert "仍需用 A 股行情、板块和情绪数据验证" in html
-    assert "https://www.federalreserve.gov/example" in html
+    assert "https://www.federalreserve.gov/example" not in html
+    assert html.count("<h2>风险观察</h2>") == 1
+    assert html.count("<h2>下一步研究问题</h2>") == 1
     assert "external_background" in notes
     assert str(external_background) in notes
     assert "Federal Reserve: https://www.federalreserve.gov/example" in notes
 
 
 def test_external_background_partial_for_non_trade_date(tmp_path: Path) -> None:
-    """非当日外部背景应降级为 partial，并在 HTML 显示边界。"""
+    """非当日外部背景应降级为 partial，并只进入风险或待验证问题。"""
 
     write_status(tmp_path)
     write_tables(tmp_path)
@@ -282,7 +326,10 @@ def test_external_background_partial_for_non_trade_date(tmp_path: Path) -> None:
     assert context.external_background.status == "partial"
     assert "非当日背景" in " ".join(context.external_background.issues)
     html = Path(result.report_artifact or "").read_text(encoding="utf-8")
-    assert "外部背景仅作非当日或不完整背景参考" in html
+    notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
+    assert "外部宏观与机构观点背景" not in html
+    assert "美国利率预期仍是全球风险资产背景变量" in html
+    assert "非当日背景" in notes
 
 
 def test_external_background_blocked_does_not_show_external_conclusions(tmp_path: Path) -> None:
@@ -308,8 +355,8 @@ def test_external_background_blocked_does_not_show_external_conclusions(tmp_path
     assert context.external_background.status == "blocked"
     html = Path(result.report_artifact or "").read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
-    assert "外部宏观与机构观点背景" in html
-    assert "外部背景状态为 blocked" in html
+    assert "外部宏观与机构观点背景" not in html
+    assert "外部背景状态为 blocked" not in html
     assert "美国利率预期仍是全球风险资产背景变量" not in html
     assert "公开来源不可用" in notes
 
@@ -337,8 +384,8 @@ def test_external_background_invalid_json_keeps_local_review(tmp_path: Path) -> 
     assert context.external_background.status == "invalid"
     html = Path(result.report_artifact or "").read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
-    assert "1.1 大盘" in html
-    assert "外部背景状态为 invalid" in html
+    assert "大盘观察" in html
+    assert "外部背景状态为 invalid" not in html
     assert "外部背景 JSON 不可解析" in notes
 
 
@@ -367,6 +414,34 @@ def test_external_background_missing_url_point_is_dropped(tmp_path: Path) -> Non
     assert "美国利率预期仍是全球风险资产背景变量" not in html
     assert "某投行观点认为中国资产仍需盈利验证" in html
     assert "缺少正文、合法类型、来源名称或 URL" in notes
+
+
+def test_external_background_fusion_json_is_accepted_and_merged(tmp_path: Path) -> None:
+    """融合包输入应被校验并合并进主报告风险和待验证问题。"""
+
+    write_status(tmp_path)
+    write_tables(tmp_path)
+    write_duckdb(tmp_path)
+    external_background = tmp_path / "external-background-fusion.json"
+    write_external_background_fusion(external_background)
+
+    result = generate_daily_review(
+        DailyReviewRequest(
+            output_root=tmp_path,
+            render_mode="deterministic",
+            external_background_path=external_background,
+        )
+    )
+
+    payload = json.loads(Path(result.context_artifact or "").read_text(encoding="utf-8"))
+    context = ReviewContext.model_validate(payload)
+    assert context.external_background.status == "passed"
+    html = Path(result.report_artifact or "").read_text(encoding="utf-8")
+    notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
+    assert "外部宏观与机构观点背景" not in html
+    assert "外部利率预期仍可能约束全球风险偏好" in html
+    assert "人民币汇率和成长估值是否同步反映外部利率预期变化" in html
+    assert "Federal Reserve: https://www.federalreserve.gov/example" in notes
 
 
 def test_review_context_rejects_invalid_status() -> None:
@@ -439,7 +514,7 @@ def test_daily_review_validates_llm_sections_and_generates_html(tmp_path: Path) 
     notes = notes_path.read_text(encoding="utf-8")
     assert "review-metadata" in html
     assert "策略分析师写给普通投资者" in html
-    assert "1.1 大盘" in html
+    assert "大盘观察" in html
     assert "大盘定性" in html
     assert "大盘结构" in html
     assert "not_investment_advice" in notes
@@ -485,7 +560,7 @@ def test_daily_review_deterministic_fallback_generates_html_for_local_eval(tmp_p
     assert result.data_notes_artifact is not None
     html = Path(result.report_artifact).read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact).read_text(encoding="utf-8")
-    assert "1.1 大盘" in html
+    assert "大盘观察" in html
     assert "大盘定性" in html
     assert "大盘结构" in html
     assert "板块层面的确认依据不足" in html

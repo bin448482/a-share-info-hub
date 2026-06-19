@@ -28,7 +28,7 @@
 - `facts`
 - `external_background`
 
-`external_background` 是可选的外部宏观与机构观点背景包。它不属于本地 A 股行情证据，不能覆盖、补全或改写 `market_breadth`、`limit_pool`、`lhb`、`market_summary`、`board_snapshot` 中的本地事实。
+`external_background` 是可选的外部宏观与机构观点背景包。它不属于本地 A 股行情证据，不能覆盖、补全或改写 `market_breadth`、`limit_pool`、`lhb`、`market_summary`、`board_snapshot` 中的本地事实。外部背景只能围绕本地主题形成风险观察、待验证问题或少量背景句，不能独立成章。
 
 ## 输出格式
 
@@ -60,25 +60,23 @@
 - 使用中文。
 - 保持策略分析师写给普通投资者的研究复盘口吻，不输出交易动作。
 - `summary` 写 2-4 条，优先说明市场宽度、情绪线索、结构证据和风险含义，不复述内部状态。
-- `market_overview_assessment` 是 HTML 中 `1.1 大盘 / 大盘定性` 的正文，必须用普通投资者能理解的语言给出当日大盘横截面定性；只能基于 `market_breadth`，不能写指数点位或指数涨跌，除非 context 明确提供。
-- `market_overview_structure` 是 HTML 中 `1.1 大盘 / 大盘结构` 的正文，必须说明上涨/下跌覆盖面、极端样本和结构分化；可以结合 `limit_pool`、`lhb` 的活跃线索和 `board_snapshot` 的证据边界，但不能把缺失板块数据补推断成主线结论。
+- `market_overview_assessment` 是 HTML 中 `大盘观察 / 大盘定性` 的正文，必须用普通投资者能理解的语言给出当日大盘横截面定性；只能基于 `market_breadth`，不能写指数点位或指数涨跌，除非 context 明确提供。
+- `market_overview_structure` 是 HTML 中 `大盘观察 / 大盘结构` 的正文，必须说明上涨/下跌覆盖面、极端样本和结构分化；可以结合 `limit_pool`、`lhb` 的活跃线索和 `board_snapshot` 的证据边界，但不能把缺失板块数据补推断成主线结论。
 - `market_breadth_review` 只能基于 `market_breadth`。
 - `sentiment_and_events_review` 只能基于 `limit_pool`、`lhb` 和 `market_summary` 中可用的部分。
 - `board_and_structure_review` 只能基于 `board_snapshot`。如果板块维度证据不足，只能用读者语言说明“板块层面的确认依据不足”，不能写板块主线、领涨板块或结构确认。
-- `risk_observations` 必须包含单日快照限制、证据不足对判断的影响或后续验证风险。
-- `follow_up_questions` 只能是研究问题或后续验证问题，不能是交易指令。
-- `external_background.status=passed|partial` 时，可以在 `external_background_review` 中写 2-4 条外部背景摘要，但必须保留“仍需用 A 股行情、板块和情绪数据验证”的边界。
-- `external_background_risks` 只能写外部背景带来的风险观察，不能写交易方向、仓位、目标价或确定性主线。
-- `external_background_follow_up_questions` 只能写需要本地行情、板块、情绪或事件数据验证的问题。
-- `external_background_boundary_note` 必须说明外部背景来自 `daily-financial-briefing` 受控摘要，只能作为背景，不构成投资建议。
+- `risk_observations` 必须包含单日快照限制、证据不足对判断的影响或后续验证风险；如果 `external_background.status=passed|partial`，外部利率、通胀、汇率或机构观点只能作为风险约束合并到这个数组。
+- `follow_up_questions` 只能是研究问题或后续验证问题，不能是交易指令；如果 `external_background.status=passed|partial`，外部背景带来的问题必须写成需要本地行情、板块、情绪或事件数据验证的问题，并合并到这个数组。
+- `external_background.status=passed|partial` 时，可以在 `market_overview_structure` 中写 1 句外部背景变量，但必须明确它只是待验证变量，不能覆盖本地 A 股快照证据。
+- `external_background_review`、`external_background_risks`、`external_background_follow_up_questions`、`external_background_boundary_note` 是兼容字段。第一版可以保留空值；如果填写，Python 会把前三者合并进主 sections 并清空旧字段，不会渲染独立章节。
 - `external_background.status=not_provided` 时，外部背景字段保持空值。
-- `external_background.status=blocked|invalid` 时，不输出外部结论正文，只能在 `external_background_boundary_note` 中写可读缺口说明。
+- `external_background.status=blocked|invalid` 时，不输出任何外部结论正文；状态、缺口和错误原因只进入技术参考 Markdown。
 - `data_boundary_note` 必须说明只引用已生成的复盘证据包，并提示详细数据状态和接口说明见同目录技术参考文件。
 - `not_investment_advice_note` 必须说明不构成投资建议。
 
 ## 用户正文禁用技术表达
 
-以下内容只能进入技术参考 Markdown，不能出现在本 JSON 的任何字段中：
+以下内容只能进入技术参考 Markdown，不能出现在本 JSON 的用户可读文本字段中；固定结构字段名不受这一条影响：
 
 - `blocked_sections`
 - `board_snapshot`
@@ -93,6 +91,15 @@
 - `broken_board`
 - `limit_down`
 - `data_status: partial`
+- `passed`
+- `partial`
+- `blocked`
+- `invalid`
+- `external_background.status`
+- `schema_version`
+- `fixture`
+- `模拟输入`
+- `HTML 展示形态`
 - `ConnectionError`
 - `RemoteDisconnected`
 - traceback 或接口错误细节

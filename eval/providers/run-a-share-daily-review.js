@@ -238,7 +238,20 @@ class AShareDailyReviewProvider {
     const notesMatch = output.match(/data_notes_artifact:\s*(.+a-share-daily-review-data-notes\.md)/);
     if (artifactMatch && existsSync(artifactMatch[1].trim())) {
       const html = readFileSync(artifactMatch[1].trim(), "utf8");
+      const htmlBody = html.replace(/<script\b[\s\S]*?<\/script>/gi, "");
       const forbiddenTerms = [
+        "passed",
+        "partial",
+        "blocked",
+        "invalid",
+        "passed 状态模拟输入",
+        "HTML 展示形态",
+        "external_background.status",
+        "external_background_status",
+        "schema_version",
+        "render_mode",
+        "fixture",
+        "模拟",
         "blocked_sections",
         "board_snapshot",
         "stock_board_industry_name_em",
@@ -253,8 +266,22 @@ class AShareDailyReviewProvider {
         "limit_down",
         "data_status: partial",
         "ConnectionError",
-      ].filter((term) => html.includes(term));
-      output = `${output}\nhtml_forbidden_terms: ${forbiddenTerms.length ? forbiddenTerms.join(",") : "none"}\n\n${html}`;
+      ].filter((term) => htmlBody.includes(term));
+      const externalStandaloneSections = (html.match(/<h2>外部宏观与机构观点背景<\/h2>/g) || []).length;
+      const riskSections = (html.match(/<h2>风险观察<\/h2>/g) || []).length;
+      const followUpSections = (html.match(/<h2>下一步研究问题<\/h2>/g) || []).length;
+      const htmlContainsExternalCitationUrl = html.includes("https://www.federalreserve.gov/example")
+        || html.includes("https://example.com/china-strategy");
+      output = [
+        output,
+        `html_forbidden_terms: ${forbiddenTerms.length ? forbiddenTerms.join(",") : "none"}`,
+        `external_background_standalone_sections: ${externalStandaloneSections}`,
+        `risk_section_count: ${riskSections}`,
+        `follow_up_section_count: ${followUpSections}`,
+        `html_contains_external_citation_url: ${htmlContainsExternalCitationUrl ? "true" : "false"}`,
+        "",
+        html,
+      ].join("\n");
     }
     if (notesMatch && existsSync(notesMatch[1].trim())) {
       const notes = readFileSync(notesMatch[1].trim(), "utf8");
@@ -266,12 +293,33 @@ class AShareDailyReviewProvider {
       const hasRequiredDiagnostics = requiredTerms.every((term) => notes.includes(term));
       output = `${output}\ndata_notes_diagnostics_present: ${hasRequiredDiagnostics ? "true" : "false"}`;
       if (externalBackgroundPath) {
-        const hasExternalDiagnostics = [
+        const externalState = vars.external_background_state || "";
+        let requiredExternalDiagnostics = [
           "external_background",
           externalBackgroundPath,
-          "Example Bank",
-          "https://example.com/china-strategy",
-        ].every((term) => notes.includes(term));
+        ];
+        if (externalState.includes("blocked")) {
+          requiredExternalDiagnostics = requiredExternalDiagnostics.concat([
+            "status: blocked",
+            "公开来源不可用",
+          ]);
+        } else if (externalState.includes("invalid citation") || externalState.includes("missing url")) {
+          requiredExternalDiagnostics = requiredExternalDiagnostics.concat([
+            "status: partial",
+            "缺少正文、合法类型、来源名称或 URL",
+            "Example Bank",
+            "https://example.com/china-strategy",
+          ]);
+        } else {
+          requiredExternalDiagnostics = requiredExternalDiagnostics.concat([
+            "status: passed",
+            "Federal Reserve",
+            "https://www.federalreserve.gov/example",
+            "Example Bank",
+            "https://example.com/china-strategy",
+          ]);
+        }
+        const hasExternalDiagnostics = requiredExternalDiagnostics.every((term) => notes.includes(term));
         output = `${output}\nexternal_background_diagnostics_present: ${hasExternalDiagnostics ? "true" : "false"}`;
       }
     }

@@ -31,7 +31,7 @@
 - `refresh_mode`：是否先刷新数据。默认只用已有数据。
 - `output_format`：`html`、`inline` 或 `context`。
 - `focus`：关注市场宽度、情绪、龙虎榜、板块、风险或数据质量。
-- `external_background`：可选。`$daily-financial-briefing` 输出整理后的 `external_background.v1` JSON 路径。
+- `external_background`：可选。`$daily-financial-briefing` 输出整理后的 `external_background.v1` 或 `external_background_fusion.v1` JSON 路径。
 
 如果用户不提供日期，agent 默认读取最近一次 daily run。若找不到 daily run，agent 应提示使用公开 CLI：
 
@@ -54,7 +54,7 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 - 生成 `reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json`。
 - 校验通过后生成 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review.html`。
 - 同时生成 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md`。
-- HTML 正文包含 `1.1 大盘`，并分出 `大盘定性` 和 `大盘结构`。
+- HTML 正文包含 `大盘观察`，并分出 `大盘定性` 和 `大盘结构`。
 - 对话中返回 HTML 路径、技术参考路径、交易日期和研究边界。
 - 不输出交易建议。
 
@@ -93,17 +93,17 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 ```text
 调用 a-share-daily-review，使用 2026-06-18 已有 A 股数据生成 HTML report。
 同时接入 external_background JSON：<path-to-external-background.json>。
-要求：外部背景只作为宏观和机构观点背景，不能覆盖本地 A 股快照结论；HTML 需要展示风险观察、待验证问题和参考来源。
+要求：外部背景只作为宏观和机构观点背景，不能覆盖本地 A 股快照结论；HTML 只能把它融入大盘观察、风险观察和待验证问题，参考来源写入技术参考 Markdown。
 ```
 
 预期结果：
 
 - agent 先用 `--external-background <path>` 生成 `review-context.json`。
 - `review-context.json.external_background` 独立记录状态、核心点、引用、信息缺口和降级原因。
-- LLM sections 新增外部背景字段，但只能写摘要、风险观察、待验证问题和边界说明。
-- Python 校验通过后，HTML 在本地市场结构之后展示 `外部宏观与机构观点背景`。
+- LLM sections 可以使用兼容的外部背景字段，但最终只能合并进主报告已有 sections，不渲染独立外部背景章节。
+- Python 校验通过后，HTML 只保留一个 `风险观察` 和一个 `下一步研究问题`，外部风险和待验证问题合并表达。
 - 技术参考 Markdown 记录 external background 输入路径、状态、引用来源和降级原因。
-- 若外部背景 blocked、invalid 或引用缺 URL，本地 A 股复盘仍可用，HTML 不展示无来源外部结论。
+- 若外部背景 blocked、invalid 或引用缺 URL，本地 A 股复盘仍可用，HTML 不展示外部状态、工程说明或无来源外部结论。
 
 ## 直接获取研究建议
 
@@ -191,7 +191,7 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 trade_date: <YYYY-MM-DD 或 最近一次>
 refresh_mode: none|daily_update
 output_format: html|inline|context
-external_background: <可选 external_background.v1 JSON 路径>
+external_background: <可选 external_background.v1 或 external_background_fusion.v1 JSON 路径>
 focus: <市场宽度/情绪/龙虎榜/板块/风险/数据质量>
 
 要求：
@@ -211,4 +211,4 @@ focus: <市场宽度/情绪/龙虎榜/板块/风险/数据质量>
 - 如果用户指定日期，不应自动改用其他日期。
 - 如果需要刷新数据，必须通过 `python -m a_share_info_hub daily-update`，不要 hard code 脚本路径。
 - Promptfoo 是黄金测试和回归评测工具，不是普通用户生成日报时的必经步骤。
-- 外部宏观和机构观点只能作为背景，不是本地 A 股行情证据；无 `source_name` 或 `url` 的外部观点不会进入 HTML 核心正文。
+- 外部宏观和机构观点只能作为背景，不是本地 A 股行情证据；无 `source_name` 或 `url` 的外部观点不会进入 HTML 核心正文，引用和状态进入技术参考 Markdown。

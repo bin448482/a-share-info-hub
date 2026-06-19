@@ -2,7 +2,7 @@
 
 本文档用于 review `a-share-daily-review` skill 的 v2 重构方案。当前仓库已有 `daily-review` CLI、源 skill、HTML 输出、用户指南、黄金测试集和 Promptfoo 配置；旧版 HTML 报告由 Python 直接拼接生成，机器元数据暴露在正文首屏，缺少 LLM 分析表达层。本次重构目标是把“确定性证据和运行时护栏”与“用户可读分析报告”拆开。当前仓库已按本文档完成 v2 实施，本文档同时保留目标、验收条件和已运行验证记录。
 
-> 后续修正：角色化报告改造以 `docs/a-share-daily-review-role-based-report-plan.md` 为准。该改造要求 HTML 主报告面向普通投资者，不在正文展示 `blocked_sections`、source key 或接口错误；这些技术细节改写入同目录 `a-share-daily-review-data-notes.md`。
+> 后续修正：角色化报告改造以 `docs/a-share-daily-review-role-based-report-plan.md` 为准；external background 融合和 `大盘观察` 标题以 `docs/20260619-132232-daily-financial-briefing-html-integration-implementation-plan.md` 为准。该改造要求 HTML 主报告面向普通投资者，不在正文展示 `blocked_sections`、source key 或接口错误；这些技术细节改写入同目录 `a-share-daily-review-data-notes.md`。
 
 ## 背景和问题
 
@@ -189,7 +189,7 @@ LLM 输出建议采用 JSON，而不是自由 Markdown。推荐字段：
 要求：
 
 - LLM 不允许输出买卖、仓位、目标价、止盈止损或实盘行动建议。
-- LLM 必须输出 `market_overview_assessment` 和 `market_overview_structure`，分别用于 HTML 中的 `1.1 大盘 / 大盘定性` 和 `1.1 大盘 / 大盘结构`。
+- LLM 必须输出 `market_overview_assessment` 和 `market_overview_structure`，分别用于 HTML 中的 `大盘观察 / 大盘定性` 和 `大盘观察 / 大盘结构`。
 - LLM 不允许声称完整复盘，除非 `data_status=passed`。
 - LLM 不允许分析 `blocked_sections` 中被阻断的维度。
 - LLM 必须明确说明 `partial`、`skipped`、`failed`、`missing` 的数据限制。

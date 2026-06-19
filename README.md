@@ -84,14 +84,14 @@ reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json
 python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format html
 ```
 
-如果已经把 `$daily-financial-briefing` 的 US Macro 和主要投行观点摘要保存为 `external_background.v1` JSON，可以把它作为受控外部背景接入每日复盘：
+如果已经把 `$daily-financial-briefing` 的 US Macro 和主要投行观点摘要保存为 `external_background.v1` 或 `external_background_fusion.v1` JSON，可以把它作为受控外部背景接入每日复盘：
 
 ```text
 python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --external-background <path-to-external-background.json> --output-format context
 python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --external-background <path-to-external-background.json> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format html
 ```
 
-`external_background` 只会写入 `review-context.json.external_background` 和技术参考 Markdown，不会写入 `data/normalized/`、`market.duckdb` 或本地行情数据源列表。HTML 只在校验通过时新增 `外部宏观与机构观点背景` 章节；blocked、invalid 或无背景时，本地 A 股复盘仍继续生成并在技术参考中记录缺口。
+`external_background` 只会写入 `review-context.json.external_background` 和技术参考 Markdown，不会写入 `data/normalized/`、`market.duckdb` 或本地行情数据源列表。HTML 不新增独立的 `外部宏观与机构观点背景` 章节；校验通过的外部变量只能融合进 `大盘观察`、唯一的 `风险观察` 和唯一的 `下一步研究问题`。blocked、invalid 或无背景时，本地 A 股复盘仍继续生成并在技术参考中记录缺口。
 
 直接在终端返回研究建议或数据质量诊断时，也使用已校验的 sections：
 
@@ -115,7 +115,7 @@ python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --render-mode 
 
 HTML 报告默认按“策略分析师写给普通投资者”的方式表达，只展示可读的市场观察和证据边界；接口失败、`data_status`、`blocked_sections`、source key、原始分类编码和排障建议写入同目录 `a-share-daily-review-data-notes.md`。
 
-每日复盘正文固定包含 `1.1 大盘`，其中 `大盘定性` 解释当日全市场宽度，`大盘结构` 解释上涨/下跌覆盖面、极端样本和结构证据边界。
+每日复盘正文固定包含 `大盘观察`，其中 `大盘定性` 解释当日全市场宽度，`大盘结构` 解释上涨/下跌覆盖面、极端样本和结构证据边界。
 
 ## 当日财经信息总结
 
@@ -133,7 +133,7 @@ HTML 报告默认按“策略分析师写给普通投资者”的方式表达，
 
 该 skill 由 agent 主动读取公开可引用来源，输出 Markdown 简报、核心结论、信息缺口和参考来源。输出只能作为 `daily-review` 的外部背景材料，不写入行情数据、不新增新闻采集管线、不改变每日复盘数据契约，也不提供交易行动建议。
 
-接入每日复盘前，需要把简报整理成 `external_background.v1` JSON，核心点必须带 `source_name` 和 `url`。无 URL 的外部观点不会进入 HTML 核心正文。
+接入每日复盘前，需要把简报整理成 `external_background.v1` 或 `external_background_fusion.v1` JSON，核心点必须带 `source_name` 和 `url`。无 URL 的外部观点不会进入 HTML 核心正文；引用 URL、输入路径、状态和降级原因写入技术参考 Markdown。
 
 本地离线评测使用 fixture，不访问真实财经网站：
 

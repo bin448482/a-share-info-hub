@@ -11,8 +11,8 @@
 
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
-- `20260619-132232-daily-financial-briefing-html-integration-implementation-plan.md`：`$daily-financial-briefing` 融入每日复盘 HTML 的实施计划，定义 external background 输入契约、context/LLM sections/HTML 扩展、异常处理、测试计划和目标达成条件。
-- `a-share-daily-review-skill-golden-testset.jsonl`：每日复盘研究 skill 的 v2 黄金测试集，用于覆盖 context、HTML 输出、external background、数据状态降级、CLI 契约、HTML 机器字段边界和非交易建议边界。
+- `20260619-132232-daily-financial-briefing-html-integration-implementation-plan.md`：`$daily-financial-briefing` 融入每日复盘 HTML 的修正实施计划，定义本地 context 后按主题并行调用外部信息 skill、融合进主报告 sections、external background 审计契约、异常处理、测试计划和目标达成条件。
+- `a-share-daily-review-skill-golden-testset.jsonl`：每日复盘研究 skill 的 v2 黄金测试集，用于覆盖 context、HTML 输出、external background 融合、无独立外部背景章节、数据状态降级、CLI 契约、HTML 机器字段边界和非交易建议边界。
 - `a-share-daily-review-skill-golden-testset.md`：每日复盘研究 skill 的黄金测试集说明和开源评测框架选型，当前推荐 Promptfoo 作为回归评测层，DeepEval 作为后续 Python/LLM 组件评测方案；已与 `eval/` 配置和 external background 用例对齐。
 - `a-share-daily-review-skill-implementation-plan.md`：每日复盘研究 skill 的 v2 重构实施计划，定义 evidence packet、LLM 分析层、Pydantic 运行时校验、HTML 封装和 Promptfoo 回归评测边界；角色化报告细节以后续改造计划为准。
 - `a-share-daily-review-role-based-report-plan.md`：每日复盘报告角色化改造计划，定义策略分析师到普通投资者的写作角色、HTML 正文与技术 Markdown 拆分、prompt/validator/eval 调整、目标达成条件和验收标准。
