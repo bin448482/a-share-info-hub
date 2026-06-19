@@ -13,6 +13,7 @@
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
 - `a-share-daily-review/`：基于每日快照 artifacts 生成 A 股每日复盘研究、HTML report、数据质量诊断和安全拒绝输出的 skill。
+- `daily-financial-briefing/`：基于公开来源生成 US Macro 和主要投行观点的当日财经信息研究简报，带来源引用、信息缺口和非投资建议边界。
 
 ## 更新要求
 

@@ -12,6 +12,7 @@
 
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
+- `daily-financial-briefings/`：当日财经信息总结 skill 的 forward test 和可 review 简报产物，按运行日期和场景保存公开来源、缺口和非投资建议边界。
 - `daily-reviews/`：每日复盘研究报告目录，按日期保存 `a-share-daily-review` 的 HTML 主报告、技术参考 Markdown、context 和 LLM sections。
 - `daily-runs/`：每日快照运行报告目录，按日期保存接口状态和人读摘要。
 

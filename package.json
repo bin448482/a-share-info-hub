@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "install:eval": "npx --yes npm@11.6.4 ci --omit=optional --ignore-scripts --no-audit --no-fund && npx --yes npm@11.6.4 rebuild better-sqlite3",
-    "eval:a-share-daily-review": "promptfoo eval -c eval/promptfooconfig.yaml --no-cache"
+    "eval:a-share-daily-review": "promptfoo eval -c eval/promptfooconfig.yaml --no-cache",
+    "eval:daily-financial-briefing": "promptfoo eval -c eval/promptfooconfig.daily-financial-briefing.yaml --no-cache"
   },
   "devDependencies": {
     "promptfoo": "0.120.0"

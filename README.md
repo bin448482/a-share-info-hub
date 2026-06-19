@@ -46,6 +46,7 @@ python -m pytest tests
 python -c "import akshare, pandas, duckdb, pyarrow, pydantic"
 npm run install:eval
 npm run eval:a-share-daily-review
+npm run eval:daily-financial-briefing
 ```
 
 真实接口验证需要指定日期运行每日采集脚本；单元测试只验证本地解析、状态和落盘逻辑。
@@ -106,3 +107,25 @@ python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --render-mode 
 HTML 报告默认按“策略分析师写给普通投资者”的方式表达，只展示可读的市场观察和证据边界；接口失败、`data_status`、`blocked_sections`、source key、原始分类编码和排障建议写入同目录 `a-share-daily-review-data-notes.md`。
 
 每日复盘正文固定包含 `1.1 大盘`，其中 `大盘定性` 解释当日全市场宽度，`大盘结构` 解释上涨/下跌覆盖面、极端样本和结构证据边界。
+
+## 当日财经信息总结
+
+当需要把海外宏观和主要投行公开观点作为 A 股研究背景时，使用仓库内 skill：
+
+```text
+使用 $daily-financial-briefing，总结今天 US Macro 和主要投行观点对 A 股研究的影响。
+```
+
+指定日期和关注点：
+
+```text
+使用 $daily-financial-briefing，日期 <YYYY-MM-DD>，重点看美国利率预期、CPI、非农和高盛/摩根对中国资产的观点。
+```
+
+该 skill 由 agent 主动读取公开可引用来源，输出 Markdown 简报、核心结论、信息缺口和参考来源。输出只能作为 `daily-review` 的外部背景材料，不写入行情数据、不新增新闻采集管线、不改变每日复盘数据契约，也不提供交易行动建议。
+
+本地离线评测使用 fixture，不访问真实财经网站：
+
+```text
+npm run eval:daily-financial-briefing
+```

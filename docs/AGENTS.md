@@ -16,6 +16,11 @@
 - `a-share-daily-review-skill-implementation-plan.md`：每日复盘研究 skill 的 v2 重构实施计划，定义 evidence packet、LLM 分析层、Pydantic 运行时校验、HTML 封装和 Promptfoo 回归评测边界；角色化报告细节以后续改造计划为准。
 - `a-share-daily-review-role-based-report-plan.md`：每日复盘报告角色化改造计划，定义策略分析师到普通投资者的写作角色、HTML 正文与技术 Markdown 拆分、prompt/validator/eval 调整、目标达成条件和验收标准。
 - `a-share-daily-review-skill-user-guide.md`：每日复盘研究 skill 的用户提示词说明，介绍 agent 调用 skill 的能力、context -> LLM sections -> validator -> HTML 流程、适用场景和直接研究建议提示词；与当前 CLI 用法对齐。
+- `daily-financial-news-design.md`：当日财经信息总结 skill 设计稿，定义基于 US Macro 和主要投行观点的 LLM 阅读、总结、引用来源、每日复盘衔接和第一版明确不做事项。
+- `daily-financial-news-feasibility-analysis.md`：当日财经信息采集数据源可行性分析报告，基于 AKShare 1.18.64 实测结果，确认 us_macro 数据源充足可用、investment_bank_views 需降级为 AKShare 内有限源，标注 DXY/金十新闻不可用及替代方案。
+- `daily-financial-news-skill-golden-testset.jsonl`：当日财经信息总结 skill 的黄金测试集，覆盖默认范围、指定日期、事实/预期/推论分离、投行观点边界、来源缺口、冲突、付费来源、交易建议拒绝、每日复盘衔接、blocked 和引用不足场景。
+- `daily-financial-news-skill-golden-testset.md`：当日财经信息总结 skill 的黄金测试说明，定义 Promptfoo provider、离线 fixture、审计行、运行命令和验收门槛。
+- `daily-financial-news-skill-implementation-plan.md`：当日财经信息总结 skill 的实施计划，定义 `daily-financial-briefing` skill scaffold、reference 拆分、黄金测试集、Promptfoo/provider 验证、异常降级和目标达成条件。
 - `daily-data-contract-implementation-plan.md`：可验证每日数据契约报告的实施计划，重点是 AKShare 今日能力探测、历史回溯和契约生成。
 - `daily-snapshot-data-design.md`：每日 A 股快照数据设计，定义主表、增强数据、存储结构、去重关联和 v1 不做事项。
 - `daily-snapshot-data-implementation-plan.md`：每日快照采集链路实施计划，定义脚本入口、异常处理、单元测试、验收标准和目标达成条件。

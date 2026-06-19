@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Financial Briefing"
+  short_description: "Summarize public macro and bank views for A-share research"
+  default_prompt: "Use $daily-financial-briefing to summarize today's US Macro and major investment bank views for A-share research context."

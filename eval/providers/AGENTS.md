@@ -12,7 +12,8 @@
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
 - `run-a-share-daily-review.js`：Promptfoo 本地 provider，创建隔离 fixture，调用 `python -m a_share_info_hub daily-review --user-prompt ... --render-mode deterministic`，并返回 HTML 正文边界和技术参考 Markdown 诊断审计结果。
+- `run-daily-financial-briefing.js`：Promptfoo 本地 provider，读取 `source_fixture` 生成确定性 Markdown 简报或 blocked 输出，并返回结构、引用、禁用交易语言和不联网审计行。
 
 ## 更新要求
 
-- Provider 参数变化时，同步更新 `eval/promptfooconfig.yaml` 和黄金测试说明。
+- Provider 参数变化时，同步更新对应 Promptfoo 配置和黄金测试说明。

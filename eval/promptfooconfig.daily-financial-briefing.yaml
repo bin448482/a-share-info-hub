@@ -1,0 +1,7 @@
+description: "daily-financial-briefing skill eval"
+prompts:
+  - "{{user_prompt}}"
+providers:
+  - file://providers/run-daily-financial-briefing.js
+tests:
+  - file://../docs/daily-financial-news-skill-golden-testset.jsonl
