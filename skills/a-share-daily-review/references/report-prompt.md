@@ -28,7 +28,7 @@
 - `facts`
 - `external_background`
 
-`external_background` 是可选的外部宏观与机构观点背景包。它不属于本地 A 股行情证据，不能覆盖、补全或改写 `market_breadth`、`limit_pool`、`lhb`、`market_summary`、`board_snapshot` 中的本地事实。外部背景只能围绕本地主题形成风险观察、待验证问题或少量背景句，不能独立成章。
+`external_background` 是可选的外部宏观与机构观点背景包。它不属于本地 A 股行情证据，不能覆盖、补全或改写 `market_breadth`、`limit_pool`、`lhb`、`market_summary`、`board_snapshot` 中的本地事实。外部背景只有在同时具备具体外部事实、可核验来源、清晰传导机制和本地指标映射时，才允许进入用户正文；低信息量边界声明、泛化风险偏好表述或占位式外部变量必须省略。
 
 ## 输出格式
 
@@ -59,15 +59,15 @@
 
 - 使用中文。
 - 保持策略分析师写给普通投资者的研究复盘口吻，不输出交易动作。
-- `summary` 写 2-4 条，优先说明市场宽度、情绪线索、结构证据和风险含义，不复述内部状态。
-- `market_overview_assessment` 是 HTML 中 `大盘观察 / 大盘定性` 的正文，必须用普通投资者能理解的语言给出当日大盘横截面定性；只能基于 `market_breadth`，不能写指数点位或指数涨跌，除非 context 明确提供。
-- `market_overview_structure` 是 HTML 中 `大盘观察 / 大盘结构` 的正文，必须说明上涨/下跌覆盖面、极端样本和结构分化；可以结合 `limit_pool`、`lhb` 的活跃线索和 `board_snapshot` 的证据边界，但不能把缺失板块数据补推断成主线结论。
-- `market_breadth_review` 只能基于 `market_breadth`。
-- `sentiment_and_events_review` 只能基于 `limit_pool`、`lhb` 和 `market_summary` 中可用的部分。
-- `board_and_structure_review` 只能基于 `board_snapshot`。如果板块维度证据不足，只能用读者语言说明“板块层面的确认依据不足”，不能写板块主线、领涨板块或结构确认。
-- `risk_observations` 必须包含单日快照限制、证据不足对判断的影响或后续验证风险；如果 `external_background.status=passed|partial`，外部利率、通胀、汇率或机构观点只能作为风险约束合并到这个数组。
-- `follow_up_questions` 只能是研究问题或后续验证问题，不能是交易指令；如果 `external_background.status=passed|partial`，外部背景带来的问题必须写成需要本地行情、板块、情绪或事件数据验证的问题，并合并到这个数组。
-- `external_background.status=passed|partial` 时，可以在 `market_overview_structure` 中写 1 句外部背景变量，但必须明确它只是待验证变量，不能覆盖本地 A 股快照证据。
+- `summary` 写 2-4 条，优先说明市场宽度、情绪线索、结构证据和风险含义，不复述内部状态。除非外部背景同时具备具体事件、数值或方向变化、明确日期和可核验引用，否则不要在摘要中写外部背景。
+- `market_overview_assessment` 是 HTML 中 `大盘观察 / 大盘定性` 的正文，必须用普通投资者能理解的语言给出当日大盘横截面定性；只能基于 `market_breadth`，不得引用、概括或暗示 `external_background`。
+- `market_overview_structure` 是 HTML 中 `大盘观察 / 大盘结构` 的正文，必须说明上涨/下跌覆盖面、极端样本和结构分化；可以结合 `limit_pool`、`lhb` 的活跃线索和 `board_snapshot` 的证据边界，但不能把缺失板块数据补推断成主线结论。默认不写外部背景；只有当外部背景提供具体、可引用、非模板化事实，并能解释当日 A 股宽度、情绪或板块证据中的某个观察时，才可写入 1 句。
+- `market_breadth_review` 只能基于 `market_breadth`，并优先解释上涨/下跌覆盖差额、覆盖比例、极端上涨/极端下跌样本与整体宽度之间的关系。如果 `up_count`、`down_count`、`sample_count` 可用，必须至少写出一个派生含义，例如净下跌覆盖差额、上涨/下跌覆盖比例或下跌家数相对上涨家数的倍数。
+- `sentiment_and_events_review` 只能基于 `limit_pool`、`lhb` 和 `market_summary` 中可用的部分。不得泛泛引用“外部风险偏好”；只有当外部背景明确给出事件类型，并能映射到涨跌停池、龙虎榜、成交或本地事件样本时，才允许写一句约束。
+- `board_and_structure_review` 只能基于 `board_snapshot`。如果板块维度证据不足，只能用读者语言说明“板块层面的确认依据不足”，不能写板块主线、领涨板块或结构确认，也不得借外部背景补板块叙事。
+- `risk_observations` 必须包含单日快照限制、证据不足对判断的影响或后续验证风险。外部背景只有能写成“外部事实 -> 影响机制 -> A 股观察对象 -> 本地验证指标”时才允许合并；每条外部风险必须包含至少一个本地指标或对象，例如上涨家数、下跌家数、极端上涨、极端下跌、涨跌停、龙虎榜、板块、成交、汇率或具体行业链。
+- `follow_up_questions` 只能是研究问题或后续验证问题，不能是交易指令。外部背景问题不能只问“是否得到验证”，必须说明哪个外部变量、对应哪个 A 股对象、要观察哪个本地指标发生什么变化。
+- `external_background.status=passed|partial` 不等于必须写入正文。如果外部背景只有“利率预期影响风险偏好”“仍需验证”“作为变量/约束”等泛化表述，或缺少具体事实、数字、事件、机构观点、真实 URL、明确发布时间、本地指标映射，用户正文应完全省略该外部背景。
 - `external_background_review`、`external_background_risks`、`external_background_follow_up_questions`、`external_background_boundary_note` 是兼容字段。第一版可以保留空值；如果填写，Python 会把前三者合并进主 sections 并清空旧字段，不会渲染独立章节。
 - `external_background.status=not_provided` 时，外部背景字段保持空值。
 - `external_background.status=blocked|invalid` 时，不输出任何外部结论正文；状态、缺口和错误原因只进入技术参考 Markdown。
@@ -114,6 +114,11 @@
 - 不要写：“stock_board_industry_name_em 和 stock_board_concept_name_em 均失败。”
 - 不要写：“外部背景确认 A 股主线。”
 - 不要写：“机构观点建议加仓。”
+- 不要写：“外部利率预期只能作为风险偏好约束和后续验证变量。”
+- 不要写：“外部利率预期可能继续影响全球风险偏好，但在本报告中只能作为待验证变量。”
+- 不要写：“仍需用 A 股行情、板块和情绪数据验证。”
+- 不要写：“外部背景不能替代本地 A 股快照证据。”
+- 不要写：“外部利率、通胀或投行观点是否会在 A 股市场宽度、板块和情绪数据中得到验证。”
 
 ## 禁止输出
 

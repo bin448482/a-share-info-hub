@@ -169,9 +169,9 @@ def write_external_background(
         "not_investment_advice": True,
         "core_points": [
             {
-                "text": "美国利率预期仍是全球风险资产背景变量。",
+                "text": "FOMC 政策路径仍依赖后续通胀数据，美债收益率变化会影响全球流动性定价。",
                 "type": "market_expectation",
-                "a_share_relevance": "需要观察北向、汇率和本地风险偏好是否共振。",
+                "a_share_relevance": "如果人民币汇率压力同步出现，应观察 A 股上涨家数、下跌家数和成长板块成交是否同步走弱。",
                 "citations": [
                     {
                         "source_name": "Federal Reserve",
@@ -183,9 +183,9 @@ def write_external_background(
                 ],
             },
             {
-                "text": "某投行观点认为中国资产仍需盈利验证。",
+                "text": "某投行观点认为中国资产仍需盈利验证，成长风格能否持续要看成交扩散。",
                 "type": "bank_view",
-                "a_share_relevance": "只作为机构观点背景，不作为事实结论。",
+                "a_share_relevance": "后续应观察成长板块成交占比、上涨家数和龙虎榜活跃度是否同步改善。",
                 "citations": [
                     {
                         "source_name": "Example Bank",
@@ -197,7 +197,7 @@ def write_external_background(
                 ],
             },
         ],
-        "follow_up_questions": ["外部利率预期是否对应到 A 股风险偏好变化？"],
+        "follow_up_questions": ["如果人民币汇率继续承压，A 股上涨家数和成长板块成交占比是否同步回落？"],
         "information_gaps": [],
         "blocked": blocked,
         "blocked_reason": "公开来源不可用" if blocked else "",
@@ -215,10 +215,10 @@ def write_external_background_fusion(path: Path) -> None:
         "not_investment_advice": True,
         "topic_findings": [
             {
-                "text": "外部利率预期仍可能约束全球风险偏好。",
+                "text": "FOMC 政策路径仍依赖后续通胀数据，美债收益率变化会影响全球流动性定价。",
                 "type": "market_expectation",
                 "report_usage": "risk_observation",
-                "local_relevance": "需要观察本地市场宽度、汇率和成长估值是否同步变化。",
+                "local_relevance": "如果人民币汇率压力同步出现，应观察 A 股上涨家数、下跌家数和成长板块成交是否同步走弱。",
                 "citations": [
                     {
                         "source_name": "Federal Reserve",
@@ -230,8 +230,8 @@ def write_external_background_fusion(path: Path) -> None:
                 ],
             }
         ],
-        "risk_candidates": ["外部利率预期只能作为风险偏好约束，需要本地市场宽度验证。"],
-        "follow_up_candidates": ["人民币汇率和成长估值是否同步反映外部利率预期变化？"],
+        "risk_candidates": ["FOMC 政策路径若继续推高美债收益率，A 股需要观察上涨家数、下跌家数和成长板块成交是否同步走弱。"],
+        "follow_up_candidates": ["人民币汇率继续承压时，A 股上涨家数和成长板块成交占比是否同步回落？"],
         "citations": [
             {
                 "source_name": "Federal Reserve",
@@ -294,8 +294,10 @@ def test_external_background_passed_enters_context_main_sections_and_notes(tmp_p
     html = Path(result.report_artifact).read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact).read_text(encoding="utf-8")
     assert "外部宏观与机构观点背景" not in html
-    assert "美国利率预期仍是全球风险资产背景变量" in html
-    assert "仍需用 A 股行情、板块和情绪数据验证" in html
+    assert "FOMC 政策路径仍依赖后续通胀数据" in html
+    assert "上涨家数、下跌家数和成长板块成交" in html
+    assert "只能作为待验证变量" not in html
+    assert "仍需用 A 股行情" not in html
     assert "https://www.federalreserve.gov/example" not in html
     assert html.count("<h2>风险观察</h2>") == 1
     assert html.count("<h2>下一步研究问题</h2>") == 1
@@ -328,7 +330,7 @@ def test_external_background_partial_for_non_trade_date(tmp_path: Path) -> None:
     html = Path(result.report_artifact or "").read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
     assert "外部宏观与机构观点背景" not in html
-    assert "美国利率预期仍是全球风险资产背景变量" in html
+    assert "FOMC 政策路径仍依赖后续通胀数据" in html
     assert "非当日背景" in notes
 
 
@@ -412,7 +414,7 @@ def test_external_background_missing_url_point_is_dropped(tmp_path: Path) -> Non
     html = Path(result.report_artifact or "").read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
     assert "美国利率预期仍是全球风险资产背景变量" not in html
-    assert "某投行观点认为中国资产仍需盈利验证" in html
+    assert "某投行观点认为中国资产仍需盈利验证，成长风格能否持续要看成交扩散" in html
     assert "缺少正文、合法类型、来源名称或 URL" in notes
 
 
@@ -439,8 +441,10 @@ def test_external_background_fusion_json_is_accepted_and_merged(tmp_path: Path) 
     html = Path(result.report_artifact or "").read_text(encoding="utf-8")
     notes = Path(result.data_notes_artifact or "").read_text(encoding="utf-8")
     assert "外部宏观与机构观点背景" not in html
-    assert "外部利率预期仍可能约束全球风险偏好" in html
-    assert "人民币汇率和成长估值是否同步反映外部利率预期变化" in html
+    assert "FOMC 政策路径仍依赖后续通胀数据" in html
+    assert "人民币汇率继续承压时，A 股上涨家数和成长板块成交占比是否同步回落" in html
+    assert "只能作为待验证变量" not in html
+    assert "仍需用 A 股行情" not in html
     assert "Federal Reserve: https://www.federalreserve.gov/example" in notes
 
 
@@ -690,6 +694,26 @@ def test_external_background_sections_reject_trading_language(tmp_path: Path) ->
 
     assert result.data_status == "failed"
     assert "forbidden trading terms" in result.message
+
+
+def test_daily_review_rejects_low_information_external_language(tmp_path: Path) -> None:
+    """LLM sections 不应把低信息外部背景套话写进用户正文。"""
+
+    write_status(tmp_path)
+    write_tables(tmp_path)
+    write_duckdb(tmp_path)
+    llm_output = tmp_path / "llm-review-sections.json"
+    write_llm_sections(llm_output)
+    payload = json.loads(llm_output.read_text(encoding="utf-8"))
+    payload["summary"].append("外部利率预期只能作为风险偏好约束和后续验证变量。")
+    llm_output.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    result = generate_daily_review(
+        DailyReviewRequest(output_root=tmp_path, llm_output_path=llm_output)
+    )
+
+    assert result.data_status == "failed"
+    assert "low-information external background language" in result.message
 
 
 def test_daily_review_refresh_uses_public_module_cli(tmp_path: Path) -> None:

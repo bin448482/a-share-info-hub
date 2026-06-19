@@ -145,9 +145,9 @@ function writeExternalBackgroundFixture(root, externalBackgroundState) {
     not_investment_advice: true,
     core_points: [
       {
-        text: "美国利率预期仍是全球风险资产背景变量。",
+        text: "FOMC 政策路径仍依赖后续通胀数据，美债收益率变化会影响全球流动性定价。",
         type: "market_expectation",
-        a_share_relevance: "需要观察 A 股行情、板块和情绪数据是否出现共振。",
+        a_share_relevance: "如果人民币汇率压力同步出现，应观察 A 股上涨家数、下跌家数和成长板块成交是否同步走弱。",
         citations: [
           {
             source_name: "Federal Reserve",
@@ -159,9 +159,9 @@ function writeExternalBackgroundFixture(root, externalBackgroundState) {
         ],
       },
       {
-        text: "某投行观点认为中国资产仍需盈利验证。",
+        text: "某投行观点认为中国资产仍需盈利验证，成长风格能否持续要看成交扩散。",
         type: "bank_view",
-        a_share_relevance: "只作为机构观点背景，不作为事实结论。",
+        a_share_relevance: "后续应观察成长板块成交占比、上涨家数和龙虎榜活跃度是否同步改善。",
         citations: [
           {
             source_name: "Example Bank",
@@ -173,7 +173,7 @@ function writeExternalBackgroundFixture(root, externalBackgroundState) {
         ],
       },
     ],
-    follow_up_questions: ["外部利率预期是否对应到 A 股风险偏好变化？"],
+    follow_up_questions: ["如果人民币汇率继续承压，A 股上涨家数和成长板块成交占比是否同步回落？"],
     information_gaps: [],
     blocked,
     blocked_reason: blocked ? "公开来源不可用" : "",
@@ -190,10 +190,10 @@ function writeExternalBackgroundFusionFixture(root) {
     not_investment_advice: true,
     topic_findings: [
       {
-        text: "大盘定性相关的外部利率预期仍可能约束全球风险偏好。",
+        text: "FOMC 政策路径仍依赖后续通胀数据，美债收益率变化会影响全球流动性定价。",
         type: "market_expectation",
         report_usage: "risk_observation",
-        local_relevance: "主表覆盖 3 只证券，上涨 1 只，下跌 1 只，平盘 1 只。 仍需用 A 股行情、板块和情绪数据验证。",
+        local_relevance: "如果人民币汇率压力同步出现，应观察 A 股上涨家数、下跌家数和成长板块成交是否同步走弱。",
         citations: [
           {
             source_name: "Federal Reserve",
@@ -205,8 +205,8 @@ function writeExternalBackgroundFusionFixture(root) {
         ],
       },
     ],
-    risk_candidates: ["大盘定性相关的外部利率预期仍可能约束全球风险偏好。 主表覆盖 3 只证券，上涨 1 只，下跌 1 只，平盘 1 只。 仍需用 A 股行情、板块和情绪数据验证。 外部变量不能覆盖本地 A 股证据。"],
-    follow_up_candidates: ["外部利率、通胀或投行观点是否会在 A 股市场宽度、板块和情绪数据中得到验证？"],
+    risk_candidates: ["FOMC 政策路径若继续推高美债收益率，A 股需要观察上涨家数、下跌家数和成长板块成交是否同步走弱。"],
+    follow_up_candidates: ["人民币汇率继续承压时，A 股上涨家数和成长板块成交占比是否同步回落？"],
     citations: [
       {
         source_name: "Federal Reserve",

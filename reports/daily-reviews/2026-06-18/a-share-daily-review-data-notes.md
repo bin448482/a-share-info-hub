@@ -69,18 +69,18 @@
 
 ## external_background
 
-- status: passed
+- status: invalid
 - input_path: reports\daily-reviews\2026-06-18\external-background-fusion.json
-- briefing_date: 2026-06-18
-- source_skill: daily-financial-briefing
+- briefing_date: 无
+- source_skill: 无
 
 ### 引用来源
 
-- Federal Reserve: https://www.federalreserve.gov/example
+- 无
 
 ### 降级或拒绝原因
 
-- 未记录 external_background 降级或拒绝原因。
+- 外部背景文件不存在：reports\daily-reviews\2026-06-18\external-background-fusion.json
 
 ### 信息缺口
 

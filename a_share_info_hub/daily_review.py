@@ -138,6 +138,64 @@ HTML_BODY_FORBIDDEN_TERMS = (
     "HTML 展示形态",
 )
 
+LOW_INFORMATION_EXTERNAL_PHRASES = (
+    "只能作为待验证变量",
+    "只能作为风险偏好约束",
+    "不能替代本地",
+    "不能覆盖本地",
+    "仍需用 A 股行情",
+    "仍需用A股行情",
+    "仍需用本地 A 股数据验证",
+    "只是背景变量",
+    "作为背景变量",
+    "约束全球风险偏好",
+    "可能继续影响全球风险偏好",
+    "是否会在 A 股市场宽度、板块和情绪数据中得到验证",
+)
+
+EXTERNAL_DETAIL_MARKERS = (
+    "FOMC",
+    "CPI",
+    "PCE",
+    "非农",
+    "失业率",
+    "初请",
+    "美债",
+    "收益率",
+    "利差",
+    "美元指数",
+    "人民币",
+    "汇率",
+    "通胀",
+    "联邦基金",
+    "政策声明",
+    "高盛",
+    "摩根",
+    "花旗",
+    "瑞银",
+    "投行",
+    "机构观点",
+    "基点",
+    "%",
+)
+
+LOCAL_VALIDATION_MARKERS = (
+    "上涨家数",
+    "下跌家数",
+    "极端上涨",
+    "极端下跌",
+    "市场宽度",
+    "涨跌停",
+    "龙虎榜",
+    "板块",
+    "成交",
+    "行业",
+    "样本",
+    "汇率",
+    "成长",
+    "半导体",
+)
+
 
 class SourceHealth(BaseModel):
     """描述单个数据源、文件或存储组件的可用性。"""
@@ -1505,31 +1563,40 @@ def render_external_background_review(context: ReviewContext) -> str:
         return ""
     snippets = []
     for point in background.core_points[:4]:
+        if not is_actionable_external_text(f"{point.text} {point.a_share_relevance}"):
+            continue
         prefix = "机构观点" if point.type == "bank_view" else "外部背景"
         snippets.append(f"{prefix}：{point.text}")
     return "；".join(snippets)
 
 
 def render_external_background_risks(context: ReviewContext) -> list[str]:
-    """生成外部背景相关风险观察，强调仍需本地数据验证。"""
+    """生成外部背景相关风险观察，只保留有信息增量的机制句。"""
 
     background = context.external_background
     if background.status not in {EXTERNAL_STATUS_PASSED, EXTERNAL_STATUS_PARTIAL}:
         return []
-    risks = ["外部背景只能作为研究上下文，仍需用 A 股行情、板块和情绪数据验证。"]
+    risks: list[str] = []
+    for point in background.core_points:
+        candidate = build_actionable_external_observation(point)
+        if candidate:
+            risks.append(candidate)
     if background.status == EXTERNAL_STATUS_PARTIAL:
         risks.append("外部背景存在日期或来源缺口，不能作为当日 A 股结论。")
     return risks
 
 
 def render_external_background_follow_up_questions(context: ReviewContext) -> list[str]:
-    """生成外部背景待验证问题，避免交易行动化。"""
+    """生成外部背景待验证问题，避免泛化验证句和交易行动化。"""
 
     background = context.external_background
     if background.status not in {EXTERNAL_STATUS_PASSED, EXTERNAL_STATUS_PARTIAL}:
         return []
-    questions = list(background.follow_up_questions[:3])
-    questions.append("仍需用 A 股行情、板块和情绪数据验证外部背景是否影响本地市场结构。")
+    questions = [
+        question
+        for question in background.follow_up_questions[:3]
+        if is_actionable_external_text(question)
+    ]
     return questions
 
 
@@ -1584,44 +1651,59 @@ def prepare_sections_for_public_report(context: ReviewContext, sections: LlmRevi
 
     external_review = clean_public_external_text(sections.external_background_review)
     external_risks = [
-        ensure_local_validation_semantics(item)
+        item.strip()
         for item in sections.external_background_risks
         if clean_public_external_text(item)
     ]
     external_questions = [
-        ensure_local_validation_semantics(item)
+        item.strip()
         for item in sections.external_background_follow_up_questions
         if clean_public_external_text(item)
     ]
     update: dict[str, Any] = dict(clear_external_fields)
+    merged_external_risks = external_risks
     if external_review:
-        update["market_overview_structure"] = merge_paragraphs(
-            sections.market_overview_structure,
-            f"外部背景只作为待验证变量：{external_review}",
-        )
-    update["risk_observations"] = merge_unique_texts(sections.risk_observations, external_risks)
+        merged_external_risks = [external_review, *external_risks]
+    update["risk_observations"] = merge_unique_texts(sections.risk_observations, merged_external_risks)
     update["follow_up_questions"] = merge_unique_texts(sections.follow_up_questions, external_questions)
     return sections.model_copy(update=update)
 
 
 def clean_public_external_text(text: str) -> str:
-    """返回可进入用户正文的外部背景文本，含工程词时丢弃。"""
+    """返回可进入用户正文的外部背景文本，低信息或工程词时丢弃。"""
 
     stripped = text.strip()
     if not stripped:
         return ""
     if any(term in stripped for term in HTML_BODY_FORBIDDEN_TERMS):
         return ""
+    if not is_actionable_external_text(stripped):
+        return ""
     return stripped
 
 
-def ensure_local_validation_semantics(text: str) -> str:
-    """确保外部背景候选被表达成需要本地数据验证的观察。"""
+def build_actionable_external_observation(point: ExternalBackgroundCorePoint) -> str:
+    """把单条外部背景转换为具备机制和本地指标映射的风险观察。"""
 
-    markers = ("A 股", "本地", "市场宽度", "板块", "情绪", "行情", "汇率", "利率", "风险偏好", "验证")
-    if any(marker in text for marker in markers):
-        return text
-    return f"仍需用本地 A 股数据验证：{text}"
+    combined = f"{point.text} {point.a_share_relevance}".strip()
+    if not is_actionable_external_text(combined):
+        return ""
+    if point.a_share_relevance.strip():
+        return f"{point.text.strip()} 对 A 股的观察口径：{point.a_share_relevance.strip()}"
+    return point.text.strip()
+
+
+def is_actionable_external_text(text: str) -> bool:
+    """判断外部背景文本是否具备进入用户正文的信息密度。"""
+
+    normalized = text.strip()
+    if not normalized:
+        return False
+    if any(phrase in normalized for phrase in LOW_INFORMATION_EXTERNAL_PHRASES):
+        return False
+    has_external_detail = any(marker in normalized for marker in EXTERNAL_DETAIL_MARKERS)
+    has_local_mapping = any(marker in normalized for marker in LOCAL_VALIDATION_MARKERS)
+    return has_external_detail and has_local_mapping
 
 
 def merge_paragraphs(first: str, second: str) -> str:
@@ -1655,6 +1737,7 @@ def validate_report_business_rules(context: ReviewContext, sections: LlmReviewSe
     enforce_research_boundary(text)
     if "数据质量诊断" not in sections.headline:
         enforce_user_report_language_boundary(text)
+        enforce_external_information_density_boundary(text)
     for blocked_section, forbidden_terms in BLOCKED_SECTION_FORBIDDEN_TERMS.items():
         if blocked_section in context.blocked_sections:
             violations = blocked_section_conclusion_violations(text, forbidden_terms)
@@ -1746,6 +1829,14 @@ def enforce_user_report_language_boundary(text: str) -> None:
     violations = [term for term in HTML_BODY_FORBIDDEN_TERMS if term in text]
     if violations:
         raise ValueError(f"review output exposes internal diagnostics in user sections: {violations}")
+
+
+def enforce_external_information_density_boundary(text: str) -> None:
+    """阻断用户正文中的低信息外部背景套话。"""
+
+    violations = [phrase for phrase in LOW_INFORMATION_EXTERNAL_PHRASES if phrase in text]
+    if violations:
+        raise ValueError(f"review output contains low-information external background language: {violations}")
 
 
 def blocked_section_conclusion_violations(text: str, terms: tuple[str, ...]) -> list[str]:
