@@ -2,6 +2,8 @@
 
 本文档用于 review `a-share-daily-review` skill 的 v2 重构方案。当前仓库已有 `daily-review` CLI、源 skill、HTML 输出、用户指南、黄金测试集和 Promptfoo 配置；旧版 HTML 报告由 Python 直接拼接生成，机器元数据暴露在正文首屏，缺少 LLM 分析表达层。本次重构目标是把“确定性证据和运行时护栏”与“用户可读分析报告”拆开。当前仓库已按本文档完成 v2 实施，本文档同时保留目标、验收条件和已运行验证记录。
 
+> 后续修正：角色化报告改造以 `docs/a-share-daily-review-role-based-report-plan.md` 为准。该改造要求 HTML 主报告面向普通投资者，不在正文展示 `blocked_sections`、source key 或接口错误；这些技术细节改写入同目录 `a-share-daily-review-data-notes.md`。
+
 ## 背景和问题
 
 当前每日数据刷新入口是仓库公开 CLI：

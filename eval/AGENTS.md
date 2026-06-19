@@ -14,7 +14,7 @@
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
 - `promptfooconfig.yaml`：每日复盘 skill 的 Promptfoo 配置草案，读取 docs 下的黄金测试集。
-- `providers/`：Promptfoo 本地 provider 目录；本地 fixture 覆盖 passed、partial、skipped、failed、missing 和刷新契约场景。
+- `providers/`：Promptfoo 本地 provider 目录；本地 fixture 覆盖 passed、partial、skipped、failed、missing、HTML 正文边界、技术参考 Markdown 和刷新契约场景。
 
 ## 更新要求
 

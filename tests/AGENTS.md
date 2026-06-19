@@ -16,7 +16,7 @@
 - `test_daily_snapshot_normalization.py`：覆盖主表、涨跌停和龙虎榜标准化逻辑，以及 schema 变化暴露。
 - `test_daily_snapshot_status.py`：覆盖主表失败、增强空结果、增强 schema 变化和整体状态归类。
 - `test_daily_snapshot_outputs.py`：覆盖失败日志、原始落盘、状态报告、每日摘要、DuckDB 重跑替换、交易日门禁和 mock 端到端成功路径。
-- `test_daily_review.py`：覆盖每日复盘研究的 `review-context.json`、Pydantic 校验、LLM sections 校验、HTML 首屏边界、partial 降级、skipped 非交易日阻断、missing 日期阻断、交易建议拒绝和公开 CLI 刷新契约。
+- `test_daily_review.py`：覆盖每日复盘研究的 `review-context.json`、Pydantic 校验、LLM sections 校验、HTML 首屏边界、技术参考 Markdown、partial 降级、skipped 非交易日阻断、missing 日期阻断、交易建议拒绝和公开 CLI 刷新契约。
 - `test_cli.py`：覆盖仓库级 CLI 的 `daily-update` 和 `daily-review` 子命令、参数化日期、非交易日 skipped 退出码、render mode、LLM output 参数和调用函数的参数传递。
 
 ## 更新要求

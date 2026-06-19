@@ -1,6 +1,6 @@
 # A 股每日复盘研究 Skill 用户提示词说明
 
-本文档面向使用者，说明如何让 agent 调用 `a-share-daily-review` skill，基于本仓库已经采集的每日 A 股数据生成 HTML report 或直接返回研究建议。当前 v2 流程是：Python 生成 evidence packet，LLM 生成 sections JSON，Python/Pydantic 校验后渲染 HTML。
+本文档面向使用者，说明如何让 agent 调用 `a-share-daily-review` skill，基于本仓库已经采集的每日 A 股数据生成 HTML report 或直接返回研究建议。当前流程是：Python 生成 evidence packet，LLM 以“策略分析师写给普通投资者”的角色生成 sections JSON，Python/Pydantic 校验后渲染 HTML，并在同目录生成技术参考 Markdown。
 
 ## 这个 agent 能做什么
 
@@ -11,7 +11,7 @@
 - 判断数据状态是 `passed`、`partial`、`skipped`、`failed` 还是 `missing`。
 - 让 LLM 只基于 `review-context.json` 生成 `llm-review-sections.json`。
 - 使用 Python/Pydantic 校验 LLM 输出和业务边界。
-- 在校验通过后生成本地 HTML report，并返回报告路径。
+- 在校验通过后生成本地 HTML report 和技术参考 Markdown，并返回两个路径。
 - 在用户要求“直接给建议”时，返回研究建议、风险观察和待验证问题。
 - 在数据缺失、接口失败或主表不可用时阻断市场结论，提示如何刷新或排查。
 
@@ -44,7 +44,7 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 
 ```text
 调用 a-share-daily-review，读取最近一次 daily run，生成 HTML 复盘报告。
-要求：先生成 review-context.json；LLM 只能基于这个 context 写 sections JSON；最后通过 Python 校验并生成 HTML。报告顶部要说明数据状态和限制，不要裸露机器字段。
+要求：先生成 review-context.json；LLM 只能基于这个 context 写 sections JSON；最后通过 Python 校验并生成 HTML。HTML 按策略分析师写给普通投资者的方式表达，技术状态写入同目录 Markdown，不要在正文裸露机器字段。
 ```
 
 预期结果：
@@ -52,7 +52,8 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 - 生成 `reports/daily-reviews/YYYY-MM-DD/review-context.json`。
 - 生成 `reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json`。
 - 校验通过后生成 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review.html`。
-- 对话中返回 HTML 路径、交易日期、数据状态和关键缺口。
+- 同时生成 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md`。
+- 对话中返回 HTML 路径、技术参考路径、交易日期和研究边界。
 - 不输出交易建议。
 
 ### 指定日期并先刷新数据
@@ -74,15 +75,16 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 
 ```text
 调用 a-share-daily-review，只使用当前仓库已有的 2026-06-18 数据，不刷新接口，生成 HTML 复盘报告。
-重点看市场宽度、涨跌停情绪和龙虎榜异动；如果板块数据缺失，请显式标记 blocked。
+重点看市场宽度、涨跌停情绪和龙虎榜异动；如果板块数据缺失，请用普通投资者能理解的语言说明证据不足，不要在 HTML 正文写接口名或 blocked 字段。
 ```
 
 预期结果：
 
 - 不调用每日更新 CLI。
 - 使用指定日期已有 artifacts。
-- HTML 中清楚展示使用了哪些数据、哪些章节被阻断。
-- 如果 `board_snapshot` blocked，报告不能写板块主线或领涨板块结论。
+- HTML 主报告呈现可用市场事实、情绪线索、风险含义和后续验证问题。
+- 如果板块证据不足，报告不能写板块主线或领涨板块结论。
+- 技术参考 Markdown 记录 `data_status`、`blocked_sections`、失败接口和排障建议。
 
 ## 直接获取研究建议
 
@@ -157,7 +159,7 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 
 ## 输出选择
 
-- 需要给别人 review：要求 `output_format=html`，但仍按 context -> LLM sections -> validator -> HTML 流程。
+- 需要给普通读者 review：要求 `output_format=html`，按 context -> LLM sections -> validator -> HTML + 技术 Markdown 流程。
 - 自己快速看结论：要求“直接给研究建议”或 `output_format=inline`。
 - 只准备证据包：要求 `output_format=context`。
 - 本地 fixture 或评测：可以用 `--render-mode deterministic`。
@@ -175,9 +177,9 @@ focus: <市场宽度/情绪/龙虎榜/板块/风险/数据质量>
 要求：
 1. 先生成 review-context.json。
 2. LLM 只能引用 review-context.json。
-3. 如果状态不是 passed，在顶部说明限制。
+3. HTML 按策略分析师写给普通投资者的口吻输出，技术状态写入同目录 Markdown。
 4. 不要输出买卖、仓位、目标价或实盘建议。
-5. HTML report 需要返回本地文件路径。
+5. HTML report 和技术参考 Markdown 都需要返回本地文件路径。
 ```
 
 ## 常见误区
@@ -185,6 +187,7 @@ focus: <市场宽度/情绪/龙虎榜/板块/风险/数据质量>
 - “直接给建议”不是“给交易建议”；agent 只能给研究建议和待验证问题。
 - 单日数据不能支持历史趋势和胜率结论。
 - 增强接口失败时，不能用主表数据补写龙虎榜、涨跌停或板块结论。
+- 普通 HTML 报告不应出现 `blocked_sections`、接口名、连接错误或 `strong_limit_up` 这类原始分类编码；这些内容属于技术参考 Markdown。
 - 如果用户指定日期，不应自动改用其他日期。
 - 如果需要刷新数据，必须通过 `python -m a_share_info_hub daily-update`，不要 hard code 脚本路径。
 - Promptfoo 是黄金测试和回归评测工具，不是普通用户生成日报时的必经步骤。

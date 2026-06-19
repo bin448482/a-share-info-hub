@@ -177,8 +177,36 @@ class AShareDailyReviewProvider {
     );
     let output = `${result.stdout || ""}${result.stderr || ""}`.trim();
     const artifactMatch = output.match(/report_artifact:\s*(.+a-share-daily-review\.html)/);
+    const notesMatch = output.match(/data_notes_artifact:\s*(.+a-share-daily-review-data-notes\.md)/);
     if (artifactMatch && existsSync(artifactMatch[1].trim())) {
-      output = `${output}\n\n${readFileSync(artifactMatch[1].trim(), "utf8")}`;
+      const html = readFileSync(artifactMatch[1].trim(), "utf8");
+      const forbiddenTerms = [
+        "blocked_sections",
+        "board_snapshot",
+        "stock_board_industry_name_em",
+        "stock_board_concept_name_em",
+        "stock_lhb_detail_em",
+        "stock_lhb_detail_daily_sina",
+        "stock_lhb_jgmmtj_em",
+        "strong_limit_up",
+        "sub_new_limit_up",
+        "previous_limit_up",
+        "broken_board",
+        "limit_down",
+        "data_status: partial",
+        "ConnectionError",
+      ].filter((term) => html.includes(term));
+      output = `${output}\nhtml_forbidden_terms: ${forbiddenTerms.length ? forbiddenTerms.join(",") : "none"}\n\n${html}`;
+    }
+    if (notesMatch && existsSync(notesMatch[1].trim())) {
+      const notes = readFileSync(notesMatch[1].trim(), "utf8");
+      const requiredTerms = [
+        "blocked_sections",
+        "board_snapshot",
+        "stock_board_industry_name_em",
+      ];
+      const hasRequiredDiagnostics = requiredTerms.every((term) => notes.includes(term));
+      output = `${output}\ndata_notes_diagnostics_present: ${hasRequiredDiagnostics ? "true" : "false"}`;
     }
     output = output.replace(/\\/g, "/");
     return {

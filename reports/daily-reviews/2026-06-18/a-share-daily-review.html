@@ -12,15 +12,11 @@
     h1, h2 { margin: 0 0 12px; line-height: 1.3; }
     p { line-height: 1.7; }
     ul { padding-left: 22px; line-height: 1.7; }
-    details { margin-top: 12px; }
     .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 16px; }
     .meta-item { border: 1px solid #e4e7eb; border-radius: 6px; padding: 10px 12px; background: #fbfcfd; }
     .label { display: block; color: #52606d; font-size: 13px; margin-bottom: 4px; }
-    .status { display: inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 700; }
-    .passed { background: #d8f3dc; color: #1b4332; }
-    .partial { background: #fff3bf; color: #7c4a03; }
-    .failed, .missing { background: #ffe3e3; color: #9b1c1c; }
     .notice { border-left: 4px solid #486581; padding-left: 12px; color: #334e68; }
+    .footnote { color: #52606d; font-size: 14px; }
     code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
   </style>
 </head>
@@ -28,50 +24,26 @@
   <main>
     <header>
       <h1>2026-06-18 A 股每日复盘研究</h1>
-      <p class="notice">本报告只引用 review-context.json 中的事实；缺失或 blocked 维度不补推断。</p>
+      <p class="notice">本报告只引用已生成的复盘证据包；详细数据状态和接口说明见同目录技术参考文件。</p>
       <div class="meta">
         <div class="meta-item"><span class="label">交易日期</span>2026-06-18</div>
-        <div class="meta-item"><span class="label">数据状态</span><span class="status partial">partial</span></div>
-        <div class="meta-item"><span class="label">研究用途</span>research only</div>
-        <div class="meta-item"><span class="label">受限维度</span>board_snapshot</div>
+        <div class="meta-item"><span class="label">报告角色</span>策略分析师写给普通投资者</div>
+        <div class="meta-item"><span class="label">报告性质</span>研究复盘</div>
       </div>
       <p>本报告仅用于研究复盘，不构成投资建议。</p>
     </header>
-    <section><h2>摘要</h2><ul><li>本次数据状态为 partial，可做主表、涨跌停情绪、龙虎榜和市场汇总范围内的研究观察。</li><li>主表覆盖 5527 只证券，上涨 2023 只，下跌 3394 只，平盘 110 只，单日宽度偏弱。</li><li>涨跌停情绪池记录 713 条，龙虎榜事件记录 256 条，事件数据可用于后续交叉验证。</li><li>板块快照接口失败，board_snapshot 被列为 blocked，本报告不生成板块结构结论。</li></ul></section>
-    <section><h2>市场宽度观察</h2><p>主表显示 5527 只证券中上涨 2023 只、下跌 3394 只、平盘 110 只；涨幅不低于 9.5% 的样本 136 只，跌幅不低于 9.5% 的样本 24 只；主表成交额合计约 33313.11 亿。这些数字只代表 2026-06-18 已落盘快照，不代表多日趋势。</p></section>
-    <section><h2>情绪与事件观察</h2><p>涨跌停情绪池共有 713 条记录，其中 strong_limit_up 347 条、sub_new_limit_up 135 条、limit_up 91 条、previous_limit_up 86 条、broken_board 42 条、limit_down 12 条；行业记录数靠前的是半导体 68 条、通用设备 54 条、元件 47 条、汽车零部 35 条、光学光电 26 条。龙虎榜事件共有 256 条，来源分布为 stock_lhb_detail_em 102 条、stock_lhb_detail_daily_sina 99 条、stock_lhb_jgmmtj_em 55 条。这些只能作为情绪和事件观察线索，需要后续与个股和连续交易日数据交叉验证。</p></section>
-    <section><h2>板块和结构观察</h2><p>板块快照数据受限：stock_board_industry_name_em 和 stock_board_concept_name_em 均失败，board_snapshot 已被列入 blocked_sections。因此本报告不能生成板块主线、领涨板块或结构确认。</p></section>
-    <section><h2>风险观察</h2><ul><li>数据状态为 partial，不能把本次报告表述为完整复盘。</li><li>board_snapshot 缺失会影响板块和结构观察，相关结论必须保持 blocked。</li><li>涨跌停情绪池和龙虎榜事件只能说明当日已获取记录，不能单独推导持续性。</li><li>主表宽度和成交额来自单日快照，不能直接扩展为历史趋势、胜率或预测。</li></ul></section>
-    <section><h2>下一步研究问题</h2><ul><li>半导体、通用设备、元件等在涨跌停情绪池中记录较多的方向，是否也在主表涨跌分布中呈现同向集中？</li><li>龙虎榜事件与极端涨跌样本是否存在重合，需要按 symbol 做交叉验证。</li><li>板块接口恢复后，board_snapshot 是否会改变本次对结构维度的限制判断？</li><li>后续连续交易日数据是否支持本日情绪观察具备持续性？</li></ul></section>
+    <section><h2>摘要</h2><ul><li>从已获取的全市场快照看，当日下跌家数明显多于上涨家数，市场宽度偏弱，普通投资者应把这一天理解为赚钱效应不足的一天。</li><li>主表覆盖 5527 只证券，上涨 2023 只，下跌 3394 只，平盘 110 只；极端上涨样本仍多于极端下跌样本，说明局部活跃和整体宽度偏弱同时存在。</li><li>涨跌停情绪池记录 713 条，龙虎榜事件记录 256 条，可作为观察活跃方向和事件扰动的线索，但还不能单独证明持续性。</li><li>板块层面的确认依据不足，因此本报告不把涨跌停情绪中的行业集中直接上升为市场主线。</li></ul></section>
+    <section><h2>市场宽度观察</h2><p>主表显示 5527 只证券中上涨 2023 只、下跌 3394 只、平盘 110 只，单日市场宽度偏弱；涨幅不低于 9.5% 的样本 136 只，跌幅不低于 9.5% 的样本 24 只，说明局部强势样本仍然存在，但覆盖面不足以抵消多数个股下跌的压力。主表成交额合计约 33313.11 亿，这只能说明当日快照中的成交规模，不能直接推出多日趋势。</p></section>
+    <section><h2>情绪与事件观察</h2><p>涨跌停情绪池共有 713 条记录，其中强势封板和次新股涨停样本占比较高，普通涨停、昨日涨停延续、开板回封或炸板线索也有一定数量，跌停样本相对较少。行业记录数靠前的是半导体 68 条、通用设备 54 条、元件 47 条、汽车零部 35 条、光学光电 26 条。龙虎榜事件共有 256 条。对普通投资者而言，这些数据更适合作为后续验证的活跃线索：先观察这些方向是否也能在全市场涨跌分布中扩散，再判断事件热度是否具备持续性。</p></section>
+    <section><h2>板块和结构观察</h2><p>板块层面的确认依据不足，因此本报告不把半导体、通用设备、元件等情绪池中靠前的行业直接定义为市场主线。更稳妥的读法是：这些方向在当日事件和涨跌停样本中更活跃，但缺少独立板块层面的确认，结构判断需要保持保守。</p></section>
+    <section><h2>风险观察</h2><ul><li>本报告只基于单日快照，不能直接推出多日趋势、胜率或预测。</li><li>当日下跌家数多于上涨家数，说明普通投资者不能只看局部强势样本，还需要警惕整体宽度偏弱带来的扩散风险。</li><li>涨跌停情绪池和龙虎榜事件只能说明当日已获取记录，不能单独证明持续性。</li><li>板块层面的确认依据不足，任何关于明确主线或领涨结构的判断都需要等待补充数据。</li></ul></section>
+    <section><h2>下一步研究问题</h2><ul><li>半导体、通用设备、元件等活跃方向，是否也在主表涨跌分布中呈现同向集中？</li><li>龙虎榜事件与极端涨跌样本是否存在代码层面的重合？</li><li>后续连续交易日中，下跌家数是否持续高于上涨家数，还是只是单日宽度压力？</li><li>补齐板块层面的确认数据后，情绪池行业集中是否仍能成立？</li></ul></section>
     <section>
       <h2>数据边界</h2>
-      <p>本报告只引用 review-context.json 中的事实；缺失或 blocked 维度不补推断。</p>
-      <details>
-        <summary>查看可审计 metadata</summary>
-        <pre><code>{
-  &quot;schema_version&quot;: &quot;daily_review_report.v1&quot;,
-  &quot;analysis_mode&quot;: &quot;research_only&quot;,
-  &quot;not_investment_advice&quot;: true,
-  &quot;trade_date&quot;: &quot;2026-06-18&quot;,
-  &quot;data_status&quot;: &quot;partial&quot;,
-  &quot;blocked_sections&quot;: [
-    &quot;board_snapshot&quot;
-  ],
-  &quot;data_sources_used&quot;: [
-    &quot;reports\\daily-runs\\2026-06-18\\interface-status.json&quot;,
-    &quot;reports\\daily-runs\\2026-06-18\\daily-data-summary.md&quot;,
-    &quot;data\\normalized\\daily_stock_snapshot.parquet&quot;,
-    &quot;data\\normalized\\limit_pool_events.parquet&quot;,
-    &quot;data\\normalized\\lhb_events.parquet&quot;,
-    &quot;data\\normalized\\market_summary.parquet&quot;,
-    &quot;data\\normalized\\board_snapshot.parquet&quot;,
-    &quot;market.duckdb&quot;
-  ],
-  &quot;render_mode&quot;: &quot;llm&quot;
-}</code></pre>
-      </details>
+      <p>本报告只引用已生成的复盘证据包；详细数据状态和接口说明见同目录技术参考文件。</p>
+      <p class="footnote">详细数据状态和接口说明见同目录技术参考文件。</p>
     </section>
   </main>
-  <script type="application/json" id="review-metadata">{&quot;schema_version&quot;: &quot;daily_review_report.v1&quot;, &quot;analysis_mode&quot;: &quot;research_only&quot;, &quot;not_investment_advice&quot;: true, &quot;trade_date&quot;: &quot;2026-06-18&quot;, &quot;data_status&quot;: &quot;partial&quot;, &quot;blocked_sections&quot;: [&quot;board_snapshot&quot;], &quot;data_sources_used&quot;: [&quot;reports\\daily-runs\\2026-06-18\\interface-status.json&quot;, &quot;reports\\daily-runs\\2026-06-18\\daily-data-summary.md&quot;, &quot;data\\normalized\\daily_stock_snapshot.parquet&quot;, &quot;data\\normalized\\limit_pool_events.parquet&quot;, &quot;data\\normalized\\lhb_events.parquet&quot;, &quot;data\\normalized\\market_summary.parquet&quot;, &quot;data\\normalized\\board_snapshot.parquet&quot;, &quot;market.duckdb&quot;], &quot;render_mode&quot;: &quot;llm&quot;}</script>
+  <script type="application/json" id="review-metadata">{&quot;schema_version&quot;: &quot;daily_review_report.v1&quot;, &quot;analysis_mode&quot;: &quot;research_only&quot;, &quot;not_investment_advice&quot;: true, &quot;trade_date&quot;: &quot;2026-06-18&quot;, &quot;render_mode&quot;: &quot;llm&quot;, &quot;technical_notes&quot;: &quot;a-share-daily-review-data-notes.md&quot;}</script>
 </body>
 </html>

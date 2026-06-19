@@ -100,6 +100,25 @@ BLOCKED_SECTION_FORBIDDEN_TERMS = {
     "market_summary": ("市场汇总确认",),
 }
 
+HTML_BODY_FORBIDDEN_TERMS = (
+    "blocked_sections",
+    "board_snapshot",
+    "stock_board_industry_name_em",
+    "stock_board_concept_name_em",
+    "stock_lhb_detail_em",
+    "stock_lhb_detail_daily_sina",
+    "stock_lhb_jgmmtj_em",
+    "strong_limit_up",
+    "sub_new_limit_up",
+    "previous_limit_up",
+    "broken_board",
+    "limit_down",
+    "data_status: partial",
+    "ConnectionError",
+    "RemoteDisconnected",
+    "Traceback",
+)
+
 
 class SourceHealth(BaseModel):
     """描述单个数据源、文件或存储组件的可用性。"""
@@ -250,6 +269,7 @@ class DailyReviewResult:
     report_artifact: str | None
     output_format: str
     message: str
+    data_notes_artifact: str | None = None
     markdown: str = ""
     html: str = ""
     context_artifact: str | None = None
@@ -415,8 +435,12 @@ def generate_daily_review(
 
     if output_format == OUTPUT_HTML:
         html_report = render_html_review(report)
+        data_notes_artifact = str(daily_review_data_notes_path(output_root, resolved_trade_date))
+        data_notes = render_data_notes_markdown(report, context_path)
+        validate_data_notes_diagnostics(context, data_notes)
         write_html_report(Path(report.report_artifact or ""), html_report)
-        message = render_cli_message(report, context_path)
+        write_data_notes(Path(data_notes_artifact), data_notes)
+        message = render_cli_message(report, context_path, data_notes_artifact)
         return DailyReviewResult(
             analysis_mode=ANALYSIS_MODE,
             not_investment_advice=True,
@@ -427,6 +451,7 @@ def generate_daily_review(
             report_artifact=report.report_artifact,
             output_format=output_format,
             message=message,
+            data_notes_artifact=data_notes_artifact,
             html=html_report,
             context_artifact=str(context_path),
             llm_output_artifact=str(request.llm_output_path) if request.llm_output_path else None,
@@ -909,29 +934,35 @@ def build_deterministic_sections(context: ReviewContext, focus: str | None = Non
 
     is_diagnosis = bool(focus and "诊断" in focus)
     summary = [
-        f"数据状态为 {context.data_status}，报告仅基于 {context.trade_date} 已落盘 artifacts。",
-        "本输出是 deterministic fallback，用于本地验证；正式 skill 路径应使用 LLM sections JSON。",
+        f"本报告由策略分析师面向普通投资者撰写，只基于 {context.trade_date} 已获取的公开市场快照。",
     ]
-    if context.blocked_sections:
-        summary.append(f"blocked_sections: {', '.join(context.blocked_sections)}。")
-    if is_diagnosis:
-        summary.insert(0, "数据质量诊断：先列出阻断项和修复建议，不做市场判断。")
     market_breadth = render_market_breadth_sentence(context)
+    if context.market_breadth.get("status") == "available":
+        summary.append(market_breadth)
+    if context.limit_pool.get("status") == "available" or context.lhb.get("status") == "available":
+        summary.append("涨跌停情绪和龙虎榜事件可作为当日活跃方向线索，但仍需要后续交易日验证。")
+    if context.board_snapshot.get("status") != "available":
+        summary.append("板块层面的确认依据不足，因此不把行业线索直接上升为明确市场主线。")
+    if is_diagnosis:
+        summary.insert(0, "数据质量诊断：先列出可读数据、缺口和修复建议，不做市场判断。")
     sentiment = render_sentiment_sentence(context)
     board = render_board_sentence(context)
-    risks = list(context.issues) or ["未发现阻断项；仍需注意本报告只基于单日快照。"]
-    if "duckdb" in context.blocked_sections:
-        risks.append("DuckDB 不可用时已降级使用 Parquet；查询一致性需要后续复查。")
+    risks = ["本报告只基于单日快照，不能直接推出多日趋势、胜率或预测。"]
     if context.data_status == DATA_STATUS_PARTIAL:
-        risks.append("partial 状态下不能把受限章节写成完整复盘。")
-    risks.append("修复建议：优先复查 blocked_sections 中的接口或重新运行公开 daily-update CLI。")
+        risks.append("部分增强维度的证据不足，因此结构判断需要保持保守。")
+    if "duckdb" in context.blocked_sections:
+        risks.append("本次查询存在本地存储降级，关键结论应优先回到原始快照复核。")
+    if is_diagnosis and context.blocked_sections:
+        risks.append(f"blocked_sections: {', '.join(context.blocked_sections)}。")
+        risks.append("修复建议：优先复查对应接口或重新运行公开 daily-update CLI。")
     follow_up = [
         "研究建议：把本次输出作为观察清单，而不是交易行动清单。",
-        "风险观察：所有受限维度都需要在后续复查前保持 blocked。",
-        "待验证：后续可补充连续交易日数据，再判断观察是否具备持续性。",
+        "后续可把涨跌停集中行业与主表涨跌分布按代码交叉，判断活跃线索是否具备扩散性。",
+        "后续可把龙虎榜事件与极端涨跌样本交叉，区分事件扰动和全市场宽度压力。",
+        "待验证：后续补齐连续交易日数据后，再判断当日情绪观察是否具备持续性。",
     ]
     if focus and "风险" in focus:
-        follow_up.insert(0, "先确认阻断项和数据缺口，再决定哪些观察值得继续跟踪。")
+        follow_up.insert(0, "先确认哪些结论只有单日证据支持，再决定哪些观察值得继续跟踪。")
     return LlmReviewSections(
         headline=f"{context.trade_date} 数据质量诊断" if is_diagnosis else f"{context.trade_date} A 股每日复盘研究",
         summary=summary,
@@ -940,7 +971,7 @@ def build_deterministic_sections(context: ReviewContext, focus: str | None = Non
         board_and_structure_review=board,
         risk_observations=risks,
         follow_up_questions=follow_up,
-        data_boundary_note="本报告只引用 review-context.json 中的事实；缺失或 blocked 维度不补推断。",
+        data_boundary_note="本报告只引用已生成的复盘证据包；详细数据状态和接口说明见同目录技术参考文件。",
         not_investment_advice_note="本报告仅用于研究复盘，不构成投资建议。",
     )
 
@@ -951,10 +982,12 @@ def render_market_breadth_sentence(context: ReviewContext) -> str:
     payload = context.market_breadth
     if payload.get("status") != "available":
         return "主表不可用，不能生成市场宽度观察。"
+    direction = "偏弱" if payload.get("down_count", 0) > payload.get("up_count", 0) else "偏强"
     return (
-        f"主表覆盖 {payload.get('sample_count')} 只证券；上涨 {payload.get('up_count')}，"
-        f"下跌 {payload.get('down_count')}，平盘 {payload.get('flat_count')}；"
-        f"极端上涨样本 {payload.get('extreme_up_count')}，极端下跌样本 {payload.get('extreme_down_count')}。"
+        f"主表覆盖 {payload.get('sample_count')} 只证券，上涨 {payload.get('up_count')} 只，"
+        f"下跌 {payload.get('down_count')} 只，平盘 {payload.get('flat_count')} 只，"
+        f"单日市场宽度{direction}；极端上涨样本 {payload.get('extreme_up_count')} 只，"
+        f"极端下跌样本 {payload.get('extreme_down_count')} 只。"
     )
 
 
@@ -965,21 +998,23 @@ def render_sentiment_sentence(context: ReviewContext) -> str:
     if context.limit_pool.get("status") == "available":
         parts.append(f"涨跌停情绪池记录 {context.limit_pool.get('row_count')} 条")
     elif "limit_pool_events" in context.blocked_sections:
-        parts.append("涨跌停情绪池数据受限，本节不补推断")
+        parts.append("涨跌停情绪池证据不足，本节不补推断")
     if context.lhb.get("status") == "available":
         parts.append(f"龙虎榜事件记录 {context.lhb.get('row_count')} 条")
     elif "lhb_events" in context.blocked_sections:
-        parts.append("龙虎榜数据受限，本节不补推断")
-    return "；".join(parts) + "。" if parts else "情绪与事件数据为空，仅能说明当前表没有可用记录。"
+        parts.append("龙虎榜事件证据不足，本节不补推断")
+    if not parts:
+        return "情绪与事件数据为空，仅能说明当前没有可用记录。"
+    return "；".join(parts) + "。这些线索可用于后续交叉验证，不单独构成趋势判断。"
 
 
 def render_board_sentence(context: ReviewContext) -> str:
     """把板块 payload 转换为 fallback 文本。"""
 
     if "board_snapshot" in context.blocked_sections:
-        return "板块快照数据受限，不能生成板块结构观察。"
+        return "板块层面的确认依据不足，因此本报告不把涨跌停情绪中的行业集中直接上升为市场主线。"
     if context.board_snapshot.get("status") != "available":
-        return "板块快照表为空，仅能说明当前表没有可用记录。"
+        return "板块层面的确认记录为空，因此结构观察保持保守。"
     top_boards = context.board_snapshot.get("top_boards") or []
     if top_boards:
         rendered = ", ".join(f"{item['board_name']}({item['change_pct']:.2f}%)" for item in top_boards)
@@ -1009,6 +1044,8 @@ def validate_report_business_rules(context: ReviewContext, sections: LlmReviewSe
 
     text = sections_to_plain_text(sections)
     enforce_research_boundary(text)
+    if "数据质量诊断" not in sections.headline:
+        enforce_user_report_language_boundary(text)
     for blocked_section, forbidden_terms in BLOCKED_SECTION_FORBIDDEN_TERMS.items():
         if blocked_section in context.blocked_sections:
             violations = blocked_section_conclusion_violations(text, forbidden_terms)
@@ -1042,8 +1079,16 @@ def sections_to_plain_text(sections: LlmReviewSections) -> str:
 def describes_blocked_or_limited_data(text: str) -> bool:
     """判断一段 blocked section 文本是否只是在说明数据缺口。"""
 
-    allowed_markers = ("受限", "缺失", "不能", "不可用", "未获取", "blocked", "不补推断")
+    allowed_markers = ("受限", "缺失", "不能", "不可用", "未获取", "不足", "不补推断")
     return any(marker in text for marker in allowed_markers)
+
+
+def enforce_user_report_language_boundary(text: str) -> None:
+    """阻断用户正文中的内部字段、接口名和技术错误。"""
+
+    violations = [term for term in HTML_BODY_FORBIDDEN_TERMS if term in text]
+    if violations:
+        raise ValueError(f"review output exposes internal diagnostics in user sections: {violations}")
 
 
 def blocked_section_conclusion_violations(text: str, terms: tuple[str, ...]) -> list[str]:
@@ -1289,7 +1334,7 @@ def render_trade_action_refusal(trade_date: str | None) -> DailyReviewResult:
     )
 
 
-def render_cli_message(report: ValidatedReviewReport, context_path: Path) -> str:
+def render_cli_message(report: ValidatedReviewReport, context_path: Path, data_notes_artifact: str | None = None) -> str:
     """生成 CLI 面向用户的简短输出。"""
 
     return "\n".join(
@@ -1301,9 +1346,11 @@ def render_cli_message(report: ValidatedReviewReport, context_path: Path) -> str
             f"context_artifact: {context_path}",
             f"blocked_sections: {json.dumps(report.context.blocked_sections, ensure_ascii=False)}",
             f"report_artifact: {report.report_artifact or 'null'}",
+            f"data_notes_artifact: {data_notes_artifact or 'null'}",
             f"render_mode: {report.render_mode}",
             "",
             f"HTML report: {report.report_artifact}",
+            f"Data notes: {data_notes_artifact or 'null'}",
             "本报告是研究复盘，不构成投资建议。",
         ]
     )
@@ -1353,14 +1400,10 @@ def render_html_review(report: ValidatedReviewReport) -> str:
         "analysis_mode": context.analysis_mode,
         "not_investment_advice": context.not_investment_advice,
         "trade_date": context.trade_date,
-        "data_status": context.data_status,
-        "blocked_sections": context.blocked_sections,
-        "data_sources_used": context.data_sources_used,
         "render_mode": report.render_mode,
+        "technical_notes": "a-share-daily-review-data-notes.md",
     }
     metadata_json = json.dumps(metadata, ensure_ascii=False)
-    status_class = html.escape(context.data_status)
-    blocked = ", ".join(context.blocked_sections) if context.blocked_sections else "无"
     return f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -1375,15 +1418,11 @@ def render_html_review(report: ValidatedReviewReport) -> str:
     h1, h2 {{ margin: 0 0 12px; line-height: 1.3; }}
     p {{ line-height: 1.7; }}
     ul {{ padding-left: 22px; line-height: 1.7; }}
-    details {{ margin-top: 12px; }}
     .meta {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 16px; }}
     .meta-item {{ border: 1px solid #e4e7eb; border-radius: 6px; padding: 10px 12px; background: #fbfcfd; }}
     .label {{ display: block; color: #52606d; font-size: 13px; margin-bottom: 4px; }}
-    .status {{ display: inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 700; }}
-    .passed {{ background: #d8f3dc; color: #1b4332; }}
-    .partial {{ background: #fff3bf; color: #7c4a03; }}
-    .failed, .missing {{ background: #ffe3e3; color: #9b1c1c; }}
     .notice {{ border-left: 4px solid #486581; padding-left: 12px; color: #334e68; }}
+    .footnote {{ color: #52606d; font-size: 14px; }}
     code {{ background: #eef2f7; padding: 2px 5px; border-radius: 4px; }}
   </style>
 </head>
@@ -1394,9 +1433,8 @@ def render_html_review(report: ValidatedReviewReport) -> str:
       <p class="notice">{html.escape(sections.data_boundary_note)}</p>
       <div class="meta">
         <div class="meta-item"><span class="label">交易日期</span>{html.escape(context.trade_date)}</div>
-        <div class="meta-item"><span class="label">数据状态</span><span class="status {status_class}">{html.escape(context.data_status)}</span></div>
-        <div class="meta-item"><span class="label">研究用途</span>research only</div>
-        <div class="meta-item"><span class="label">受限维度</span>{html.escape(blocked)}</div>
+        <div class="meta-item"><span class="label">报告角色</span>策略分析师写给普通投资者</div>
+        <div class="meta-item"><span class="label">报告性质</span>研究复盘</div>
       </div>
       <p>{html.escape(sections.not_investment_advice_note)}</p>
     </header>
@@ -1409,16 +1447,114 @@ def render_html_review(report: ValidatedReviewReport) -> str:
     <section>
       <h2>数据边界</h2>
       <p>{html.escape(sections.data_boundary_note)}</p>
-      <details>
-        <summary>查看可审计 metadata</summary>
-        <pre><code>{html.escape(json.dumps(metadata, ensure_ascii=False, indent=2))}</code></pre>
-      </details>
+      <p class="footnote">详细数据状态和接口说明见同目录技术参考文件。</p>
     </section>
   </main>
   <script type="application/json" id="review-metadata">{html.escape(metadata_json)}</script>
 </body>
 </html>
 """
+
+
+def render_data_notes_markdown(report: ValidatedReviewReport, context_path: Path) -> str:
+    """渲染面向开发者和 agent 排障的技术参考 Markdown。"""
+
+    context = report.context
+    lines = [
+        f"# {context.trade_date} A 股每日复盘技术参考",
+        "",
+        "本文档记录主报告隐藏的技术状态、接口失败和数据来源，供 review、排障和后续重跑使用。",
+        "",
+        "## 运行状态",
+        "",
+        f"- trade_date: {context.trade_date}",
+        f"- data_status: {context.data_status}",
+        f"- analysis_mode: {context.analysis_mode}",
+        f"- not_investment_advice: {str(context.not_investment_advice).lower()}",
+        f"- context_artifact: {context_path}",
+        f"- blocked_sections: {json.dumps(context.blocked_sections, ensure_ascii=False)}",
+        f"- render_mode: {report.render_mode}",
+        "",
+        "## 数据来源",
+        "",
+        *render_bullets(context.data_sources_used or ["无"]),
+        "",
+        "## 接口和表状态",
+        "",
+        "| 名称 | 分类 | 状态 | 行数 | 问题 |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for key, item in sorted(context.source_health.items()):
+        row_count = "" if item.row_count is None else str(item.row_count)
+        issue = item.issue or ""
+        lines.append(
+            f"| {escape_markdown_table(key)} | {escape_markdown_table(item.category)} | "
+            f"{escape_markdown_table(item.status)} | {escape_markdown_table(row_count)} | "
+            f"{escape_markdown_table(issue)} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## 原始分类统计",
+            "",
+            "### 涨跌停情绪池分类",
+            "",
+            *render_key_value_bullets(context.limit_pool.get("pool_type_counts")),
+            "",
+            "### 龙虎榜事件来源",
+            "",
+            *render_key_value_bullets(context.lhb.get("event_type_counts")),
+        ]
+    )
+    lines.extend(
+        [
+            "",
+            "## 诊断问题",
+            "",
+            *render_bullets(context.issues or ["未记录诊断问题。"]),
+            "",
+            "## 修复建议",
+            "",
+            f"- 如需重跑数据采集，使用：`{render_public_daily_update_command(context.trade_date)}`",
+            "- 修复或重跑后重新生成 `review-context.json`，再让 LLM 基于新的 context 生成 sections JSON。",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def render_key_value_bullets(values: Any) -> list[str]:
+    """把字典型技术统计渲染为 Markdown bullet。"""
+
+    if not isinstance(values, dict) or not values:
+        return ["- 无"]
+    return [f"- {key}: {value}" for key, value in values.items()]
+
+
+def validate_data_notes_diagnostics(context: ReviewContext, data_notes: str) -> None:
+    """确保技术参考 Markdown 保留主报告外置的关键诊断信息。"""
+
+    required_terms = ["data_status:", "数据来源", "接口和表状态"]
+    if context.blocked_sections:
+        required_terms.append("blocked_sections:")
+        required_terms.extend(context.blocked_sections)
+    for issue in context.issues:
+        required_terms.append(issue)
+    for payload_key in ("pool_type_counts",):
+        payload = context.limit_pool.get(payload_key)
+        if isinstance(payload, dict):
+            required_terms.extend(str(key) for key in payload.keys())
+    payload = context.lhb.get("event_type_counts")
+    if isinstance(payload, dict):
+        required_terms.extend(str(key) for key in payload.keys())
+    missing_terms = [term for term in required_terms if term not in data_notes]
+    if missing_terms:
+        raise ValueError(f"technical data notes missing diagnostics: {missing_terms}")
+
+
+def escape_markdown_table(value: str) -> str:
+    """转义 Markdown 表格单元格中会破坏列结构的字符。"""
+
+    return value.replace("|", "\\|").replace("\n", " ")
 
 
 def render_html_section(title: str, body: str) -> str:
@@ -1448,12 +1584,27 @@ def daily_review_report_path(output_root: Path, trade_date: str) -> Path:
     return report_dir / "a-share-daily-review.html"
 
 
+def daily_review_data_notes_path(output_root: Path, trade_date: str) -> Path:
+    """计算指定交易日每日复盘技术参考 Markdown 路径。"""
+
+    report_dir = output_root / "reports" / "daily-reviews" / trade_date
+    return report_dir / "a-share-daily-review-data-notes.md"
+
+
 def write_html_report(report_path: Path, content: str) -> Path:
     """写入每日复盘 HTML 报告并返回本地路径。"""
 
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(content, encoding="utf-8")
     return report_path
+
+
+def write_data_notes(notes_path: Path, content: str) -> Path:
+    """写入每日复盘技术参考 Markdown 并返回本地路径。"""
+
+    notes_path.parent.mkdir(parents=True, exist_ok=True)
+    notes_path.write_text(content, encoding="utf-8")
+    return notes_path
 
 
 def render_bullets(items: list[str]) -> list[str]:

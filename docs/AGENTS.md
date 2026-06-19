@@ -13,7 +13,8 @@
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
 - `a-share-daily-review-skill-golden-testset.jsonl`：每日复盘研究 skill 的 v2 黄金测试集，用于覆盖 context、HTML 输出、数据状态降级、CLI 契约、HTML 机器字段边界和非交易建议边界。
 - `a-share-daily-review-skill-golden-testset.md`：每日复盘研究 skill 的黄金测试集说明和开源评测框架选型，当前推荐 Promptfoo 作为回归评测层，DeepEval 作为后续 Python/LLM 组件评测方案；已与 `eval/` 配置对齐。
-- `a-share-daily-review-skill-implementation-plan.md`：每日复盘研究 skill 的 v2 重构实施计划，定义 evidence packet、LLM 分析层、Pydantic 运行时校验、HTML 封装和 Promptfoo 回归评测边界。
+- `a-share-daily-review-skill-implementation-plan.md`：每日复盘研究 skill 的 v2 重构实施计划，定义 evidence packet、LLM 分析层、Pydantic 运行时校验、HTML 封装和 Promptfoo 回归评测边界；角色化报告细节以后续改造计划为准。
+- `a-share-daily-review-role-based-report-plan.md`：每日复盘报告角色化改造计划，定义策略分析师到普通投资者的写作角色、HTML 正文与技术 Markdown 拆分、prompt/validator/eval 调整、目标达成条件和验收标准。
 - `a-share-daily-review-skill-user-guide.md`：每日复盘研究 skill 的用户提示词说明，介绍 agent 调用 skill 的能力、context -> LLM sections -> validator -> HTML 流程、适用场景和直接研究建议提示词；与当前 CLI 用法对齐。
 - `daily-data-contract-implementation-plan.md`：可验证每日数据契约报告的实施计划，重点是 AKShare 今日能力探测、历史回溯和契约生成。
 - `daily-snapshot-data-design.md`：每日 A 股快照数据设计，定义主表、增强数据、存储结构、去重关联和 v1 不做事项。

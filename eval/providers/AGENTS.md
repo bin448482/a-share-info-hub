@@ -11,7 +11,7 @@
 
 - `AGENTS.md`：本目录索引和维护规则。
 - `claude.md`：Claude/Codex 入口引用文件，内容固定为 `@agents.md`。
-- `run-a-share-daily-review.js`：Promptfoo 本地 provider，创建隔离 fixture，调用 `python -m a_share_info_hub daily-review --user-prompt ... --render-mode deterministic` 并返回输出。
+- `run-a-share-daily-review.js`：Promptfoo 本地 provider，创建隔离 fixture，调用 `python -m a_share_info_hub daily-review --user-prompt ... --render-mode deterministic`，并返回 HTML 正文边界和技术参考 Markdown 诊断审计结果。
 
 ## 更新要求
 
