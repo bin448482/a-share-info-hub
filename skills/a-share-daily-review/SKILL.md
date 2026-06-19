@@ -50,7 +50,7 @@ not_investment_advice: true
 
 If data status is `failed` or `missing`, do not generate market conclusions. If status is `partial`, keep the HTML report user-readable and do not infer from missing data; record blocked sections and interface failures in the technical notes.
 
-HTML reports are written by the role of a strategy analyst for ordinary investors. Do not expose raw machine lines or internal diagnostics such as `analysis_mode:`, `data_status:`, `blocked_sections`, `board_snapshot`, source function names, raw enum codes like `strong_limit_up`, or connection errors in the report body; keep those details in the embedded metadata or technical notes.
+HTML reports are written by the role of a strategy analyst for ordinary investors. The report body must include `1.1 大盘` with `大盘定性` and `大盘结构`. Do not expose raw machine lines or internal diagnostics such as `analysis_mode:`, `data_status:`, `blocked_sections`, `board_snapshot`, source function names, raw enum codes like `strong_limit_up`, or connection errors in the report body; keep those details in the embedded metadata or technical notes.
 
 ## Reference
 

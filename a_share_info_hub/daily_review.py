@@ -185,6 +185,8 @@ class LlmReviewSections(BaseModel):
     schema_version: Literal["daily_review_sections.v1"] = SECTIONS_SCHEMA_VERSION
     headline: str
     summary: list[str] = Field(default_factory=list)
+    market_overview_assessment: str = ""
+    market_overview_structure: str = ""
     market_breadth_review: str = ""
     sentiment_and_events_review: str = ""
     board_and_structure_review: str = ""
@@ -201,6 +203,10 @@ class LlmReviewSections(BaseModel):
             raise ValueError("headline is required")
         if not self.summary:
             raise ValueError("summary must not be empty")
+        if not self.market_overview_assessment.strip():
+            raise ValueError("market_overview_assessment is required")
+        if not self.market_overview_structure.strip():
+            raise ValueError("market_overview_structure is required")
         if not self.risk_observations:
             raise ValueError("risk_observations must not be empty")
         if not self.follow_up_questions:
@@ -966,6 +972,8 @@ def build_deterministic_sections(context: ReviewContext, focus: str | None = Non
     return LlmReviewSections(
         headline=f"{context.trade_date} 数据质量诊断" if is_diagnosis else f"{context.trade_date} A 股每日复盘研究",
         summary=summary,
+        market_overview_assessment=render_market_overview_assessment(context),
+        market_overview_structure=render_market_overview_structure(context),
         market_breadth_review=market_breadth,
         sentiment_and_events_review=sentiment,
         board_and_structure_review=board,
@@ -973,6 +981,50 @@ def build_deterministic_sections(context: ReviewContext, focus: str | None = Non
         follow_up_questions=follow_up,
         data_boundary_note="本报告只引用已生成的复盘证据包；详细数据状态和接口说明见同目录技术参考文件。",
         not_investment_advice_note="本报告仅用于研究复盘，不构成投资建议。",
+    )
+
+
+def render_market_overview_assessment(context: ReviewContext) -> str:
+    """生成每日复盘中“1.1 大盘 / 大盘定性”的 fallback 文本。"""
+
+    payload = context.market_breadth
+    if payload.get("status") != "available":
+        return "主表证据不足，不能给出大盘定性判断。"
+    up_count = payload.get("up_count", 0)
+    down_count = payload.get("down_count", 0)
+    flat_count = payload.get("flat_count", 0)
+    direction = "偏弱" if down_count > up_count else "偏强"
+    return (
+        f"从已获取的全市场快照看，主表覆盖 {payload.get('sample_count')} 只证券，"
+        f"上涨 {up_count} 只、下跌 {down_count} 只、平盘 {flat_count} 只，"
+        f"大盘定性为单日宽度{direction}。这个判断只反映当日横截面，不代表多日趋势。"
+    )
+
+
+def render_market_overview_structure(context: ReviewContext) -> str:
+    """生成每日复盘中“1.1 大盘 / 大盘结构”的 fallback 文本。"""
+
+    payload = context.market_breadth
+    if payload.get("status") != "available":
+        return "主表证据不足，不能展开大盘结构判断。"
+    up_count = payload.get("up_count", 0)
+    down_count = payload.get("down_count", 0)
+    extreme_up_count = payload.get("extreme_up_count", 0)
+    extreme_down_count = payload.get("extreme_down_count", 0)
+    if down_count > up_count:
+        structure = "多数个股承压、局部强势仍在的分化结构"
+    elif up_count > down_count:
+        structure = "上涨覆盖面更占优、但仍需要观察扩散质量的结构"
+    else:
+        structure = "涨跌分布接近均衡、方向感不强的结构"
+    boundary = (
+        "板块层面的确认依据不足，相关结构判断保持保守。"
+        if "board_snapshot" in context.blocked_sections
+        else "板块快照可作为结构参考，但仍需要后续交易日交叉验证。"
+    )
+    return (
+        f"大盘结构呈现{structure}；极端上涨样本 {extreme_up_count} 只，"
+        f"极端下跌样本 {extreme_down_count} 只，说明强弱样本同时存在。{boundary}"
     )
 
 
@@ -1065,6 +1117,8 @@ def sections_to_plain_text(sections: LlmReviewSections) -> str:
     parts = [
         sections.headline,
         *sections.summary,
+        sections.market_overview_assessment,
+        sections.market_overview_structure,
         sections.market_breadth_review,
         sections.sentiment_and_events_review,
         sections.board_and_structure_review,
@@ -1366,6 +1420,13 @@ def render_markdown_from_report(report: ValidatedReviewReport) -> str:
         "## 摘要",
         *render_bullets(sections.summary),
         "",
+        "## 1.1 大盘",
+        "### 大盘定性",
+        sections.market_overview_assessment,
+        "",
+        "### 大盘结构",
+        sections.market_overview_structure,
+        "",
         "## 市场宽度观察",
         sections.market_breadth_review,
         "",
@@ -1416,6 +1477,7 @@ def render_html_review(report: ValidatedReviewReport) -> str:
     header {{ background: #ffffff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 22px; margin-bottom: 18px; }}
     section {{ background: #ffffff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px 20px; margin: 14px 0; }}
     h1, h2 {{ margin: 0 0 12px; line-height: 1.3; }}
+    h3 {{ margin: 14px 0 6px; line-height: 1.35; }}
     p {{ line-height: 1.7; }}
     ul {{ padding-left: 22px; line-height: 1.7; }}
     .meta {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 16px; }}
@@ -1439,6 +1501,7 @@ def render_html_review(report: ValidatedReviewReport) -> str:
       <p>{html.escape(sections.not_investment_advice_note)}</p>
     </header>
     {render_html_section("摘要", render_list_html(sections.summary))}
+    {render_market_overview_html(sections)}
     {render_html_section("市场宽度观察", render_paragraph_html(sections.market_breadth_review))}
     {render_html_section("情绪与事件观察", render_paragraph_html(sections.sentiment_and_events_review))}
     {render_html_section("板块和结构观察", render_paragraph_html(sections.board_and_structure_review))}
@@ -1561,6 +1624,20 @@ def render_html_section(title: str, body: str) -> str:
     """渲染单个 HTML section。"""
 
     return f"<section><h2>{html.escape(title)}</h2>{body}</section>"
+
+
+def render_market_overview_html(sections: LlmReviewSections) -> str:
+    """渲染每日复盘固定的“1.1 大盘”HTML section。"""
+
+    return (
+        "<section>"
+        "<h2>1.1 大盘</h2>"
+        "<h3>大盘定性</h3>"
+        f"{render_paragraph_html(sections.market_overview_assessment)}"
+        "<h3>大盘结构</h3>"
+        f"{render_paragraph_html(sections.market_overview_structure)}"
+        "</section>"
+    )
 
 
 def render_paragraph_html(text: str) -> str:

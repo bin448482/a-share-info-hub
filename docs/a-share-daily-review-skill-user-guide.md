@@ -53,6 +53,7 @@ python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
 - 生成 `reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json`。
 - 校验通过后生成 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review.html`。
 - 同时生成 `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md`。
+- HTML 正文包含 `1.1 大盘`，并分出 `大盘定性` 和 `大盘结构`。
 - 对话中返回 HTML 路径、技术参考路径、交易日期和研究边界。
 - 不输出交易建议。
 

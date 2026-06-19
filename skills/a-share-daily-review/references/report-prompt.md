@@ -36,6 +36,8 @@
   "schema_version": "daily_review_sections.v1",
   "headline": "",
   "summary": [],
+  "market_overview_assessment": "",
+  "market_overview_structure": "",
   "market_breadth_review": "",
   "sentiment_and_events_review": "",
   "board_and_structure_review": "",
@@ -51,6 +53,8 @@
 - 使用中文。
 - 保持策略分析师写给普通投资者的研究复盘口吻，不输出交易动作。
 - `summary` 写 2-4 条，优先说明市场宽度、情绪线索、结构证据和风险含义，不复述内部状态。
+- `market_overview_assessment` 是 HTML 中 `1.1 大盘 / 大盘定性` 的正文，必须用普通投资者能理解的语言给出当日大盘横截面定性；只能基于 `market_breadth`，不能写指数点位或指数涨跌，除非 context 明确提供。
+- `market_overview_structure` 是 HTML 中 `1.1 大盘 / 大盘结构` 的正文，必须说明上涨/下跌覆盖面、极端样本和结构分化；可以结合 `limit_pool`、`lhb` 的活跃线索和 `board_snapshot` 的证据边界，但不能把缺失板块数据补推断成主线结论。
 - `market_breadth_review` 只能基于 `market_breadth`。
 - `sentiment_and_events_review` 只能基于 `limit_pool`、`lhb` 和 `market_summary` 中可用的部分。
 - `board_and_structure_review` 只能基于 `board_snapshot`。如果板块维度证据不足，只能用读者语言说明“板块层面的确认依据不足”，不能写板块主线、领涨板块或结构确认。

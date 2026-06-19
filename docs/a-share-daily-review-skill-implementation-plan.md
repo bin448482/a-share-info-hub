@@ -174,6 +174,8 @@ LLM 输出建议采用 JSON，而不是自由 Markdown。推荐字段：
 {
   "headline": "",
   "summary": [],
+  "market_overview_assessment": "",
+  "market_overview_structure": "",
   "market_breadth_review": "",
   "sentiment_and_events_review": "",
   "board_and_structure_review": "",
@@ -187,6 +189,7 @@ LLM 输出建议采用 JSON，而不是自由 Markdown。推荐字段：
 要求：
 
 - LLM 不允许输出买卖、仓位、目标价、止盈止损或实盘行动建议。
+- LLM 必须输出 `market_overview_assessment` 和 `market_overview_structure`，分别用于 HTML 中的 `1.1 大盘 / 大盘定性` 和 `1.1 大盘 / 大盘结构`。
 - LLM 不允许声称完整复盘，除非 `data_status=passed`。
 - LLM 不允许分析 `blocked_sections` 中被阻断的维度。
 - LLM 必须明确说明 `partial`、`skipped`、`failed`、`missing` 的数据限制。

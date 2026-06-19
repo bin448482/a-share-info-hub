@@ -104,3 +104,5 @@ python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --render-mode 
 正式用户报告应使用 `$a-share-daily-review` 的 evidence packet + LLM sections + Python/Pydantic validator 流程。该 skill 只输出研究复盘、风险观察和待验证问题；不提供买卖、仓位、目标价或止盈止损建议。
 
 HTML 报告默认按“策略分析师写给普通投资者”的方式表达，只展示可读的市场观察和证据边界；接口失败、`data_status`、`blocked_sections`、source key、原始分类编码和排障建议写入同目录 `a-share-daily-review-data-notes.md`。
+
+每日复盘正文固定包含 `1.1 大盘`，其中 `大盘定性` 解释当日全市场宽度，`大盘结构` 解释上涨/下跌覆盖面、极端样本和结构证据边界。

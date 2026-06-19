@@ -73,6 +73,9 @@
 HTML 正文默认包含：
 
 - 摘要。
+- `1.1 大盘`。
+  - `大盘定性`：基于全市场宽度给出当日横截面定性，不写指数点位或技术字段。
+  - `大盘结构`：解释上涨/下跌覆盖面、极端样本和结构分化，同时保留板块证据边界。
 - 市场宽度观察。
 - 情绪与事件观察。
 - 板块和结构观察。
@@ -203,6 +206,7 @@ python C:/Users/zhanb.BIINN/.codex/skills/.system/skill-creator/scripts/quick_va
    - 使用 `2026-06-18` 这类 `partial` 样本重新生成报告。
    - 新 HTML 正文不再出现 `blocked_sections`、`board_snapshot`、`stock_board_industry_name_em`、`stock_board_concept_name_em`、`ConnectionError`。
    - 新 HTML 正文不再出现 `strong_limit_up`、`sub_new_limit_up`、`previous_limit_up`、`broken_board`、`stock_lhb_detail_em` 等原始分类编码。
+   - 新 HTML 正文包含 `1.1 大盘`，并在其中清晰分出 `大盘定性` 和 `大盘结构`。
    - 新 HTML 正文仍包含主表覆盖、上涨/下跌/平盘、市场宽度、涨跌停情绪、龙虎榜事件和板块证据不足的用户可读表达。
    - 新技术参考 Markdown 包含被 HTML 隐藏的 `data_status`、`blocked_sections`、失败接口、失败原因、原始分类编码、数据来源和重跑/排障建议。
 
@@ -240,3 +244,4 @@ python C:/Users/zhanb.BIINN/.codex/skills/.system/skill-creator/scripts/quick_va
 - `reports/daily-reviews/2026-06-18/a-share-daily-review.html` 已重新生成，正文包含角色化复盘、主表宽度、情绪事件和板块证据不足表达。
 - `reports/daily-reviews/2026-06-18/a-share-daily-review-data-notes.md` 已生成，记录 `data_status`、`blocked_sections`、失败接口、失败原因、数据来源和重跑建议。
 - 追加修正：HTML 正文已禁止 `strong_limit_up`、`sub_new_limit_up`、`previous_limit_up`、`broken_board`、`stock_lhb_detail_em` 等原始分类编码；这些编码已写入技术参考 Markdown 的“原始分类统计”。
+- 追加修正：每日复盘正文新增 `1.1 大盘`，并固定包含 `大盘定性` 与 `大盘结构` 两个子项；LLM sections schema、prompt、pytest 和 Promptfoo golden set 均已同步该要求。
