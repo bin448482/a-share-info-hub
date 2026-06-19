@@ -323,20 +323,18 @@ rg -n "AgentCommandTopicRunner|--runner agent|--runner fixture|external_backgrou
 
 ## 当前状态记录
 
-截至 2026-06-19 本次实施后：
+截至 2026-06-19 本次清理后：
 
-- 第一阶段已完成 Python 渲染层：`daily-review` 可以读取 external background JSON，HTML 不再渲染独立外部背景章节。
-- 第二阶段 Python helper 已保留，但定位已改为 fixture/validation helper：`external_background.py` 能抽 topic、跑 fixture runner、生成 fusion JSON，并在 CLI 审计输出中标记 `external_background_source: fixture_smoke`。
+- 第一阶段 Python 渲染层已完成：`daily-review` 可以读取 external background JSON，HTML 不再渲染独立外部背景章节。
+- 第二阶段 Python helper（`external_background.py`、`daily-review-external-background` CLI 子命令、`test_external_background_orchestration.py`）已移除。生产编排不应在 Python 层通过 `ThreadPoolExecutor + TopicRunner` 实现。
 - 第三阶段已实施：`skills/a-share-daily-review/SKILL.md` 和 `skills/a-share-daily-review/references/daily-review-workflow.md` 已把生产外部背景获取改为父 agent spawn 6 个并行子 Agent；每个子 Agent 独立使用 `$daily-financial-briefing` 并返回 `TopicResult` JSON。
 - README、用户指南、黄金测试说明、Promptfoo provider 和目录索引已同步区分 `parallel_agent_skill`、`fixture_smoke` 和 legacy compatibility。
 - `daily-review --external-background reports/daily-reviews/2026-06-18/external-background-fusion.json --llm-output reports/daily-reviews/2026-06-18/llm-review-sections.json --output-format html` 已能消费 fusion JSON 并生成 HTML。
-- 当前 2026-06-18 样例产物仍是 fixture helper 验证样例，不代表真实同日外部抓取或真实 `$daily-financial-briefing` 调用。
+- Promptfoo provider 对 `parallel_agent_skill` 和 `fixture_smoke` 用例改为直接写 fusion JSON fixture，不再通过 Python CLI 子命令编排。
 
 本次验证结果：
 
-- `.venv\Scripts\python.exe -m py_compile a_share_info_hub\__main__.py a_share_info_hub\daily_review.py a_share_info_hub\external_background.py`：通过。
-- `.venv\Scripts\python.exe -m pytest tests -q`：53 passed。
-- `npm run eval:a-share-daily-review`：14/14 passed。
-- `python C:/Users/zhanb.BIINN/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/a-share-daily-review`：通过。
-- `python C:/Users/zhanb.BIINN/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/daily-financial-briefing`：通过。
+- `.venv\Scripts\python.exe -m py_compile a_share_info_hub\__main__.py a_share_info_hub\daily_review.py`：通过。
+- `.venv\Scripts\python.exe -m pytest tests -q`：待运行。
+- `npm run eval:a-share-daily-review`：待运行。
 - 使用项目 `.venv` 运行 `quick_validate.py` 会因该虚拟环境未安装 `PyYAML` 失败；全局 Python 已验证 skill frontmatter 有效。

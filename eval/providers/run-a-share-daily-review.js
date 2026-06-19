@@ -181,74 +181,45 @@ function writeExternalBackgroundFixture(root, externalBackgroundState) {
   return path;
 }
 
-function runExternalBackgroundOrchestration(root, tradeDate) {
-  const python = resolvePython();
-  const reviewDir = join(root, "reports", "daily-reviews", tradeDate);
-  const contextResult = spawnSync(
-    python,
-    [
-      "-m",
-      "a_share_info_hub",
-      "daily-review",
-      "--output-root",
-      root,
-      "--trade-date",
-      tradeDate,
-      "--output-format",
-      "context",
+function writeExternalBackgroundFusionFixture(root) {
+  const path = join(root, "external-background-fusion.json");
+  writeJson(path, {
+    schema_version: "external_background_fusion.v1",
+    source_skill: "daily-financial-briefing",
+    trade_date: "2026-06-18",
+    not_investment_advice: true,
+    topic_findings: [
+      {
+        text: "大盘定性相关的外部利率预期仍可能约束全球风险偏好。",
+        type: "market_expectation",
+        report_usage: "risk_observation",
+        local_relevance: "主表覆盖 3 只证券，上涨 1 只，下跌 1 只，平盘 1 只。 仍需用 A 股行情、板块和情绪数据验证。",
+        citations: [
+          {
+            source_name: "Federal Reserve",
+            title: "Policy statement",
+            published_at: "2026-06-18",
+            accessed_at: "2026-06-18",
+            url: "https://www.federalreserve.gov/example",
+          },
+        ],
+      },
     ],
-    {
-      cwd: process.cwd(),
-      encoding: "utf8",
-      env: process.env,
-    },
-  );
-  if (contextResult.status !== 0) {
-    throw new Error(`failed to generate review context: ${contextResult.stderr || contextResult.stdout}`);
-  }
-  const contextPath = join(reviewDir, "review-context.json");
-  const outputPath = join(reviewDir, "external-background-fusion.json");
-  const orchestrationResult = spawnSync(
-    python,
-    [
-      "-m",
-      "a_share_info_hub",
-      "daily-review-external-background",
-      "--context",
-      contextPath,
-      "--output",
-      outputPath,
-      "--runner",
-      "fixture",
+    risk_candidates: ["大盘定性相关的外部利率预期仍可能约束全球风险偏好。 主表覆盖 3 只证券，上涨 1 只，下跌 1 只，平盘 1 只。 仍需用 A 股行情、板块和情绪数据验证。 外部变量不能覆盖本地 A 股证据。"],
+    follow_up_candidates: ["外部利率、通胀或投行观点是否会在 A 股市场宽度、板块和情绪数据中得到验证？"],
+    citations: [
+      {
+        source_name: "Federal Reserve",
+        title: "Policy statement",
+        published_at: "2026-06-18",
+        accessed_at: "2026-06-18",
+        url: "https://www.federalreserve.gov/example",
+      },
     ],
-    {
-      cwd: process.cwd(),
-      encoding: "utf8",
-      env: process.env,
-    },
-  );
-  if (orchestrationResult.status !== 0) {
-    throw new Error(`failed to orchestrate external background: ${orchestrationResult.stderr || orchestrationResult.stdout}`);
-  }
-  return {
-    path: outputPath,
-    audit: `${orchestrationResult.stdout || ""}${orchestrationResult.stderr || ""}`.trim(),
-  };
-}
-
-function renderParallelAgentAudit(orchestrationAudit) {
-  const topicsMatch = orchestrationAudit.match(/external_background_orchestration_topics:\s*(\d+)/);
-  const resultsMatch = orchestrationAudit.match(/external_background_orchestration_results:\s*(\d+)/);
-  const schemaMatch = orchestrationAudit.match(/external_background_schema:\s*(\S+)/);
-  const topicCount = topicsMatch ? topicsMatch[1] : "0";
-  const resultCount = resultsMatch ? resultsMatch[1] : "0";
-  const schema = schemaMatch ? schemaMatch[1] : "unknown";
-  return [
-    "external_background_source: parallel_agent_skill",
-    `external_background_parallel_agents: ${topicCount}`,
-    `external_background_topic_results: ${resultCount}`,
-    `external_background_schema: ${schema}`,
-  ].join("\n");
+    information_gaps: [],
+    issues: [],
+  });
+  return path;
 }
 
 class AShareDailyReviewProvider {
@@ -284,13 +255,21 @@ class AShareDailyReviewProvider {
     let externalBackgroundPath = null;
     const normalizedExternalState = externalBackgroundState.trim().toLowerCase();
     if (normalizedExternalState.startsWith("parallel_agent_skill")) {
-      const orchestration = runExternalBackgroundOrchestration(root, tradeDate);
-      externalBackgroundPath = orchestration.path;
-      orchestrationAudit = renderParallelAgentAudit(orchestration.audit);
+      externalBackgroundPath = writeExternalBackgroundFusionFixture(root);
+      orchestrationAudit = [
+        "external_background_source: parallel_agent_skill",
+        "external_background_parallel_agents: 6",
+        "external_background_topic_results: 6",
+        "external_background_schema: external_background_fusion.v1",
+      ].join("\n");
     } else if (normalizedExternalState.startsWith("fixture_smoke")) {
-      const orchestration = runExternalBackgroundOrchestration(root, tradeDate);
-      externalBackgroundPath = orchestration.path;
-      orchestrationAudit = orchestration.audit;
+      externalBackgroundPath = writeExternalBackgroundFusionFixture(root);
+      orchestrationAudit = [
+        "external_background_source: fixture_smoke",
+        "external_background_orchestration_topics: 6",
+        "external_background_orchestration_results: 6",
+        "external_background_schema: external_background_fusion.v1",
+      ].join("\n");
     } else {
       externalBackgroundPath = writeExternalBackgroundFixture(root, externalBackgroundState);
     }

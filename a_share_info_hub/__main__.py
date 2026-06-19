@@ -28,12 +28,6 @@ from a_share_info_hub.daily_review import (
     generate_daily_review,
     generate_daily_review_from_prompt,
 )
-from a_share_info_hub.external_background import (
-    build_runner,
-    orchestrate_external_background,
-    render_orchestration_message,
-)
-
 
 def build_parser() -> argparse.ArgumentParser:
     """构建 A Share Info Hub 的顶层 CLI 参数解析器。"""
@@ -148,31 +142,6 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Optional natural-language request used to infer review mode for golden tests.",
     )
-    external_background = subparsers.add_parser(
-        "daily-review-external-background",
-        help="Build a fixture/validation external_background_fusion.v1 from a daily review context.",
-    )
-    external_background.add_argument(
-        "--context",
-        required=True,
-        help="Path to reports/daily-reviews/YYYY-MM-DD/review-context.json.",
-    )
-    external_background.add_argument(
-        "--output",
-        required=True,
-        help="Path where external-background-fusion.json will be written.",
-    )
-    external_background.add_argument(
-        "--runner",
-        choices=("fixture", "agent"),
-        default="agent",
-        help="Local helper runner. fixture is deterministic smoke; agent is legacy diagnostic and not the production skill path.",
-    )
-    external_background.add_argument(
-        "--fixture-blocked-topic",
-        default=None,
-        help="Optional topic_key blocked by the fixture runner for local validation.",
-    )
     return parser
 
 
@@ -227,18 +196,6 @@ def run_daily_review(args: argparse.Namespace) -> int:
     return 0 if result.data_status in {OVERALL_PASSED, OVERALL_PARTIAL, OVERALL_SKIPPED, "blocked"} else 1
 
 
-def run_daily_review_external_background(args: argparse.Namespace) -> int:
-    """执行每日复盘外部背景 fixture/validation helper 子命令并返回退出码。"""
-
-    runner = build_runner(args.runner, blocked_topic=args.fixture_blocked_topic)
-    result = orchestrate_external_background(
-        context_path=Path(args.context),
-        output_path=Path(args.output),
-        runner=runner,
-    )
-    print(render_orchestration_message(result))
-    return 0
-
 
 def main() -> int:
     """运行 A Share Info Hub 顶层 CLI。"""
@@ -249,8 +206,6 @@ def main() -> int:
         return run_daily_update(args)
     if args.command == "daily-review":
         return run_daily_review(args)
-    if args.command == "daily-review-external-background":
-        return run_daily_review_external_background(args)
     parser.error(f"unsupported command: {args.command}")
     return 2
 

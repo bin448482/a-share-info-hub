@@ -102,20 +102,6 @@ external_background_topic_results: 6
 external_background_schema: external_background_fusion.v1
 ```
 
-本地 smoke、Promptfoo 或 fusion schema 回归需要从 `review-context.json` 生成可审计的 fixture fusion 包时，可以运行辅助入口：
-
-```text
-python -m a_share_info_hub daily-review-external-background --context reports/daily-reviews/YYYY-MM-DD/review-context.json --output reports/daily-reviews/YYYY-MM-DD/external-background-fusion.json --runner fixture
-```
-
-该入口会写出：
-
-- `reports/daily-reviews/YYYY-MM-DD/external-background-local-topics.json`
-- `reports/daily-reviews/YYYY-MM-DD/external-background-topic-results.json`
-- `reports/daily-reviews/YYYY-MM-DD/external-background-fusion.json`
-
-`--runner fixture` 只用于本地测试和评测，审计来源应标记为 `fixture_smoke`。`--runner agent` 是 legacy diagnostic，不代表真实 `$daily-financial-briefing` skill 调用；真实验收必须能看到 `parallel_agent_skill`、6 个并行子 Agent 和 6 个 topic results。
-
 `external_background` 只会写入 `review-context.json.external_background` 和技术参考 Markdown，不会写入 `data/normalized/`、`market.duckdb` 或本地行情数据源列表。HTML 不新增独立的 `外部宏观与机构观点背景` 章节；校验通过的外部变量只能融合进 `大盘观察`、唯一的 `风险观察` 和唯一的 `下一步研究问题`。blocked、invalid 或无背景时，本地 A 股复盘仍继续生成并在技术参考中记录缺口。
 
 直接在终端返回研究建议或数据质量诊断时，也使用已校验的 sections：
@@ -160,7 +146,7 @@ HTML 报告默认按“策略分析师写给普通投资者”的方式表达，
 
 接入每日复盘前，需要把简报整理成 `external_background.v1` 或 `external_background_fusion.v1` JSON，核心点必须带 `source_name` 和 `url`。无 URL 的外部观点不会进入 HTML 核心正文；引用 URL、输入路径、状态和降级原因写入技术参考 Markdown。
 
-如果已有每日复盘 `review-context.json`，生产路径应由 `$a-share-daily-review` 父 agent spawn 6 个并行子 Agent，并让每个子 Agent 使用 `$daily-financial-briefing` 产出 topic 结果。`daily-review-external-background` 只用于 fixture smoke、离线评测和 fusion 校验；`daily-review` 本身仍只读取现成 JSON，不联网搜索。
+如果已有每日复盘 `review-context.json`，生产路径应由 `$a-share-daily-review` 父 agent spawn 6 个并行子 Agent，并让每个子 Agent 使用 `$daily-financial-briefing` 产出 topic 结果。`daily-review` 本身只读取现成 JSON，不联网搜索。
 
 本地离线评测使用 fixture，不访问真实财经网站：
 
