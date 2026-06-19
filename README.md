@@ -44,9 +44,12 @@ python -m a_share_info_hub daily-update --ignore-proxy
 python -m py_compile a_share_info_hub/__main__.py a_share_info_hub/daily_review.py scripts/collect_daily_snapshot.py
 python -m pytest tests
 python -c "import akshare, pandas, duckdb, pyarrow, pydantic"
+npm run install:eval
+npm run eval:a-share-daily-review
 ```
 
 真实接口验证需要指定日期运行每日采集脚本；单元测试只验证本地解析、状态和落盘逻辑。
+Promptfoo 评测使用仓库固定版本；在 Windows/npm 11 环境下先运行 `npm run install:eval`，该命令会使用兼容的 npm 版本并构建 `better-sqlite3`。
 
 ## 每日复盘研究
 

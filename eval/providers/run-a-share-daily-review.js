@@ -128,9 +128,12 @@ if not ${duckdbFailed ? "True" : "False"}:
   return tradeDate;
 }
 
-module.exports = {
-  id: () => "a-share-daily-review-local",
-  callApi: async (prompt, context) => {
+class AShareDailyReviewProvider {
+  id() {
+    return "a-share-daily-review-local";
+  }
+
+  async callApi(prompt, context) {
     const vars = (context && context.vars) || {};
     const userPrompt = vars.user_prompt || prompt;
     if ((vars.artifact_state || "").includes("refresh_requested")) {
@@ -185,5 +188,7 @@ module.exports = {
         caseId: vars.case_id,
       },
     };
-  },
-};
+  }
+}
+
+module.exports = AShareDailyReviewProvider;

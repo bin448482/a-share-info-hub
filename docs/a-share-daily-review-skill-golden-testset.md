@@ -44,8 +44,11 @@ Promptfoo 适合作为第一版回归测试框架，因为它支持 YAML/JSON/JS
 建议运行方式：
 
 ```text
-npx promptfoo@latest eval -c eval/promptfooconfig.yaml
+npm run install:eval
+npm run eval:a-share-daily-review
 ```
+
+本仓库固定使用 `promptfoo@0.120.0`。在当前 Windows/npm 组合中，直接使用全局 `npm install` 可能触发 npm engine 或原生依赖问题；`npm run install:eval` 会使用 `npm@11.6.4`、省略 optional provider SDK，并重建 `better-sqlite3`。
 
 当前 provider：
 
