@@ -97,6 +97,7 @@
 ```
 
 - 不为了满足规范创建空目录。只有当目录承载真实代码、脚本、测试、文档或数据说明时，才创建该目录及对应的 `AGENTS.md` / `claude.md`。
+- 开发或修改 `skills/` 下的 skill 时，必须同步更新 `.claude/skills/` 和 `.agents/skills/` 的对应运行时入口或镜像，并验证三处指向同一套工作流语义；如果某处使用链接或 wrapper，不要复制第二份正文，但要确保入口仍指向最新源 skill。
 
 ## 文件注释规则
 
@@ -159,6 +160,7 @@ function normalizeQuote(raw: QuoteRecord): NormalizedQuote {
 
 - `.claude/`：Claude 相关本地配置目录。
 - `.codex/`：Codex 相关本地配置目录。
+- `.agents/`：Codex 当前仓库运行时可发现的 skill wrapper 和 agent 配置目录，详见 `.agents/AGENTS.md`。
 - `.venv/`：项目 Python 虚拟环境，不作为代码索引对象。
 - `a_share_info_hub/`：仓库 CLI 包目录，日常每日更新入口为 `python -m a_share_info_hub daily-update`。
 - `data/`：原始数据和标准化数据目录，详见 `data/AGENTS.md`。
