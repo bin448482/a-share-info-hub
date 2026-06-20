@@ -1,155 +1,230 @@
 # A Share Info Hub
 
-本仓库用于验证和落地每日 A 股免费数据采集链路。当前主入口是每日快照采集，不生成预测，也不提供交易建议。
+每日 A 股公开数据采集与复盘研究工具链。
 
-## 每日快照采集
+A daily A-share public data collection and research review pipeline.
 
-实施入口是仓库 CLI：
+---
 
-```text
-python -m a_share_info_hub daily-update
-```
+## 中文
 
-需要指定日期时，使用参数传入，不要把日期写死到脚本或文档流程里：
+### 项目概述
 
-```text
-python -m a_share_info_hub daily-update --trade-date <YYYY-MM-DD>
-```
+`a-share-info-hub` 是一个每日 A 股公开行情数据采集、标准化和复盘研究工具。它从 AKShare 获取当日全市场快照、涨跌停池、龙虎榜、交易所概况和板块快照，将数据标准化为 Parquet 表并写入本地 DuckDB 分析库，在此基础上生成研究用途的每日复盘报告。
 
-`daily-update` 会在采集前验证目标日期是否为 A 股交易日。非交易日返回 `skipped`，只生成 `reports/daily-runs/YYYY-MM-DD/interface-status.json` 和 `daily-data-summary.md`，不调用行情接口，也不写入原始行情、标准化表或 DuckDB。
+**边界声明**：本项目仅用于数据采集和研究复盘，不提供任何形式的交易建议、买卖信号、仓位配置、目标价或止盈止损指令。
 
-如果当前环境代理导致 AKShare 接口失败，可以显式忽略代理：
+### 核心能力
 
-```text
-python -m a_share_info_hub daily-update --ignore-proxy
-```
+- **每日快照采集** — 从 AKShare 获取当日 14 个公开接口的行情数据，经交易日验证后归一化为 5 张标准表
+- **多源数据汇聚** — 覆盖个股快照、涨跌停池（涨停/曾涨停/炸板/跌停）、龙虎榜明细（新浪/东方财富/机构买卖）、沪深交易所概况、行业和概念板块快照
+- **标准化存储** — 统一字段映射和类型转换，产出 Parquet 表并维护本地 DuckDB 按日替换的查询层
+- **状态可追溯** — 每次运行生成 `interface-status.json`、人读摘要和外部接口失败日志，失败和空结果分开记录
+- **研究复盘报告** — 通过 `review-context.json` evidence packet → LLM sections → 校验器 → HTML 报告的工作流，生成面向普通投资者的策略分析师报告，包含大盘观察、市场宽度、情绪事件、板块结构、风险观察和下一步研究问题
+- **外部背景融合** — 可选接入 `daily-financial-briefing` 产出的 US Macro 和投行观点摘要，在本地 A 股证据边界内作为风险观察和待验证问题
+- **安全输出边界** — 多层校验阻断交易行动语言、内部诊断泄漏和 blocked section 的越界结论
 
-交易日主要输出：
-
-- `data/raw/YYYY-MM-DD/<source>/response.json`
-- `data/raw/YYYY-MM-DD/<source>/metadata.json`
-- `data/normalized/daily_stock_snapshot.parquet`
-- `data/normalized/limit_pool_events.parquet`
-- `data/normalized/lhb_events.parquet`
-- `data/normalized/market_summary.parquet`
-- `data/normalized/board_snapshot.parquet`
-- `logs/external-interface-failures.jsonl`
-- `reports/daily-runs/YYYY-MM-DD/interface-status.json`
-- `reports/daily-runs/YYYY-MM-DD/daily-data-summary.md`
-- `market.duckdb`
-
-## 验证命令
+### 项目结构
 
 ```text
-python -m py_compile a_share_info_hub/__main__.py a_share_info_hub/daily_review.py scripts/collect_daily_snapshot.py
-python -m pytest tests
-python -c "import akshare, pandas, duckdb, pyarrow, pydantic"
-npm run install:eval
-npm run eval:a-share-daily-review
-npm run eval:daily-financial-briefing
+a_share_info_hub/    CLI 包入口和复盘研究模块
+scripts/             采集脚本和契约探测脚本
+skills/              可复用的 agent skill（采集复盘、财经简报）
+data/
+  raw/               按日期和接口保存的 AKShare 原始响应
+  normalized/        标准化 Parquet 表
+reports/
+  daily-runs/        每次采集运行的状态报告和摘要
+  daily-reviews/     每日复盘 HTML、技术参考和 context
+logs/                外部接口失败 JSONL 日志
+tests/               单元测试和 fixture
+docs/                设计和实施文档
 ```
 
-真实接口验证需要指定日期运行每日采集脚本；单元测试只验证本地解析、状态和落盘逻辑。
-Promptfoo 评测使用仓库固定版本；在 Windows/npm 11 环境下先运行 `npm run install:eval`，该命令会使用兼容的 npm 版本并构建 `better-sqlite3`。
+### 快速开始
 
-## 每日复盘研究
+**环境要求**：Python 3.11+，依赖见 `requirements.txt`。
 
-已有每日快照后，先生成 research-only evidence packet：
+```bash
+# 安装依赖
+pip install -r requirements.txt
+
+# 执行每日数据采集（T 日快照）
+python -m a_share_info_hub daily-update --trade-date 2026-06-20
+
+# 生成研究复盘 context（evidence packet）
+python -m a_share_info_hub daily-review --trade-date 2026-06-20 --output-format context
+
+# 基于 LLM sections 生成 HTML 复盘报告
+python -m a_share_info_hub daily-review \
+  --trade-date 2026-06-20 \
+  --llm-output reports/daily-reviews/2026-06-20/llm-review-sections.json \
+  --output-format html
+```
+
+**可选参数**：
+
+| 参数 | 说明 |
+| --- | --- |
+| `--trade-date` | 交易日，格式 `YYYY-MM-DD`，默认当天 |
+| `--output-root` | 项目根，控制 data/logs/reports 输出位置 |
+| `--ignore-proxy` | 跳过系统 HTTP 代理，适合直连环境 |
+| `--skip-duckdb` | 跳过 DuckDB 写入，用于诊断 |
+| `--refresh-mode daily_update` | 复盘前先执行数据刷新 |
+| `--render-mode deterministic` | 使用确定性 fallback，适合本地测试 |
+| `--external-background` | 指定外部财经背景 JSON |
+| `--output-format` | 复盘输出格式：`html` / `context` / `inline` / `markdown` |
+
+### 数据状态语义
+
+| 状态 | 含义 |
+| --- | --- |
+| `passed` | 主表和其他表均非空，DuckDB 写入成功 |
+| `partial` | 主表可用但部分增强接口失败或缺失 |
+| `failed` | 主表不可用或交易日历验证失败 |
+| `skipped` | 目标日期非 A 股交易日，未调用行情接口 |
+| `missing` | 指定日期没有已存在的采集运行记录 |
+
+### 运行测试
+
+```bash
+pytest tests/ -v
+```
+
+测试使用 fixture 和 mock，不依赖真实 AKShare 网络调用。
+
+### 技术栈
+
+| 组件 | 用途 |
+| --- | --- |
+| [AKShare](https://github.com/akfamily/akshare) | A 股公开行情数据接口 |
+| [DuckDB](https://duckdb.org/) | 本地嵌入式分析数据库 |
+| [Pandas](https://pandas.pydata.org/) / [PyArrow](https://arrow.apache.org/) | 数据处理和列式存储 |
+| [Pydantic](https://docs.pydantic.dev/) | 数据模型校验和契约约束 |
+
+### 架构说明
+
+采集链路采用接口→原始保存→标准化→多格式输出的分层架构。数据路径上每层各自保存产物，不依赖上层缓存推断下层的状态。复盘工作流采用 evidence packet → LLM sections → 校验器 → 报告渲染的四阶段流水线，LLM 输出在被写入用户可读 HTML 之前必须通过 Pydantic 结构校验和业务规则阻断检查。
+
+### Agent 开发设计经验
+
+本项目在 Agent 架构上的核心思路是**用确定性代码定义 LLM 的边界，而非依赖 prompt 约束**。数据采集完成后，确定性代码先将原始表编译为版本化的 `review-context.json` 证据包——其中明确列出 `allowed_sections`、`blocked_sections`、`forbidden_claims` 和 `facts`，LLM 被要求只基于此 context 生成 sections JSON，不得引入外部知识。LLM 输出在进入用户可读 HTML 之前，必须通过 Pydantic 结构校验和业务规则扫描（禁用词表、blocked section 越界检查、信息密度门槛）的双层门禁——任何一层未通过即阻断渲染并返回具体原因。系统同时提供 `deterministic` 渲染模式，接收相同 context、产出相同结构的 sections，使流水线可在无 LLM 环境下完整测试；LLM 输出异常时切换到此模式即可快速定位问题在 context 还是 LLM。所有组件间 JSON 契约均带 `Literal` 锁定的 `schema_version`，字段演进时上下游不会静默断裂。外部背景融合采用 6 路并行子 Agent 各负责一个本地 topic，由确定性代码合并结果——既控制了单 Agent 上下文规模，也用代码而非 LLM 完成最终汇总。综合来看，可迁移的经验只有一句话：**把 LLM 当作受控文本生成组件，而不是流程编排器；软约束放在 prompt 里，硬约束放在代码里。**
+
+---
+
+## English
+
+### Overview
+
+`a-share-info-hub` is a daily A-share public market data collection, normalization, and research review toolkit. It fetches end-of-day snapshots — full-market quotes, limit-up/down pools, Dragon Tiger List (LHB) details, exchange summaries, and industry/concept board snapshots — from AKShare, normalizes them into Parquet tables and a local DuckDB database, then generates research-only daily review reports.
+
+**Boundary**: This project is for data collection and research review only. It does not produce trading advice, buy/sell signals, position sizing, price targets, or stop-loss/take-profit directives.
+
+### Core Capabilities
+
+- **Daily Snapshot Collection** — Fetches 14 public AKShare interfaces per trading day after verifying the A-share trading calendar, then normalizes results into 5 standard tables
+- **Multi-source Data Aggregation** — Covers individual stock quotes, limit-up/down pools (fresh/previous/strong/sub-new/broken-board/limit-down), LHB details (Sina/EastMoney/institutional), SSE/SZSE summaries, and industry/concept board snapshots
+- **Normalized Storage** — Unified field mapping and type coercion producing Parquet tables and a per-date replaceable DuckDB query layer
+- **Traceable Status** — Each run produces `interface-status.json`, a human-readable summary, and a failure log; failures, empty results, and schema changes are tracked separately
+- **Research Review Reports** — A `review-context.json` evidence packet → LLM sections → validator → HTML report pipeline generates strategy-analyst-role reports for ordinary investors, covering market overview, breadth, sentiment/events, board structure, risk observations, and follow-up research questions
+- **External Background Fusion** — Optional integration with `daily-financial-briefing` outputs (US Macro and investment bank views) as risk observations and verify-later questions within the local A-share evidence boundary
+- **Safety Output Boundaries** — Multi-layer validation blocks trading-action language, internal diagnostic leaks, and conclusions that exceed data-gap constraints
+
+### Project Layout
 
 ```text
-python -m a_share_info_hub daily-review --output-format context
+a_share_info_hub/    CLI package entry and daily review module
+scripts/             Collection script and data-contract probe script
+skills/              Reusable agent skills (review, financial briefing)
+data/
+  raw/               AKShare raw responses, per date and interface
+  normalized/        Normalized Parquet tables
+reports/
+  daily-runs/        Per-run status report and summary
+  daily-reviews/     Per-date review HTML, technical notes, and context
+logs/                External interface failure JSONL log
+tests/               Unit tests and fixtures
+docs/                Design and implementation docs
 ```
 
-指定日期生成 `review-context.json`：
+### Quick Start
 
-```text
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --output-format context
+**Requirements**: Python 3.11+, dependencies listed in `requirements.txt`.
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run daily data collection (T-day snapshot)
+python -m a_share_info_hub daily-update --trade-date 2026-06-20
+
+# Generate review evidence packet
+python -m a_share_info_hub daily-review --trade-date 2026-06-20 --output-format context
+
+# Generate HTML review report from LLM sections
+python -m a_share_info_hub daily-review \
+  --trade-date 2026-06-20 \
+  --llm-output reports/daily-reviews/2026-06-20/llm-review-sections.json \
+  --output-format html
 ```
 
-输出位置：
+**Optional flags**:
 
-- `reports/daily-reviews/YYYY-MM-DD/review-context.json`
-- `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review.html`
-- `reports/daily-reviews/YYYY-MM-DD/a-share-daily-review-data-notes.md`
+| Flag | Description |
+| --- | --- |
+| `--trade-date` | Trade date in `YYYY-MM-DD`, defaults to today |
+| `--output-root` | Project root for data/logs/reports output |
+| `--ignore-proxy` | Bypass system HTTP proxy for direct connections |
+| `--skip-duckdb` | Skip DuckDB writes for diagnostics |
+| `--refresh-mode daily_update` | Run data refresh before review generation |
+| `--render-mode deterministic` | Use deterministic fallback for local testing |
+| `--external-background` | Path to external financial background JSON |
+| `--output-format` | Review output: `html` / `context` / `inline` / `markdown` |
 
-然后让 agent/LLM 只基于 `review-context.json` 生成：
+### Data Status Semantics
 
-```text
-reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json
+| Status | Meaning |
+| --- | --- |
+| `passed` | Main table and all enhanced tables non-empty, DuckDB write succeeded |
+| `partial` | Main table available but some enhanced interfaces failed or missing |
+| `failed` | Main table unavailable or trading calendar verification failed |
+| `skipped` | Target date is not an A-share trading day, no market interfaces called |
+| `missing` | No existing collection run found for the specified date |
+
+### Running Tests
+
+```bash
+pytest tests/ -v
 ```
 
-再由 Python 校验并渲染 HTML：
+Tests use fixtures and mocks; no live AKShare network calls are made.
 
-```text
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format html
-```
+### Tech Stack
 
-如果已经把 `$daily-financial-briefing` 的 US Macro 和主要投行观点摘要保存为 `external_background.v1` 或 `external_background_fusion.v1` JSON，可以把它作为受控外部背景接入每日复盘：
+| Component | Role |
+| --- | --- |
+| [AKShare](https://github.com/akfamily/akshare) | Public A-share market data interfaces |
+| [DuckDB](https://duckdb.org/) | Embedded analytical database |
+| [Pandas](https://pandas.pydata.org/) / [PyArrow](https://arrow.apache.org/) | Data processing and columnar storage |
+| [Pydantic](https://docs.pydantic.dev/) | Data model validation and contract enforcement |
 
-```text
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --external-background <path-to-external-background.json> --output-format context
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --external-background <path-to-external-background.json> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format html
-```
+### Architecture
 
-生产运行中，如需由 `$a-share-daily-review` 生成外部背景，父 agent 必须先读取 `review-context.json`，再 spawn 6 个并行子 Agent；每个子 Agent 独立使用 `$daily-financial-briefing` 处理一个本地 topic，并返回 `TopicResult` JSON。父 agent 汇总 6 个结果后写出 `reports/daily-reviews/YYYY-MM-DD/external-background-fusion.json`，再传给 `daily-review --external-background`。
+The collection pipeline follows a layered architecture: interface call → raw persistence → normalization → multi-format output. Each layer stores its own artifacts; no layer infers a downstream layer's state from an upstream cache. The review workflow follows a four-stage pipeline: evidence packet → LLM sections → validator → report rendering. LLM output must pass Pydantic structural validation and business-rule boundary checks before being written into user-readable HTML.
 
-真实 runtime 验收应能看到以下审计语义：
+### Agent Development Design Experience
 
-```text
-external_background_source: parallel_agent_skill
-external_background_parallel_agents: 6
-external_background_topic_results: 6
-external_background_schema: external_background_fusion.v1
-```
+The core architectural philosophy of this project is **using deterministic code to define the LLM's boundaries, rather than relying on prompt constraints**. After data collection, deterministic code compiles raw tables into a versioned `review-context.json` evidence packet — explicitly listing `allowed_sections`, `blocked_sections`, `forbidden_claims`, and `facts` — and the LLM is instructed to generate sections JSON from this context alone, with no external knowledge. LLM output passes through a dual-layer gate (Pydantic structural validation + business rule scanning for forbidden terms, blocked-section boundary violations, and information-density thresholds) before reaching user-readable HTML; either layer failing blocks rendering with a specific reason. The system also provides a `deterministic` render mode that accepts the same context and produces the same sections structure, enabling full pipeline testing without an LLM and fast fault isolation when LLM output fails validation. All inter-component JSON contracts carry a `Literal`-locked `schema_version`, preventing silent breakage during field evolution. External background fusion decomposes into 6 parallel sub-agents each handling one local topic, with deterministic code performing the final merge — controlling per-agent context size while keeping synthesis in code, not the LLM. The portable takeaway: **treat the LLM as a constrained text-generation component, not a flow orchestrator; put soft constraints in prompts, hard constraints in code.**
 
-`external_background` 只会写入 `review-context.json.external_background` 和技术参考 Markdown，不会写入 `data/normalized/`、`market.duckdb` 或本地行情数据源列表。HTML 不新增独立的 `外部宏观与机构观点背景` 章节；校验通过的外部变量只能融合进 `大盘观察`、唯一的 `风险观察` 和唯一的 `下一步研究问题`。blocked、invalid 或无背景时，本地 A 股复盘仍继续生成并在技术参考中记录缺口。
+### Agent Skills
 
-直接在终端返回研究建议或数据质量诊断时，也使用已校验的 sections：
+The repository includes two Claude Code / Codex agent skills:
 
-```text
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --llm-output reports/daily-reviews/YYYY-MM-DD/llm-review-sections.json --output-format inline
-```
+| Skill | Purpose |
+| --- | --- |
+| `a-share-daily-review` | Drives the full review workflow from context generation through LLM sections to HTML report, with optional parallel sub-agent external background fusion |
+| `daily-financial-briefing` | Produces cited US Macro and investment bank view briefings from public sources as external background for the A-share review |
 
-如需先刷新再复盘，只通过公开 CLI 子命令：
+### License
 
-```text
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --refresh-mode daily_update --output-format context
-```
-
-本地评测或 fixture 可使用 deterministic fallback：
-
-```text
-python -m a_share_info_hub daily-review --trade-date <YYYY-MM-DD> --render-mode deterministic --output-format html
-```
-
-正式用户报告应使用 `$a-share-daily-review` 的 evidence packet + LLM sections + Python/Pydantic validator 流程。该 skill 只输出研究复盘、风险观察和待验证问题；不提供买卖、仓位、目标价或止盈止损建议。
-
-HTML 报告默认按“策略分析师写给普通投资者”的方式表达，只展示可读的市场观察和证据边界；接口失败、`data_status`、`blocked_sections`、source key、原始分类编码和排障建议写入同目录 `a-share-daily-review-data-notes.md`。
-
-每日复盘正文固定包含 `大盘观察`，其中 `大盘定性` 解释当日全市场宽度，`大盘结构` 解释上涨/下跌覆盖面、极端样本和结构证据边界。
-
-## 当日财经信息总结
-
-当需要把海外宏观和主要投行公开观点作为 A 股研究背景时，使用仓库内 skill：
-
-```text
-使用 $daily-financial-briefing，总结今天 US Macro 和主要投行观点对 A 股研究的影响。
-```
-
-指定日期和关注点：
-
-```text
-使用 $daily-financial-briefing，日期 <YYYY-MM-DD>，重点看美国利率预期、CPI、非农和高盛/摩根对中国资产的观点。
-```
-
-该 skill 由 agent 主动读取公开可引用来源，输出 Markdown 简报、核心结论、信息缺口和参考来源。输出只能作为 `daily-review` 的外部背景材料，不写入行情数据、不新增新闻采集管线、不改变每日复盘数据契约，也不提供交易行动建议。
-
-接入每日复盘前，需要把简报整理成 `external_background.v1` 或 `external_background_fusion.v1` JSON，核心点必须带 `source_name` 和 `url`。无 URL 的外部观点不会进入 HTML 核心正文；引用 URL、输入路径、状态和降级原因写入技术参考 Markdown。
-
-如果已有每日复盘 `review-context.json`，生产路径应由 `$a-share-daily-review` 父 agent spawn 6 个并行子 Agent，并让每个子 Agent 使用 `$daily-financial-briefing` 产出 topic 结果。`daily-review` 本身只读取现成 JSON，不联网搜索。
-
-本地离线评测使用 fixture，不访问真实财经网站：
-
-```text
-npm run eval:daily-financial-briefing
-```
+MIT
