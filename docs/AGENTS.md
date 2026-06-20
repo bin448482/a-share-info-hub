@@ -25,6 +25,8 @@
 - `daily-data-contract-implementation-plan.md`：可验证每日数据契约报告的实施计划，重点是 AKShare 今日能力探测、历史回溯和契约生成。
 - `daily-snapshot-data-design.md`：每日 A 股快照数据设计，定义主表、增强数据、存储结构、去重关联和 v1 不做事项。
 - `daily-snapshot-data-implementation-plan.md`：每日快照采集链路实施计划，定义脚本入口、异常处理、单元测试、验收标准和目标达成条件。
+- `linkedin-article-cn.html`：LinkedIn 分享用的中文技术文章 HTML 版本，可直接复制到 LinkedIn 发布。
+- `linkedin-article-en.html`：LinkedIn 分享用的英文技术文章 HTML 版本，可直接复制到 LinkedIn 发布。
 
 ## 更新要求
 

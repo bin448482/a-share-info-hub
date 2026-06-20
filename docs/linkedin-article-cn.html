@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从数据管道到 AI Agent 编排：构建一个 A 股研究信息中枢</title>
+<style>
+  body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fff;
+  }
+  h1 {
+    font-size: 28px;
+    line-height: 1.35;
+    margin: 0 0 12px 0;
+    color: #111;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 36px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e0e0e0;
+    color: #222;
+  }
+  h3 {
+    font-size: 18px;
+    margin: 24px 0 8px 0;
+    color: #333;
+  }
+  p { margin: 0 0 14px 0; }
+  blockquote {
+    margin: 16px 0;
+    padding: 10px 18px;
+    border-left: 3px solid #999;
+    color: #555;
+    font-style: italic;
+  }
+  strong { color: #111; }
+  code {
+    background: #f2f2f2;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 15px;
+    color: #c7254e;
+  }
+  pre {
+    background: #f7f7f7;
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+  }
+  ul, ol { margin: 0 0 14px 0; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 32px 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 15px;
+  }
+  th {
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: #666;
+    margin: 0 0 28px 0;
+    line-height: 1.5;
+  }
+  .disclaimer {
+    font-size: 14px;
+    color: #888;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<h1>从数据管道到 AI Agent 编排：构建一个 A 股研究信息中枢</h1>
+
+<p class="subtitle">一个关于架构决策、AI Agent 编排，以及如何用确定性代码约束 LLM 边界的项目复盘。</p>
+
+<hr>
+
+<h2>动机</h2>
+
+<p>每天 A 股收盘后，我需要回答一系列研究问题：大盘今天怎么样？涨停池里有没有值得关注的结构性变化？龙虎榜资金在往哪儿流？宏观面和主要投行观点对市场情绪有什么影响？</p>
+
+<p>手动做这件事有两个问题：<strong>重复性劳动太多</strong>（15+ 个公开数据接口，逐一手工查询、对字段、做标准化），以及<strong>纯脚本缺少分析上下文</strong>（能拿到数据，但数据之间的关联和叙事需要人力判断）。</p>
+
+<p>传统方案是写一个爬虫脚本定时拉数据。但我想要的不只是数据 dump — 我想要一个能自动生成结构化研究报告的系统，同时确保每一条结论都可以追溯到数据来源，而且绝对不会越界给出交易建议。</p>
+
+<p>于是有了 <code>a-share-info-hub</code>。</p>
+
+<hr>
+
+<h2>架构全景</h2>
+
+<p>整个系统的核心设计原则是：<strong>Python 做确定性工作，AI Agent 做需要判断力的编排和分析</strong>。</p>
+
+<h3>第一层：数据采集（Python 确定性管道）</h3>
+
+<p>每天收盘后，一条 CLI 命令 <code>python -m a_share_info_hub daily-update</code> 触发采集链：</p>
+
+<ul>
+  <li>先验证目标日期是否 A 股交易日（通过 AKShare 交易日历）</li>
+  <li>如果是交易日，并行拉取 14 个公开接口：全市场个股快照（~5500 只）、6 个涨跌停池、3 个龙虎榜维度、沪深交易所概况、行业和概念板块</li>
+  <li>每个接口独立记录状态（passed / partial / failed / schema_changed），失败不阻塞其他接口</li>
+  <li>原始响应以 JSON 完整保留，标准化后写入 Parquet + DuckDB</li>
+</ul>
+
+<p>这里有一个重要的设计：<strong>不假设 API 字段永远不变</strong>。国内免费数据接口经常调整字段名，所以我实现了字段别名解析（<code>find_column()</code> 基于已知别名元组做模糊匹配），以及 <code>SchemaChangedError</code> 异常类，让模式漂移成为<strong>可观察事件</strong>而非静默故障。</p>
+
+<h3>第二层：证据编译（Python 业务逻辑）</h3>
+
+<p>数据采集完成后，<code>daily-review</code> 子命令将分散的 Parquet 表和接口状态编译为一个版本化的 <strong>evidence packet</strong>（<code>review-context.json</code>）：</p>
+
+<ul>
+  <li>明确列出 <code>allowed_sections</code>（哪些分析板块有数据支撑）</li>
+  <li>明确列出 <code>blocked_sections</code>（哪些数据源挂了，对应的分析板块被冻结）</li>
+  <li>明确列出 <code>forbidden_claims</code>（LLM 不能自己编造的结论）</li>
+  <li>硬编码 <code>analysis_mode: research_only</code> 和 <code>not_investment_advice: true</code></li>
+</ul>
+
+<p>这不是对 LLM 的软约束，而是<strong>代码层的硬约束</strong>。LLM 的输入被严格限定在 evidence packet 内，不允许引入外部知识。</p>
+
+<h3>第三层：Agent 编排（AI 判断力层）</h3>
+
+<p>复盘流程由两个 Claude Code skill 驱动：</p>
+
+<ul>
+  <li><strong><code>a-share-daily-review</code></strong>：主导完整工作流 — 生成 evidence packet → 传递给 LLM 写 sections JSON → Pydantic 结构校验 → 业务规则扫描 → 渲染用户可读 HTML</li>
+  <li><strong><code>daily-financial-briefing</code></strong>：负责外部背景 — 从公开来源搜集 US Macro（CPI、FOMC、国债收益率）和主要投行观点，带来源引用和发表日期</li>
+</ul>
+
+<p>当需要外部背景时，编排模式是 <strong>6 路并行子 Agent 的扇出/扇入拓扑</strong>：</p>
+
+<pre>父 Agent（daily-review）
+  ├── 子 Agent 1：大盘定性 + external background
+  ├── 子 Agent 2：大盘结构 + external background
+  ├── 子 Agent 3：市场宽度 + external background
+  ├── 子 Agent 4：情绪与事件 + external background
+  ├── 子 Agent 5：板块与结构 + external background
+  └── 子 Agent 6：风险观察 + external background
+       ↓
+  确定性代码合并为 external_background_fusion.v1</pre>
+
+<p>每个子 Agent 使用 <code>$daily-financial-briefing</code> skill 独立搜索自己负责的主题。<strong>合并过程由确定性 Python 代码完成</strong>，不交给 LLM — 因为 LLM 在汇总结构化数据时容易出错，而代码不会。</p>
+
+<hr>
+
+<h2>五个关键设计决策</h2>
+
+<h3>1. research-only 不是提示词，是架构</h3>
+
+<p>很多 AI 应用把"不提供医疗建议/法律建议/投资建议"写成 prompt 里的免责声明。用户换个问法就绕过去了。</p>
+
+<p>在这个项目里，交易行为过滤是多层的、硬编码的：</p>
+
+<ul>
+  <li><strong>Prompt 层</strong>：LLM 被明确禁止使用买入/卖出/加仓/止损等语言</li>
+  <li><strong>Python 层</strong>：<code>contains_trade_action_request()</code> 在用户输入进入任何数据分析之前就扫描交易模式并直接拒绝；<code>enforce_user_report_language_boundary()</code> 扫描最终 HTML，确保任何内部诊断术语（如 <code>data_status: partial</code>、<code>blocked_sections</code>）不会泄露给普通用户</li>
+  <li><strong>业务规则层</strong>：<code>validate_report_business_rules()</code> 验证 LLM 输出没有对被 blocked 的数据源做出正面结论</li>
+</ul>
+
+<p><strong>决定</strong>：安全约束放在代码里，不在 prompt 里祈祷。<br>
+<strong>代价</strong>：维护四套禁止词列表（FORBIDDEN_OUTPUT_TERMS、TRADE_ACTION_PATTERNS、BLOCKED_SECTION_FORBIDDEN_TERMS、LOW_INFORMATION_EXTERNAL_PHRASES），但换来的是确定性的安全保证。</p>
+
+<h3>2. 两层验证架构</h3>
+
+<p>LLM 输出是不可靠的—可能缺少字段、可能编造数据、可能违反输出契约。</p>
+
+<p>项目采用两层门禁：</p>
+
+<ol>
+  <li><strong>Pydantic 结构验证</strong>：<code>model_validator</code> 和 <code>field_validator</code> 强制执行类型、必填字段、禁止额外字段和日期格式</li>
+  <li><strong>业务规则验证</strong>：扫描禁止词、blocked section 越界、虚假完整性声明（"本报告覆盖了全部数据" — 当有数据源 failed 时这句话就是假的）</li>
+</ol>
+
+<p>任何一层未通过，<strong>渲染直接中断并返回具体失败原因</strong>。</p>
+
+<p>这让我可以在没有 LLM 的情况下测试整个流水线 — 系统提供了 <code>deterministic</code> 渲染模式，接收相同的 context 产出相同结构的 sections，使得 LLM 异常时能快速定位问题在 context 还是 LLM。</p>
+
+<h3>3. 数据缺口不作静默失败</h3>
+
+<p>很多数据管道把"这个接口挂了"当作一条 error log 然后跳过。在这个项目里，<strong>数据缺口是输出的一部分</strong>：</p>
+
+<ul>
+  <li>每个 API 的状态独立追踪（passed / partial / failed / skipped / schema_changed / empty）</li>
+  <li>状态通过 <code>apply_status_rules()</code> 编译为整体画像</li>
+  <li>如果一个增强接口挂了，主表 passed 时整体是 <code>partial</code> 而非 <code>failed</code></li>
+  <li>LLM 被指示：如果某个板块的数据不可用，<strong>描述数据缺口，不要猜测</strong></li>
+</ul>
+
+<p>这套状态机确保：你可以一眼看出哪些数据是可靠的，哪些是缺失的，以及缺失对结论有什么影响。</p>
+
+<h3>4. 采集与分析完全分离</h3>
+
+<p>采集脚本（<code>collect_daily_snapshot.py</code>，1365 行）不接触 LLM。<br>
+LLM 分析流程不接触 API。</p>
+
+<p>两个世界通过文件系统通信：<code>interface-status.json</code> → <code>review-context.json</code> → <code>llm-review-sections.json</code> → HTML。</p>
+
+<p>这意味着：</p>
+<ul>
+  <li>采集层的稳定性可以在无 LLM 的情况下独立测试</li>
+  <li>LLM 输出的质量可以用 mock 数据独立评估</li>
+  <li>如果 AKShare API 挂了，不影响已有数据的复盘分析</li>
+  <li>如果 LLM 输出有问题，不会污染数据采集</li>
+</ul>
+
+<h3>5. 契约式设计</h3>
+
+<p>所有组件间的 JSON 契约都带有 <code>Literal</code> 锁定的 <code>schema_version</code>（如 <code>daily_review_context.v1</code>、<code>external_background_fusion.v1</code>）。</p>
+
+<p>字段演进时，上下游通过 version 字符串识别格式变化 — 不会出现"字段悄悄改了，下游误读了 3 天才发现"的情况。</p>
+
+<hr>
+
+<h2>技术栈</h2>
+
+<table>
+  <tr><th>层</th><th>技术</th><th>用途</th></tr>
+  <tr><td>运行时</td><td>Python 3.12+</td><td>数据采集、业务逻辑、CLI</td></tr>
+  <tr><td>数据采集</td><td>AKShare</td><td>15 个 A 股公开行情接口</td></tr>
+  <tr><td>数据存储</td><td>Parquet + DuckDB + JSONL</td><td>标准化表、本地分析库、审计日志</td></tr>
+  <tr><td>契约验证</td><td>Pydantic v2</td><td>结构化契约和字段级约束</td></tr>
+  <tr><td>数据处理</td><td>Pandas + NumPy</td><td>DataFrame 转换和统计</td></tr>
+  <tr><td>AI 编排</td><td>Claude Code skills</td><td>分析和外部信息收集的 agent 驱动工作流</td></tr>
+  <tr><td>回归评测</td><td>Promptfoo + 黄金测试集</td><td>离线 regression、HTML 边界检查</td></tr>
+</table>
+
+<hr>
+
+<h2>几点反思</h2>
+
+<p><strong>1. Prompt 约束是脆弱的，代码约束是可靠的。</strong></p>
+
+<p>在写这个项目之前，我会把所有行为期望写在 prompt 里。现在我的做法是：prompt 负责"怎么表达"（写作风格、角色语气），代码负责"不能说什么"（禁用词、越界检测、安全边界）。prompt 里的约束是给 LLM 的建议，代码里的约束才是真正的 gate。</p>
+
+<p><strong>2. 为离线测试做好铺垫。</strong></p>
+
+<p><code>deterministic</code> 渲染模式和基于 fixture 的 Promptfoo 评测是这个项目最有价值的工程投资之一。它们让我可以在不烧 token 的情况下验证核心逻辑是否正确 — 每次改 prompt 或 validator 之后，跑一遍 <code>npm run test:eval</code>，几分钟就知道有没有退化。</p>
+
+<p><strong>3. 把 LLM 当受控文本生成组件，而不是流程编排器。</strong></p>
+
+<p>LLM 擅长生成有洞察力的文本，但在结构化数据汇总和确定性逻辑链路中不够可靠。我的选择是：LLM 负责生成 sections 的自然语言内容，Python 负责合并、校验、渲染。结果是：我得到了 LLM 的分析深度，也得到了软件工程的确定性保证。</p>
+
+<p><strong>4. 契约先于实现。</strong></p>
+
+<p>在写任何采集代码之前，先定义了数据模式版本和输出契约。在写任何 LLM prompt 之前，先定义了什么算"pass"。这种"先定标准再写代码"的方式，在 LLM 开发中比传统软件工程更重要 — 因为 LLM 的输出质量是统计性的，你需要一个确定性的标准来判断它是否达标。</p>
+
+<hr>
+
+<h2>结语</h2>
+
+<p>这个项目是开源的（MIT），可以在 GitHub 上找到。如果你也在探索 AI Agent + 数据管道的交集，或者对如何在实际项目中约束 LLM 行为感兴趣，欢迎交流。</p>
+
+<p>代码地址：<a href="https://github.com">github.com/your-org/a-share-info-hub</a></p>
+
+<hr>
+
+<p class="disclaimer">声明：本项目仅用于 A 股公开数据采集和复盘研究，不提供任何形式的交易建议。数据来源于 AKShare 公开接口，不保证完整性和准确性。</p>
+
+</body>
+</html>

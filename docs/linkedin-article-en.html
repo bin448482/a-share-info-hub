@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Data Pipeline to AI Agent Orchestration: Building an A-Share Research Info Hub</title>
+<style>
+  body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fff;
+  }
+  h1 {
+    font-size: 28px;
+    line-height: 1.35;
+    margin: 0 0 12px 0;
+    color: #111;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 36px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e0e0e0;
+    color: #222;
+  }
+  h3 {
+    font-size: 18px;
+    margin: 24px 0 8px 0;
+    color: #333;
+  }
+  p { margin: 0 0 14px 0; }
+  blockquote {
+    margin: 16px 0;
+    padding: 10px 18px;
+    border-left: 3px solid #999;
+    color: #555;
+    font-style: italic;
+  }
+  strong { color: #111; }
+  code {
+    background: #f2f2f2;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 15px;
+    color: #c7254e;
+  }
+  pre {
+    background: #f7f7f7;
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+  }
+  ul, ol { margin: 0 0 14px 0; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 32px 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 15px;
+  }
+  th {
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: #666;
+    margin: 0 0 28px 0;
+    line-height: 1.5;
+  }
+  .disclaimer {
+    font-size: 14px;
+    color: #888;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<h1>From Data Pipeline to AI Agent Orchestration: Building an A-Share Research Info Hub</h1>
+
+<p class="subtitle">A project postmortem on architecture decisions, AI agent orchestration, and why I chose to constrain LLMs with deterministic code instead of prompt engineering.</p>
+
+<hr>
+
+<h2>The Motivation</h2>
+
+<p>Every day after the A-share market closes, I found myself asking the same set of research questions: How did the market do? Any structural changes in the limit-up pools? Where is institutional money flowing on the Dragon Tiger List? What does the macro landscape and major bank commentary suggest about near-term sentiment?</p>
+
+<p>Doing this manually meant <strong>highly repetitive work</strong> (15+ public data interfaces, each requiring manual query, field mapping, and normalization) and <strong>insufficient analytical context</strong> (raw data dumps don't tell stories — the connections between data points require synthesis).</p>
+
+<p>A traditional approach would be a cron-triggered scraper. But I didn't just want a data dump. I wanted a system that automatically generates structured research reports — where every conclusion is traceable to a data source, and where the boundary between "research" and "trading advice" is enforced in code, not in wishful prompting.</p>
+
+<p>That's the origin story of <code>a-share-info-hub</code>.</p>
+
+<hr>
+
+<h2>Architecture at a Glance</h2>
+
+<p>The system is built on a single principle: <strong>Python handles deterministic work; AI agents handle judgment, synthesis, and orchestration.</strong></p>
+
+<h3>Layer 1: Data Collection (Deterministic Python Pipeline)</h3>
+
+<p>One CLI command — <code>python -m a_share_info_hub daily-update</code> — triggers the collection chain:</p>
+
+<ul>
+  <li>Verify the target date is an A-share trading day (via AKShare's trading calendar)</li>
+  <li>If yes, pull 14 public interfaces in parallel: full-market snapshot (~5,500 stocks), 6 limit-up/down pools, 3 Dragon Tiger List dimensions, SSE/SZSE exchange summaries, industry and concept board snapshots</li>
+  <li>Each interface independently tracks its status (passed / partial / failed / schema_changed) — one failure never blocks others</li>
+  <li>Raw responses are preserved as JSON; normalized data goes to Parquet + DuckDB</li>
+</ul>
+
+<p>One detail worth highlighting: <strong>I don't assume API fields are stable.</strong> Chinese free data interfaces frequently adjust column names and shapes. So the code has a <code>SchemaChangedError</code> exception class and a <code>find_column()</code> function that performs fuzzy matching against known alias tuples — making schema drift an <strong>observable event</strong>, not a silent failure.</p>
+
+<h3>Layer 2: Evidence Compilation (Python Business Logic)</h3>
+
+<p>After collection, the <code>daily-review</code> subcommand compiles the scattered Parquet tables and interface states into a single, versioned <strong>evidence packet</strong> (<code>review-context.json</code>):</p>
+
+<ul>
+  <li>Lists <code>allowed_sections</code> — which analytical sections have data backing</li>
+  <li>Lists <code>blocked_sections</code> — which data sources failed, freezing their corresponding report sections</li>
+  <li>Lists <code>forbidden_claims</code> — conclusions the LLM must not fabricate</li>
+  <li>Hardcodes <code>analysis_mode: research_only</code> and <code>not_investment_advice: true</code></li>
+</ul>
+
+<p>This is not a soft prompt constraint. It's a <strong>hard code constraint</strong> — the LLM's input is strictly scoped to the evidence packet. No external knowledge allowed.</p>
+
+<h3>Layer 3: Agent Orchestration (The Judgment Layer)</h3>
+
+<p>The review workflow is driven by two Claude Code skills:</p>
+
+<ul>
+  <li><strong><code>a-share-daily-review</code></strong>: Drives the full pipeline — generates the evidence packet → sends it to the LLM for section writing → Pydantic validation → business rule scanning → renders user-readable HTML</li>
+  <li><strong><code>daily-financial-briefing</code></strong>: Handles external context — gathers US Macro data (CPI, FOMC, Treasury yields) and major investment bank views from public sources, with full citations and publication dates</li>
+</ul>
+
+<p>When external background is needed, the orchestration pattern is a <strong>6-way parallel fan-out / fan-in topology</strong>:</p>
+
+<pre>Parent Agent (daily-review)
+  ├── Sub-agent 1: Market Overview Assessment + external background
+  ├── Sub-agent 2: Market Structure + external background
+  ├── Sub-agent 3: Market Breadth + external background
+  ├── Sub-agent 4: Sentiment & Events + external background
+  ├── Sub-agent 5: Board & Structure + external background
+  └── Sub-agent 6: Risk Observations + external background
+       ↓
+  Deterministic code merges into external_background_fusion.v1</pre>
+
+<p>Each sub-agent uses the <code>$daily-financial-briefing</code> skill to independently search its assigned topic. <strong>The final merge is performed by deterministic Python code</strong> — not by an LLM — because LLMs are unreliable at structured data aggregation, and code is not.</p>
+
+<hr>
+
+<h2>Five Design Decisions Worth Discussing</h2>
+
+<h3>1. research-only Is an Architecture, Not a Prompt</h3>
+
+<p>Many AI applications handle safety boundaries with a prompt disclaimer: "Do not provide financial advice." Users can jailbreak that with a rephrase.</p>
+
+<p>In this project, the safety boundary is multi-layered and hardcoded:</p>
+
+<ul>
+  <li><strong>Prompt layer</strong>: The LLM is explicitly forbidden from using buy/sell/position/stop-loss language</li>
+  <li><strong>Python layer</strong>: <code>contains_trade_action_request()</code> scans user input for trading patterns and <strong>rejects the request before any data analysis occurs</strong>; <code>enforce_user_report_language_boundary()</code> scans the final HTML to ensure internal diagnostics (like <code>data_status: partial</code> or <code>blocked_sections</code>) never leak to non-technical readers</li>
+  <li><strong>Business rules layer</strong>: <code>validate_report_business_rules()</code> verifies the LLM hasn't drawn positive conclusions about blocked data sources</li>
+</ul>
+
+<p><strong>Decision</strong>: Enforce safety in code. Don't pray that prompts will hold.<br>
+<strong>Trade-off</strong>: Maintaining four separate forbidden-term lists (FORBIDDEN_OUTPUT_TERMS, TRADE_ACTION_PATTERNS, BLOCKED_SECTION_FORBIDDEN_TERMS, LOW_INFORMATION_EXTERNAL_PHRASES) — but the payoff is deterministic safety guarantees.</p>
+
+<h3>2. Dual-Layer Validation Architecture</h3>
+
+<p>LLM output is unreliable — it can miss fields, hallucinate data, or violate output contracts.</p>
+
+<p>The system uses a two-layer gate:</p>
+
+<ol>
+  <li><strong>Pydantic structural validation</strong>: <code>model_validator</code> and <code>field_validator</code> enforce types, required fields, forbidden extra fields, and date formats</li>
+  <li><strong>Business rule validation</strong>: Scans for forbidden terms, blocked-section boundary violations, and false completeness claims ("This report covers all data" is a lie when some data sources have failed)</li>
+</ol>
+
+<p>If either layer fails, <strong>rendering is blocked and the exact failure reason is returned.</strong></p>
+
+<p>This also means I can test the entire pipeline without an LLM — a <code>deterministic</code> render mode accepts the same context and produces the same section structure, enabling fast fault isolation with zero token cost.</p>
+
+<h3>3. Data Gaps as First-Class Citizens</h3>
+
+<p>Many data pipelines treat "this API is down" as an error log entry and move on. In this project, <strong>data gaps are part of the output:</strong></p>
+
+<ul>
+  <li>Each API's status is independently tracked (passed / partial / failed / skipped / schema_changed / empty)</li>
+  <li>A state machine (<code>apply_status_rules()</code>) compiles them into an overall health picture</li>
+  <li>If an enhancement interface fails while the main table passes, overall status is <code>partial</code>, not <code>failed</code></li>
+  <li>The LLM is instructed: if data for a section is unavailable, <strong>describe the gap, don't guess</strong></li>
+</ul>
+
+<p>This state machine ensures you can see at a glance which data is reliable, which is missing, and what impact the gaps have on conclusions.</p>
+
+<h3>4. Collection and Analysis Are Completely Decoupled</h3>
+
+<p>The collection script (<code>collect_daily_snapshot.py</code>, 1,365 lines) never touches an LLM.<br>
+The LLM analysis flow never touches an API.</p>
+
+<p>They communicate via the filesystem: <code>interface-status.json</code> → <code>review-context.json</code> → <code>llm-review-sections.json</code> → HTML.</p>
+
+<p>What this buys:</p>
+<ul>
+  <li>Collection stability can be tested independently with zero LLM involvement</li>
+  <li>LLM output quality can be evaluated with mock data</li>
+  <li>If AKShare APIs go down, review analysis on existing data still works</li>
+  <li>If LLM output is broken, the data pipeline is unharmed</li>
+</ul>
+
+<h3>5. Contract-First Design</h3>
+
+<p>Every inter-component JSON contract carries a <code>Literal</code>-locked <code>schema_version</code> (e.g., <code>daily_review_context.v1</code>, <code>external_background_fusion.v1</code>).</p>
+
+<p>When fields evolve, consumers identify the format change through the version string. No more "field silently changed and downstream misread it for three days" situations.</p>
+
+<hr>
+
+<h2>Tech Stack</h2>
+
+<table>
+  <tr><th>Layer</th><th>Technology</th><th>Role</th></tr>
+  <tr><td>Runtime</td><td>Python 3.12+</td><td>Data collection, business logic, CLI</td></tr>
+  <tr><td>Data sourcing</td><td>AKShare</td><td>15 A-share public market interfaces</td></tr>
+  <tr><td>Storage</td><td>Parquet + DuckDB + JSONL</td><td>Normalized tables, local OLAP, audit trails</td></tr>
+  <tr><td>Contract validation</td><td>Pydantic v2</td><td>Structured contracts and field-level constraints</td></tr>
+  <tr><td>Data processing</td><td>Pandas + NumPy</td><td>DataFrame transforms and statistics</td></tr>
+  <tr><td>AI orchestration</td><td>Claude Code skills</td><td>Agent-driven workflows for analysis and external info gathering</td></tr>
+  <tr><td>Regression testing</td><td>Promptfoo + golden test sets</td><td>Offline regression, HTML boundary checks</td></tr>
+</table>
+
+<hr>
+
+<h2>Lessons Learned</h2>
+
+<p><strong>1. Prompt constraints are fragile. Code constraints are reliable.</strong></p>
+
+<p>Before this project, I would have put all behavioral expectations in prompts. Now my practice is: prompts control <em>how to express</em> (writing style, role tone); code controls <em>what cannot be said</em> (forbidden terms, boundary violations, safety gates). Prompt constraints are suggestions to the LLM. Code constraints are actual gates.</p>
+
+<p><strong>2. Invest early in offline testing infrastructure.</strong></p>
+
+<p>The <code>deterministic</code> render mode and fixture-based Promptfoo evaluation were among the highest-ROI engineering investments in this project. They let me verify core logic without burning tokens — after every prompt or validator change, running <code>npm run test:eval</code> tells me in minutes whether anything regressed.</p>
+
+<p><strong>3. Treat the LLM as a constrained text-generation component, not a flow orchestrator.</strong></p>
+
+<p>LLMs excel at generating insightful text but are unreliable for structured data aggregation and deterministic logic chains. My choice: the LLM generates natural-language section content; Python handles merging, validation, and rendering. The result: I get the LLM's analytical depth, and I get software engineering's deterministic guarantees.</p>
+
+<p><strong>4. Contracts before implementation.</strong></p>
+
+<p>I defined data schema versions and output contracts before writing any collection code. I defined what counts as "pass" before writing any LLM prompt. This "define the standard before writing the code" approach matters even more in LLM development than in traditional software engineering — because LLM output quality is statistical, and you need a deterministic standard to judge whether it meets the bar.</p>
+
+<hr>
+
+<h2>Wrapping Up</h2>
+
+<p>This project is open-source (MIT). If you're exploring the intersection of AI agents and data pipelines, or thinking about how to practically constrain LLM behavior in production systems, I'd love to connect and discuss.</p>
+
+<p>Repository: <a href="https://github.com">github.com/your-org/a-share-info-hub</a></p>
+
+<hr>
+
+<p class="disclaimer">Disclaimer: This project is for A-share public data collection and research review only. It does not produce trading advice of any kind. Data is sourced from AKShare public interfaces with no guarantees of completeness or accuracy.</p>
+
+</body>
+</html>
