@@ -44,6 +44,15 @@ EXTERNAL_STATUS_BLOCKED = "blocked"
 EXTERNAL_STATUS_INVALID = "invalid"
 REPORT_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
+
+def _validate_report_date(value: str, field_name: str) -> str:
+    """校验报告日期格式并保留字段名错误语义。"""
+
+    if not REPORT_DATE_RE.fullmatch(value):
+        raise ValueError(f"{field_name} must be formatted as YYYY-MM-DD")
+    return value
+
+
 TABLE_FILES = {
     "daily_stock_snapshot": "daily_stock_snapshot.parquet",
     "limit_pool_events": "limit_pool_events.parquet",
@@ -320,9 +329,7 @@ class ExternalBackgroundFusionInput(BaseModel):
     def validate_trade_date(cls, value: str) -> str:
         """校验外部背景融合包日期格式。"""
 
-        if not REPORT_DATE_RE.fullmatch(value):
-            raise ValueError("trade_date must be formatted as YYYY-MM-DD")
-        return value
+        return _validate_report_date(value, "trade_date")
 
 
 class ExternalBackgroundInput(BaseModel):
@@ -346,9 +353,7 @@ class ExternalBackgroundInput(BaseModel):
     def validate_briefing_date(cls, value: str) -> str:
         """校验外部背景日期格式，避免自然语言日期进入契约。"""
 
-        if not REPORT_DATE_RE.fullmatch(value):
-            raise ValueError("briefing_date must be formatted as YYYY-MM-DD")
-        return value
+        return _validate_report_date(value, "briefing_date")
 
 
 class ExternalBackgroundContext(BaseModel):
@@ -396,9 +401,7 @@ class ReviewContext(BaseModel):
     def validate_trade_date(cls, value: str) -> str:
         """校验交易日期格式，避免混入自然语言日期。"""
 
-        if not REPORT_DATE_RE.fullmatch(value):
-            raise ValueError("trade_date must be formatted as YYYY-MM-DD")
-        return value
+        return _validate_report_date(value, "trade_date")
 
 
 class LlmReviewSections(BaseModel):
@@ -1157,20 +1160,21 @@ def coerce_external_citations(
 ) -> list[ExternalBackgroundCitation]:
     """把融合包顶层引用转换为带来源和 URL 的引用列表。"""
 
-    citations: list[ExternalBackgroundCitation] = []
-    for citation in raw_citations:
-        if not citation.source_name.strip() or not citation.url.strip():
-            continue
-        citations.append(
-            ExternalBackgroundCitation(
-                source_name=citation.source_name.strip(),
-                title=citation.title.strip(),
-                published_at=citation.published_at.strip(),
-                accessed_at=citation.accessed_at.strip(),
-                url=citation.url.strip(),
-            )
-        )
-    return citations
+    return [citation for raw in raw_citations if (citation := _coerce_external_citation(raw))]
+
+
+def _coerce_external_citation(citation: ExternalBackgroundRawCitation) -> ExternalBackgroundCitation | None:
+    """把单条原始引用转换为带来源和 URL 的受控引用。"""
+
+    if not citation.source_name.strip() or not citation.url.strip():
+        return None
+    return ExternalBackgroundCitation(
+        source_name=citation.source_name.strip(),
+        title=citation.title.strip(),
+        published_at=citation.published_at.strip(),
+        accessed_at=citation.accessed_at.strip(),
+        url=citation.url.strip(),
+    )
 
 
 def merge_external_citations(
@@ -1210,19 +1214,7 @@ def coerce_external_core_point(point: ExternalBackgroundRawCorePoint) -> Externa
 
     if point.type not in {"fact", "market_expectation", "bank_view", "inference"}:
         return None
-    citations: list[ExternalBackgroundCitation] = []
-    for citation in point.citations:
-        if not citation.source_name.strip() or not citation.url.strip():
-            continue
-        citations.append(
-            ExternalBackgroundCitation(
-                source_name=citation.source_name.strip(),
-                title=citation.title.strip(),
-                published_at=citation.published_at.strip(),
-                accessed_at=citation.accessed_at.strip(),
-                url=citation.url.strip(),
-            )
-        )
+    citations = coerce_external_citations(point.citations)
     if not point.text.strip() or not citations:
         return None
     return ExternalBackgroundCorePoint(
@@ -1704,16 +1696,6 @@ def is_actionable_external_text(text: str) -> bool:
     has_external_detail = any(marker in normalized for marker in EXTERNAL_DETAIL_MARKERS)
     has_local_mapping = any(marker in normalized for marker in LOCAL_VALIDATION_MARKERS)
     return has_external_detail and has_local_mapping
-
-
-def merge_paragraphs(first: str, second: str) -> str:
-    """合并两个段落并避免空文本产生多余空格。"""
-
-    if not first.strip():
-        return second.strip()
-    if not second.strip():
-        return first.strip()
-    return f"{first.strip()} {second.strip()}"
 
 
 def merge_unique_texts(primary: list[str], secondary: list[str]) -> list[str]:
@@ -2461,12 +2443,6 @@ def format_large_number(value: float) -> str:
     if abs(value) >= 10_000:
         return f"{value / 10_000:.2f} 万"
     return f"{value:.2f}"
-
-
-def format_counts(counts: pd.Series) -> str:
-    """把 value_counts 结果渲染成紧凑文本。"""
-
-    return ", ".join(f"{index}: {int(value)}" for index, value in counts.items())
 
 
 def series_counts_to_dict(counts: pd.Series) -> dict[str, int]:

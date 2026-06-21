@@ -562,7 +562,7 @@ def build_today_capability(
         )
         rows.append(
             {
-                **spec_to_dict(spec),
+                **asdict(spec),
                 **asdict(result),
                 "contract_candidate": contract_candidate,
                 "today_exclusion_reason": today_exclusion_reason(spec, result),
@@ -584,12 +584,6 @@ def today_exclusion_reason(spec: InterfaceSpec, result: CallResult) -> str | Non
     if spec.exclusion_note:
         return spec.exclusion_note
     return None
-
-
-def spec_to_dict(spec: InterfaceSpec) -> dict[str, Any]:
-    """Serialize an interface spec without dataclass internals."""
-
-    return asdict(spec)
 
 
 def function_signature(function_name: str) -> str:
@@ -1393,7 +1387,7 @@ def main() -> int:
         "generated_at": generated_at,
         "akshare_version": getattr(ak, "__version__", "unknown"),
         "candidate_count": len(specs),
-        "interfaces": [spec_to_dict(spec) for spec in specs],
+        "interfaces": [asdict(spec) for spec in specs],
     }
     write_json(output_dir / "candidate_interfaces.json", candidate_payload)
     today_rows = build_today_capability(specs, args.max_retries, args.retry_sleep)

@@ -36,6 +36,13 @@ DUCKDB_FAILED = "failed"
 MAIN_SOURCE_KEY = "stock_zh_a_spot"
 MAIN_MIN_ROWS = 100
 TRADING_CALENDAR_SOURCE = "akshare.tool_trade_date_hist_sina"
+CATEGORY_TABLE_NAMES = {
+    "main": "daily_stock_snapshot",
+    "limit_pool": "limit_pool_events",
+    "lhb": "lhb_events",
+    "market_summary": "market_summary",
+    "board_snapshot": "board_snapshot",
+}
 
 MAIN_FIELD_MAP = {
     "symbol": "代码",
@@ -792,7 +799,7 @@ def write_raw_artifacts(
     raw_path: str | None = None
     if result.status in {SUCCESS, SUCCESS_EMPTY} or status == SCHEMA_CHANGED:
         response_path = source_dir / "response.json"
-        write_json(response_path, dataframe_to_records(result.dataframe))
+        write_json(response_path, to_jsonable(result.dataframe.to_dict(orient="records")))
         raw_path = str(response_path)
     metadata_path = source_dir / "metadata.json"
     write_json(
@@ -812,12 +819,6 @@ def write_raw_artifacts(
         },
     )
     return raw_path, str(metadata_path)
-
-
-def dataframe_to_records(dataframe: pd.DataFrame) -> list[dict[str, Any]]:
-    """把 DataFrame 转成 JSON 可写入的记录列表。"""
-
-    return to_jsonable(dataframe.to_dict(orient="records"))
 
 
 def collect_daily_snapshot(
@@ -874,7 +875,7 @@ def collect_daily_snapshot(
         )
         source_records.append(record)
         append_status_log(logs_root / "external-interface-failures.jsonl", record, trade_date)
-        table_name = table_name_for_category(spec.category)
+        table_name = CATEGORY_TABLE_NAMES.get(spec.category)
         if table_name and normalized is not None:
             normalized_by_table[table_name].append(normalized)
     tables = build_standard_tables(normalized_by_table)
@@ -932,7 +933,7 @@ def build_no_collection_outputs(
     """为非交易日或交易日历失败生成状态报告，不调用行情接口。"""
 
     report_root = output_root / "reports" / "daily-runs" / trade_date.isoformat()
-    tables = build_empty_standard_tables()
+    tables = build_standard_tables({table_name: [] for table_name in CATEGORY_TABLE_NAMES.values()})
     interface_status_path = report_root / "interface-status.json"
     summary_path = report_root / "daily-data-summary.md"
     write_interface_status(
@@ -968,18 +969,6 @@ def build_no_collection_outputs(
     )
 
 
-def table_name_for_category(category: str) -> str | None:
-    """返回接口类别对应的标准化表名。"""
-
-    return {
-        "main": "daily_stock_snapshot",
-        "limit_pool": "limit_pool_events",
-        "lhb": "lhb_events",
-        "market_summary": "market_summary",
-        "board_snapshot": "board_snapshot",
-    }.get(category)
-
-
 def build_standard_tables(
     normalized_by_table: dict[str, list[pd.DataFrame]]
 ) -> dict[str, pd.DataFrame]:
@@ -1000,20 +989,6 @@ def build_standard_tables(
             normalized_by_table["board_snapshot"], BOARD_SNAPSHOT_COLUMNS
         ),
     }
-
-
-def build_empty_standard_tables() -> dict[str, pd.DataFrame]:
-    """生成不含数据但保留 schema 的标准化表集合。"""
-
-    return build_standard_tables(
-        {
-            "daily_stock_snapshot": [],
-            "limit_pool_events": [],
-            "lhb_events": [],
-            "market_summary": [],
-            "board_snapshot": [],
-        }
-    )
 
 
 def concat_or_empty(frames: list[pd.DataFrame], columns: list[str]) -> pd.DataFrame:
