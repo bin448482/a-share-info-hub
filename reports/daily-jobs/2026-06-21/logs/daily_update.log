@@ -1,0 +1,17 @@
+stage: daily_update
+started_at: 2026-06-21T19:55:18+08:00
+finished_at: 2026-06-21T19:55:19+08:00
+elapsed_seconds: 1.546
+exit_code: 0
+status: passed
+soft_warning: false
+timed_out: false
+command: .venv/bin/python -m a_share_info_hub daily-update --trade-date 2026-06-21 --output-root /mnt/tool/2-projects/a-share-info-hub
+
+## stdout
+Daily snapshot status: skipped
+interface_status: /mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-21/interface-status.json
+daily_summary: /mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-21/daily-data-summary.md
+
+
+## stderr

@@ -1,0 +1,38 @@
+{
+  "attempts": 1,
+  "columns": [
+    "序号",
+    "代码",
+    "名称",
+    "上榜日",
+    "解读",
+    "收盘价",
+    "涨跌幅",
+    "龙虎榜净买额",
+    "龙虎榜买入额",
+    "龙虎榜卖出额",
+    "龙虎榜成交额",
+    "市场总成交额",
+    "净买额占总成交比",
+    "成交额占总成交比",
+    "换手率",
+    "流通市值",
+    "上榜原因",
+    "上榜后1日",
+    "上榜后2日",
+    "上榜后5日",
+    "上榜后10日"
+  ],
+  "elapsed_seconds": 0.336,
+  "failure_reason": null,
+  "fetched_at": "2026-06-22T17:22:37.347704+08:00",
+  "function_name": "stock_lhb_detail_em",
+  "params": {
+    "end_date": "20260622",
+    "start_date": "20260622"
+  },
+  "raw_path": "/mnt/tool/2-projects/a-share-info-hub/data/raw/2026-06-22/stock_lhb_detail_em/response.json",
+  "row_count": 105,
+  "source": "akshare.stock_lhb_detail_em",
+  "status": "success"
+}

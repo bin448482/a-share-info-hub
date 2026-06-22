@@ -1,0 +1,22 @@
+{
+  "started_at": "2026-06-22T16:02:43+08:00",
+  "finished_at": "2026-06-22T16:03:29+08:00",
+  "elapsed_seconds": 45.661,
+  "status": "passed",
+  "results": [
+    {
+      "message_kind": "alert",
+      "level": "critical",
+      "title": "2026-06-22 A 股日报任务告警",
+      "recipients": [
+        "main"
+      ],
+      "status": "passed",
+      "provider": "openclaw_agent",
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main: {\n  \"runId\": \"1baf4c05-2052-490d-9a9f-1e3b6161c15c\",\n  \"status\": \"ok\",\n  \"summary\": \"completed\",\n  \"result\": {\n    \"payloads\": [\n      {\n        \"text\": \"收到 critical 告警，立即排查。\",\n        \"mediaUrl\": null\n      },\n      {\n        \"text\": \"告警诊断",
+      "failure_reason": null
+    }
+  ]
+}
