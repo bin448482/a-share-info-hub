@@ -448,6 +448,69 @@ def test_external_background_fusion_json_is_accepted_and_merged(tmp_path: Path) 
     assert "Federal Reserve: https://www.federalreserve.gov/example" in notes
 
 
+def test_external_background_fusion_topic_results_are_accepted(tmp_path: Path) -> None:
+    """真实 agent 形态的 topic results 和对象候选项应被融合包消费端接受。"""
+
+    write_status(tmp_path)
+    write_tables(tmp_path)
+    write_duckdb(tmp_path)
+    external_background = tmp_path / "external-background-fusion.json"
+    payload = {
+        "schema_version": "external_background_fusion.v1",
+        "source_skill": "daily-financial-briefing",
+        "trade_date": TRADE_DATE,
+        "not_investment_advice": True,
+        "topic_findings": [
+            {
+                "topic_key": "market_breadth",
+                "blocked": False,
+                "external_findings": [
+                    {
+                        "text": "FOMC 政策路径仍依赖后续通胀数据，美债收益率变化会影响全球流动性定价。",
+                        "type": "macro_fact",
+                        "local_relevance": "对应 A 股上涨家数、下跌家数和成长板块成交。",
+                        "citations": [
+                            {
+                                "source_name": "Federal Reserve",
+                                "title": "Policy statement",
+                                "published_at": "2026-06-18",
+                                "accessed_at": "2026-06-18",
+                                "url": "https://www.federalreserve.gov/example",
+                            }
+                        ],
+                    }
+                ],
+                "information_gaps": [],
+            }
+        ],
+        "risk_candidates": [
+            {
+                "text": "FOMC 政策路径若继续推高美债收益率，A 股需要观察上涨家数、下跌家数和成长板块成交是否同步走弱。"
+            }
+        ],
+        "follow_up_candidates": [
+            {"text": "人民币汇率继续承压时，A 股上涨家数和成长板块成交占比是否同步回落？"}
+        ],
+        "citations": [],
+        "information_gaps": [],
+        "issues": [],
+    }
+    external_background.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    result = generate_daily_review(
+        DailyReviewRequest(
+            output_root=tmp_path,
+            render_mode="deterministic",
+            external_background_path=external_background,
+        )
+    )
+
+    context_payload = json.loads(Path(result.context_artifact or "").read_text(encoding="utf-8"))
+    context = ReviewContext.model_validate(context_payload)
+    assert context.external_background.status == "passed"
+    assert context.external_background.core_points[0].text.startswith("FOMC")
+
+
 def test_review_context_rejects_invalid_status() -> None:
     """Pydantic 应阻断非法 context 枚举值。"""
 
@@ -546,6 +609,35 @@ def test_daily_review_blocks_llm_board_claim_when_board_blocked(tmp_path: Path) 
     assert result.report_artifact is None
     assert "validation_status: failed" in result.message
     assert "blocked section board_snapshot" in result.message
+
+
+@pytest.mark.parametrize(
+    "board_text",
+    [
+        "板块层面的确认依据不足，行业集中无法上升为结构主线。",
+        "本报告不将涨跌停池中的行业集中直接上升为市场板块主线。",
+        "存在将个股活跃误读为板块主线的风险。",
+        "涨停池行业集中暂不上升为板块主线。",
+        "上述行业线索不构成板块主线的确认。",
+    ],
+)
+def test_daily_review_allows_negated_board_claim_when_board_blocked(
+    tmp_path: Path, board_text: str
+) -> None:
+    """板块数据 blocked 时，否定结构主线的风险提示不应被误判。"""
+
+    write_status(tmp_path, overall_status="partial", board_failed=True)
+    write_tables(tmp_path, with_board=False)
+    write_duckdb(tmp_path)
+    llm_output = tmp_path / "llm-review-sections.json"
+    write_llm_sections(llm_output, board_text=board_text)
+
+    result = generate_daily_review(
+        DailyReviewRequest(output_root=tmp_path, llm_output_path=llm_output)
+    )
+
+    assert result.data_status == "partial"
+    assert result.report_artifact is not None
 
 
 def test_daily_review_deterministic_fallback_generates_html_for_local_eval(tmp_path: Path) -> None:
@@ -665,6 +757,54 @@ def test_daily_review_rejects_forbidden_trading_language(tmp_path: Path) -> None
 
     assert result.data_status == "failed"
     assert "forbidden trading terms" in result.message
+
+
+def test_daily_review_normalizes_disclaimer_before_forbidden_term_check(tmp_path: Path) -> None:
+    """免责声明枚举禁用交易词时应被固定研究声明替换后再渲染。"""
+
+    write_status(tmp_path)
+    write_tables(tmp_path)
+    write_duckdb(tmp_path)
+    llm_output = tmp_path / "llm-review-sections.json"
+    write_llm_sections(llm_output)
+    payload = json.loads(llm_output.read_text(encoding="utf-8"))
+    payload["not_investment_advice_note"] = (
+        "本报告为盘后研究复盘，不构成任何形式的投资建议、买卖指令、仓位建议或价格预测。"
+    )
+    llm_output.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    result = generate_daily_review(
+        DailyReviewRequest(output_root=tmp_path, llm_output_path=llm_output)
+    )
+
+    assert result.data_status == "passed"
+    assert result.report_artifact is not None
+    html = Path(result.report_artifact).read_text(encoding="utf-8")
+    assert "本报告仅用于研究复盘，不构成投资建议。" in html
+    assert "仓位建议" not in html
+
+
+def test_daily_review_normalizes_data_boundary_note_before_html_check(tmp_path: Path) -> None:
+    """数据边界说明裸露内部字段时应被固定用户文案替换。"""
+
+    write_status(tmp_path, overall_status="partial", board_failed=True)
+    write_tables(tmp_path, with_board=False)
+    write_duckdb(tmp_path)
+    llm_output = tmp_path / "llm-review-sections.json"
+    write_llm_sections(llm_output, board_text="板块层面的确认依据不足，行业集中无法上升为结构主线。")
+    payload = json.loads(llm_output.read_text(encoding="utf-8"))
+    payload["data_boundary_note"] = "详细的数据接口状态、blocked sections 及修复建议请参见技术参考文件。"
+    llm_output.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    result = generate_daily_review(
+        DailyReviewRequest(output_root=tmp_path, llm_output_path=llm_output)
+    )
+
+    assert result.data_status == "partial"
+    assert result.report_artifact is not None
+    html = Path(result.report_artifact).read_text(encoding="utf-8")
+    assert "本报告仅引用已生成的复盘证据包" in html
+    assert "blocked sections" not in html
 
 
 def test_external_background_sections_reject_trading_language(tmp_path: Path) -> None:

@@ -72,7 +72,7 @@
 - `external_background.status=not_provided` 时，外部背景字段保持空值。
 - `external_background.status=blocked|invalid` 时，不输出任何外部结论正文；状态、缺口和错误原因只进入技术参考 Markdown。
 - `data_boundary_note` 必须说明只引用已生成的复盘证据包，并提示详细数据状态和接口说明见同目录技术参考文件。
-- `not_investment_advice_note` 必须说明不构成投资建议。
+- `not_investment_advice_note` 必须固定写为：“本报告仅用于研究复盘，不构成投资建议。” 不要在声明中枚举买卖、仓位、价格预测或止盈止损等禁用交易词。
 
 ## 用户正文禁用技术表达
 
