@@ -8,6 +8,7 @@ import pandas as pd
 
 from scripts.collect_daily_snapshot import (
     FAILED,
+    IGNORED,
     MAIN_SOURCE_KEY,
     OVERALL_FAILED,
     OVERALL_PARTIAL,
@@ -20,6 +21,7 @@ from scripts.collect_daily_snapshot import (
     SourceSpec,
     build_overall_status,
     normalize_source,
+    should_ignore_external_failure,
 )
 
 
@@ -118,6 +120,43 @@ def test_enhancement_schema_change_makes_partial() -> None:
     )
 
     assert overall == OVERALL_PARTIAL
+
+
+def test_eastmoney_push2_proxy_failure_is_ignored_for_enhancement() -> None:
+    """增强接口命中 Eastmoney push2 代理断连时应临时忽略。"""
+
+    spec = SourceSpec(
+        "stock_board_industry_name_em",
+        "stock_board_industry_name_em",
+        "board_snapshot",
+    )
+    reason = (
+        "ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): "
+        "Max retries exceeded (Caused by ProxyError('Unable to connect to proxy', "
+        "RemoteDisconnected('Remote end closed connection without response')))"
+    )
+
+    assert should_ignore_external_failure(spec, FAILED, reason) is True
+    overall = build_overall_status(
+        [
+            record(MAIN_SOURCE_KEY, "main", SUCCESS),
+            record("stock_board_industry_name_em", "board_snapshot", IGNORED),
+        ],
+        "written",
+    )
+    assert overall == OVERALL_PASSED
+
+
+def test_main_push2_proxy_failure_is_not_ignored() -> None:
+    """主表即使命中同类网络错误也不能被临时忽略。"""
+
+    spec = SourceSpec(MAIN_SOURCE_KEY, "stock_zh_a_spot", "main")
+    reason = (
+        "ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): "
+        "Caused by ProxyError('Unable to connect to proxy')"
+    )
+
+    assert should_ignore_external_failure(spec, FAILED, reason) is False
 
 
 def test_main_failure_makes_failed() -> None:

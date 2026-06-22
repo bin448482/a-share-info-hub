@@ -128,11 +128,13 @@ openclaw cron add \
 
 | 状态 | 含义 |
 | --- | --- |
-| `passed` | 主表和其他表均非空，DuckDB 写入成功 |
+| `passed` | 主表可用，未发生未忽略的增强接口失败，DuckDB 写入成功 |
 | `partial` | 主表可用但部分增强接口失败或缺失 |
 | `failed` | 主表不可用或交易日历验证失败 |
 | `skipped` | 目标日期非 A 股交易日，未调用行情接口 |
 | `missing` | 指定日期没有已存在的采集运行记录 |
+
+接口级 `ignored` 表示增强接口命中已知临时忽略规则；当前仅用于 Eastmoney `push2.eastmoney.com` 代理断连问题。该状态不写入失败日志、不把当日整体状态降为 `partial`，但仍会出现在 `interface-status.json` 和每日摘要中；主表接口不会被忽略。
 
 ### 运行测试
 
@@ -236,11 +238,13 @@ python -m a_share_info_hub daily-review \
 
 | Status | Meaning |
 | --- | --- |
-| `passed` | Main table and all enhanced tables non-empty, DuckDB write succeeded |
+| `passed` | Main table available, no non-ignored enhanced-interface failures, DuckDB write succeeded |
 | `partial` | Main table available but some enhanced interfaces failed or missing |
 | `failed` | Main table unavailable or trading calendar verification failed |
 | `skipped` | Target date is not an A-share trading day, no market interfaces called |
 | `missing` | No existing collection run found for the specified date |
+
+Interface-level `ignored` means an enhanced interface matched a known temporary ignore rule; currently this only covers Eastmoney `push2.eastmoney.com` proxy disconnections. It is shown in `interface-status.json` and the daily summary, but it is not written to the failure log and does not downgrade the run to `partial`. Main-table failures are never ignored.
 
 ### Running Tests
 

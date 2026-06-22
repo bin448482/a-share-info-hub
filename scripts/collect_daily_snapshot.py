@@ -24,6 +24,7 @@ REPORT_DATE_FMT = "%Y-%m-%d"
 SOURCE_PREFIX = "akshare"
 SUCCESS = "success"
 SUCCESS_EMPTY = "success_empty"
+IGNORED = "ignored"
 FAILED = "failed"
 SCHEMA_CHANGED = "schema_changed"
 OVERALL_PASSED = "passed"
@@ -756,6 +757,9 @@ def process_source(
         spec, call_result, trade_date, min_main_rows
     )
     failure_reason = normalize_failure or call_result.failure_reason
+    if should_ignore_external_failure(spec, final_status, failure_reason):
+        final_status = IGNORED
+        normalized = None
     raw_path, metadata_path = write_raw_artifacts(
         raw_root, trade_date, spec, call_result, final_status, failure_reason
     )
@@ -775,6 +779,27 @@ def process_source(
         attempts=call_result.attempts,
     )
     return record, normalized
+
+
+def should_ignore_external_failure(
+    spec: SourceSpec, status: str, failure_reason: str | None
+) -> bool:
+    """识别临时忽略的 Eastmoney push2 代理断连增强接口失败。"""
+
+    if spec.source_key == MAIN_SOURCE_KEY or status != FAILED:
+        return False
+    if not failure_reason:
+        return False
+    reason = failure_reason.lower()
+    proxy_disconnected = any(
+        marker in reason
+        for marker in (
+            "proxyerror",
+            "unable to connect to proxy",
+            "remotedisconnected",
+        )
+    )
+    return "push2.eastmoney.com" in reason and proxy_disconnected
 
 
 def write_raw_artifacts(
@@ -1099,7 +1124,7 @@ def build_overall_status(source_records: list[SourceRecord], duckdb_status: str)
 def append_status_log(log_path: Path, record: SourceRecord, trade_date: date) -> None:
     """把失败、空结果和字段变化追加到外部接口状态 JSONL。"""
 
-    if record.status == SUCCESS:
+    if record.status in {SUCCESS, IGNORED}:
         return
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("a", encoding="utf-8") as handle:

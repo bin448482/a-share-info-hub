@@ -27,11 +27,18 @@ from a_share_info_hub.daily_review import (
 TRADE_DATE = "2026-06-18"
 
 
-def write_status(root: Path, overall_status: str = "passed", board_failed: bool = False) -> None:
+def write_status(
+    root: Path,
+    overall_status: str = "passed",
+    board_failed: bool = False,
+    board_status: str | None = None,
+) -> None:
     """写入每日复盘测试所需的最小接口状态。"""
 
     run_dir = root / "reports" / "daily-runs" / TRADE_DATE
     run_dir.mkdir(parents=True)
+    resolved_board_status = board_status or ("failed" if board_failed else "success")
+    board_rows = 0 if board_failed or resolved_board_status == "ignored" else 1
     sources = [
         {"source_key": "stock_zh_a_spot", "category": "main", "status": "success", "row_count": 3},
         {"source_key": "stock_zt_pool_em", "category": "limit_pool", "status": "success", "row_count": 1},
@@ -40,8 +47,8 @@ def write_status(root: Path, overall_status: str = "passed", board_failed: bool 
         {
             "source_key": "stock_board_industry_name_em",
             "category": "board_snapshot",
-            "status": "failed" if board_failed else "success",
-            "row_count": 0 if board_failed else 1,
+            "status": resolved_board_status,
+            "row_count": board_rows,
             "failure_reason": "ConnectionError" if board_failed else None,
         },
     ]
@@ -55,7 +62,7 @@ def write_status(root: Path, overall_status: str = "passed", board_failed: bool 
             "limit_pool_events": 1,
             "lhb_events": 1,
             "market_summary": 1,
-            "board_snapshot": 0 if board_failed else 1,
+            "board_snapshot": board_rows,
         },
     }
     (run_dir / "interface-status.json").write_text(
@@ -265,6 +272,25 @@ def test_daily_review_emits_pydantic_context(tmp_path: Path) -> None:
     assert context.schema_version == "daily_review_context.v1"
     assert context.market_breadth["sample_count"] == 3
     assert "review-context.json" in result.message
+
+
+def test_daily_review_does_not_block_ignored_eastmoney_source(tmp_path: Path) -> None:
+    """临时忽略的 Eastmoney push2 接口不应阻断复盘 context。"""
+
+    write_status(tmp_path, board_status="ignored")
+    write_tables(tmp_path, with_board=False)
+    write_duckdb(tmp_path)
+
+    result = generate_daily_review(
+        DailyReviewRequest(output_root=tmp_path, output_format="context")
+    )
+
+    payload = json.loads(Path(result.context_artifact or "").read_text(encoding="utf-8"))
+    context = ReviewContext.model_validate(payload)
+    assert result.data_status == "passed"
+    assert "board_snapshot" not in context.blocked_sections
+    assert context.board_snapshot["status"] == "empty"
+    assert context.source_health["stock_board_industry_name_em"].status == "ignored"
 
 
 def test_external_background_passed_enters_context_main_sections_and_notes(tmp_path: Path) -> None:
