@@ -110,7 +110,7 @@ class StageExecution:
 
 @dataclass
 class FeishuMessageRequest:
-    """保存一次消息发送请求的标题、正文和发送配置。"""
+    """保存一次消息发送请求的标题、正文、可选附件和发送配置。"""
 
     message_kind: str
     level: str
@@ -127,6 +127,7 @@ class FeishuMessageRequest:
     openclaw_alert_targets: list[str] = field(default_factory=list)
     openclaw_report_agents: list[str] = field(default_factory=list)
     openclaw_alert_agents: list[str] = field(default_factory=list)
+    media_path: str | None = None
     timeout_seconds: float = 120.0
 
 
@@ -988,6 +989,7 @@ def build_report_message(status: dict[str, Any]) -> FeishuMessageRequest:
         openclaw_alert_targets=[],
         openclaw_report_agents=[],
         openclaw_alert_agents=[],
+        media_path=artifacts.get("html_report"),
         timeout_seconds=default_stage_sla()["feishu_send"].hard_timeout_seconds,
     )
 
@@ -1148,7 +1150,7 @@ def send_feishu_webhook_message(request: FeishuMessageRequest) -> FeishuDelivery
 
 
 def send_openclaw_message(request: FeishuMessageRequest) -> FeishuDeliveryResult:
-    """通过 OpenClaw Gateway 的 Feishu channel 发送文本消息。"""
+    """通过 OpenClaw Gateway 的 Feishu channel 发送文本和可选附件。"""
 
     targets = openclaw_message_targets_for_request(request)
     if not targets:
@@ -1172,6 +1174,8 @@ def send_openclaw_message(request: FeishuMessageRequest) -> FeishuDeliveryResult
             request.text,
             "--json",
         ]
+        if request.media_path:
+            command.extend(["--media", str(Path(request.media_path).expanduser().resolve())])
         account = message_target.account or request.openclaw_account
         if account:
             command.extend(["--account", account])
@@ -1345,6 +1349,11 @@ def run_feishu_send_stage(
         message.openclaw_alert_targets = list(config.openclaw_alert_targets)
         message.openclaw_report_agents = list(config.openclaw_report_agents)
         message.openclaw_alert_agents = list(config.openclaw_alert_agents)
+        if message.media_path:
+            media_path = Path(message.media_path).expanduser()
+            if not media_path.is_absolute():
+                media_path = output_root / media_path
+            message.media_path = str(media_path.resolve())
         result = sender(message)
         send_results.append(
             {
@@ -1352,6 +1361,7 @@ def run_feishu_send_stage(
                 "level": message.level,
                 "title": message.title,
                 "recipients": delivery_recipients_for_message(message),
+                "media_path": message.media_path,
                 **result.to_dict(),
             }
         )

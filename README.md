@@ -81,7 +81,7 @@ python -m a_share_info_hub daily-review \
 | `--render-mode deterministic` | 使用确定性 fallback，适合本地测试 |
 | `--external-background` | 指定外部财经背景 JSON |
 | `--skip-external-background` | 定时任务跳过默认外部背景生成，仅使用本地 A 股 context |
-| `--delivery-provider openclaw_message` | 定时任务通过 OpenClaw `feishu` channel 发送消息 |
+| `--delivery-provider openclaw_message` | 定时任务通过 OpenClaw `feishu` channel 发送消息；正式报告会附带 HTML 文件 |
 | `--openclaw-report-targets` | 报告消息的 OpenClaw Feishu channel routes，格式 `account:chatId`，默认发 main 和 candy 两个 channel |
 | `--openclaw-alert-targets` | 告警和 watchdog 消息的 OpenClaw Feishu channel routes，格式 `account:chatId`，默认只发 main channel |
 | `--output-format` | 复盘输出格式：`html` / `context` / `inline` / `markdown` |
@@ -90,7 +90,7 @@ python -m a_share_info_hub daily-review \
 
 ### 定时任务配置示例
 
-第一版不在仓库内实现长期驻留调度服务。生产推荐由 OpenClaw cron / scheduler 读取 `docs/openclaw-a-share-daily-orchestrator.prompt.md` 和 `docs/openclaw-a-share-daily-watchdog.prompt.md`，再由 OpenClaw 调用本地编排脚本。报告消息通过 OpenClaw `feishu` channel 发给 main 和 candy 两个 channel，监控/告警只发给 main channel；飞书自定义机器人 webhook 仅作为本地 fallback，使用 `FEISHU_WEBHOOK_URL` 和可选 `FEISHU_WEBHOOK_SECRET`，不能提交到仓库或写入报告产物。
+第一版不在仓库内实现长期驻留调度服务。生产推荐由 OpenClaw cron / scheduler 读取 `docs/openclaw-a-share-daily-orchestrator.prompt.md` 和 `docs/openclaw-a-share-daily-watchdog.prompt.md`，再由 OpenClaw 调用本地编排脚本。报告通过 OpenClaw `feishu` channel 附带 HTML 文件发给 main 和 candy 两个 channel，监控/告警只发给 main channel；飞书自定义机器人 webhook 仅作为本地 fallback，使用 `FEISHU_WEBHOOK_URL` 和可选 `FEISHU_WEBHOOK_SECRET`，不能提交到仓库或写入报告产物。
 
 `--timeout-seconds 7200` 是 OpenClaw agent turn 的最外层兜底，不是日报业务 SLA。业务超时由编排脚本的分阶段 hard timeout、`heartbeat.json` 和 watchdog 判断；如果后续新增脚本级 overall hard kill，应把 OpenClaw 外层 timeout 调整为脚本 overall hard timeout 加 5-10 分钟缓冲。
 

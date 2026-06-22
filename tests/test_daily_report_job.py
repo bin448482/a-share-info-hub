@@ -277,6 +277,9 @@ def test_daily_report_job_success_sends_report_and_uses_public_cli(tmp_path: Pat
     assert status["artifacts"]["external_background"] == f"reports/daily-reviews/{TRADE_DATE}/external-background-fusion.json"
     assert status["artifacts"]["html_report"] == f"reports/daily-reviews/{TRADE_DATE}/a-share-daily-review.html"
     assert sender.messages[0].message_kind == "report"
+    expected_media = str((tmp_path / "reports" / "daily-reviews" / TRADE_DATE / "a-share-daily-review.html").resolve())
+    assert sender.messages[0].media_path == expected_media
+    assert status["send_results"][0]["media_path"] == expected_media
     assert [command[3] if len(command) > 3 and command[1:3] == ["-m", "a_share_info_hub"] else "claude" for command in runner.commands[:5]] == [
         "daily-update",
         "daily-review",
@@ -567,6 +570,7 @@ def test_openclaw_message_sender_calls_feishu_channel_targets(monkeypatch: Any) 
             openclaw_account=None,
             openclaw_report_targets=[DEFAULT_OPENCLAW_MAIN_TARGET, DEFAULT_OPENCLAW_CANDY_TARGET],
             openclaw_alert_targets=[DEFAULT_OPENCLAW_MAIN_TARGET],
+            media_path="reports/daily-reviews/2026-06-18/a-share-daily-review.html",
             timeout_seconds=1,
         )
     )
@@ -599,6 +603,13 @@ def test_openclaw_message_sender_calls_feishu_channel_targets(monkeypatch: Any) 
     assert [command[-2:] for command in commands] == [
         ["--account", "main"],
         ["--account", "candy"],
+    ]
+    assert [
+        command[command.index("--media") + 1]
+        for command in commands
+    ] == [
+        str(Path("reports/daily-reviews/2026-06-18/a-share-daily-review.html").resolve()),
+        str(Path("reports/daily-reviews/2026-06-18/a-share-daily-review.html").resolve()),
     ]
 
 

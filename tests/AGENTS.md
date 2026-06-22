@@ -17,7 +17,7 @@
 - `test_daily_snapshot_status.py`：覆盖主表失败、增强空结果、增强 schema 变化和整体状态归类。
 - `test_daily_snapshot_outputs.py`：覆盖失败日志、原始落盘、状态报告、每日摘要、DuckDB 重跑替换、交易日门禁和 mock 端到端成功路径。
 - `test_daily_review.py`：覆盖每日复盘研究的 `review-context.json`、Pydantic 校验、LLM sections 校验、external background passed/partial/blocked/invalid/fusion 校验、`大盘观察` HTML 段落、外部背景融合、HTML 首屏边界、技术参考 Markdown、partial 降级、skipped 非交易日阻断、missing 日期阻断、交易建议拒绝和公开 CLI 刷新契约。
-- `test_daily_report_job.py`：覆盖每日定时报告编排的公开 CLI 调用、external background fusion 阶段、状态文件、OpenClaw `feishu` channel 报告和告警发送、Claude Code/HTML 失败门禁、数据质量告警、soft warning、重复发送保护、非交易日 skipped 和 watchdog missed-run/stale-heartbeat。
+- `test_daily_report_job.py`：覆盖每日定时报告编排的公开 CLI 调用、external background fusion 阶段、状态文件、OpenClaw `feishu` channel HTML 报告附件和告警发送、Claude Code/HTML 失败门禁、数据质量告警、soft warning、重复发送保护、非交易日 skipped 和 watchdog missed-run/stale-heartbeat。
 - `test_cli.py`：覆盖仓库级 CLI 的 `daily-update` 和 `daily-review` 子命令、参数化日期、非交易日 skipped 退出码、render mode、LLM output 参数、external background 参数和调用函数的参数传递。
 
 ## 更新要求

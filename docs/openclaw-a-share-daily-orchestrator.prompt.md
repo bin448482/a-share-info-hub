@@ -33,7 +33,7 @@
 4. 读取本次交易日期对应的 `reports/daily-jobs/YYYY-MM-DD/job-status.json`，确认 `job-summary.md` 和 `heartbeat.json` 已写入。
 5. 若 `overall_status` 为 `passed` 或 `partial`，确认 `llm_sections_validated=true`、HTML 主报告和技术参考路径存在。
 6. 若 `overall_status` 为 `failed`、`skipped` 或 `missing`，不要生成市场结论；只发送或记录诊断摘要。
-7. 报告消息通过 OpenClaw `feishu` channel 发送给 main 和 candy；监控、告警和修复请求只发送给 main。
+7. 报告通过 OpenClaw `feishu` channel 附带 HTML 文件发送给 main 和 candy；监控、告警和修复请求只发送给 main。
 8. 如果任何阶段 critical，启动受限诊断 prompt，不自动修复生产代码。
 
 完成条件：
@@ -42,4 +42,4 @@
 - `job-summary.md` 已写入。
 - `heartbeat.json` 显示 `finished` 或可诊断失败阶段。
 - 发送结果已记录在 `send_results` 和 `quality_metrics.delivery_status`。
-- 若报告发送，Python HTML validator 已通过。
+- 若报告发送，Python HTML validator 已通过，且发送记录包含 HTML 附件路径。
