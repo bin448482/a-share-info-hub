@@ -1,0 +1,734 @@
+{
+  "schema_version": "daily_review_context.v1",
+  "analysis_mode": "research_only",
+  "not_investment_advice": true,
+  "trade_date": "2026-06-22",
+  "data_status": "partial",
+  "data_sources_used": [
+    "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-22/interface-status.json",
+    "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-22/daily-data-summary.md",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/daily_stock_snapshot.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/limit_pool_events.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/lhb_events.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/market_summary.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/board_snapshot.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/market.duckdb"
+  ],
+  "blocked_sections": [
+    "board_snapshot",
+    "lhb_events"
+  ],
+  "source_health": {
+    "interface_status": {
+      "name": "interface-status.json",
+      "category": "run_status",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-22/interface-status.json",
+      "issue": null
+    },
+    "daily_data_summary": {
+      "name": "daily-data-summary.md",
+      "category": "run_summary",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-22/daily-data-summary.md",
+      "issue": null
+    },
+    "trading_day_check": {
+      "name": "trading_day_check",
+      "category": "run_status",
+      "status": "success",
+      "row_count": null,
+      "source_path": null,
+      "issue": "trade date is listed in AKShare trading calendar"
+    },
+    "stock_zh_a_spot": {
+      "name": "stock_zh_a_spot",
+      "category": "main",
+      "status": "success",
+      "row_count": 5527,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_em": {
+      "name": "stock_zt_pool_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 134,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_previous_em": {
+      "name": "stock_zt_pool_previous_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 91,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_strong_em": {
+      "name": "stock_zt_pool_strong_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 383,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_sub_new_em": {
+      "name": "stock_zt_pool_sub_new_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 133,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_zbgc_em": {
+      "name": "stock_zt_pool_zbgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 26,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_dtgc_em": {
+      "name": "stock_zt_pool_dtgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 4,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_detail_daily_sina": {
+      "name": "stock_lhb_detail_daily_sina",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "KeyError: '股票代码'"
+    },
+    "stock_lhb_detail_em": {
+      "name": "stock_lhb_detail_em",
+      "category": "lhb",
+      "status": "success",
+      "row_count": 105,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_jgmmtj_em": {
+      "name": "stock_lhb_jgmmtj_em",
+      "category": "lhb",
+      "status": "success",
+      "row_count": 63,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_sse_deal_daily": {
+      "name": "stock_sse_deal_daily",
+      "category": "market_summary",
+      "status": "success",
+      "row_count": 8,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_szse_summary": {
+      "name": "stock_szse_summary",
+      "category": "market_summary",
+      "status": "success",
+      "row_count": 14,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_board_industry_name_em": {
+      "name": "stock_board_industry_name_em",
+      "category": "board_snapshot",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fields=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6%2Cf7%2Cf8%2Cf9%2Cf10%2Cf12%2Cf13%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf23%2Cf24%2Cf25%2Cf26%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf136%2Cf115%2Cf152%2Cf124%2Cf107%2Cf104%2Cf105%2Cf140%2Cf141%2Cf207%2Cf208%2Cf209%2Cf222 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    },
+    "stock_board_concept_name_em": {
+      "name": "stock_board_concept_name_em",
+      "category": "board_snapshot",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ProxyError: HTTPSConnectionPool(host='79.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m%3A90+t%3A3+f%3A%2150&fields=f2%2Cf3%2Cf4%2Cf8%2Cf12%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf24%2Cf25%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf124%2Cf107%2Cf104%2Cf105%2Cf136 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    },
+    "table:daily_stock_snapshot": {
+      "name": "daily_stock_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 5527,
+      "source_path": "data/normalized/daily_stock_snapshot.parquet",
+      "issue": null
+    },
+    "table:limit_pool_events": {
+      "name": "limit_pool_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 771,
+      "source_path": "data/normalized/limit_pool_events.parquet",
+      "issue": null
+    },
+    "table:lhb_events": {
+      "name": "lhb_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 168,
+      "source_path": "data/normalized/lhb_events.parquet",
+      "issue": null
+    },
+    "table:market_summary": {
+      "name": "market_summary",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 22,
+      "source_path": "data/normalized/market_summary.parquet",
+      "issue": null
+    },
+    "table:board_snapshot": {
+      "name": "board_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/board_snapshot.parquet",
+      "issue": null
+    },
+    "duckdb": {
+      "name": "market.duckdb",
+      "category": "storage",
+      "status": "passed",
+      "row_count": null,
+      "source_path": null,
+      "issue": null
+    }
+  },
+  "market_breadth": {
+    "status": "available",
+    "sample_count": 5527,
+    "up_count": 2915,
+    "down_count": 2468,
+    "flat_count": 144,
+    "extreme_up_count": 219,
+    "extreme_down_count": 22,
+    "total_amount": 3761649357480.0,
+    "total_amount_display": "37616.49 亿"
+  },
+  "limit_pool": {
+    "status": "available",
+    "row_count": 771,
+    "pool_type_counts": {
+      "strong_limit_up": 383,
+      "limit_up": 134,
+      "sub_new_limit_up": 133,
+      "previous_limit_up": 91,
+      "broken_board": 26,
+      "limit_down": 4
+    },
+    "top_industries": {
+      "半导体": 64,
+      "通用设备": 49,
+      "汽车零部": 37,
+      "通信设备": 33,
+      "元件": 32,
+      "化学制品": 31,
+      "小金属": 30,
+      "专用设备": 23
+    }
+  },
+  "lhb": {
+    "status": "blocked",
+    "reason": "lhb_events is listed in blocked_sections"
+  },
+  "market_summary": {
+    "status": "available",
+    "row_count": 22
+  },
+  "board_snapshot": {
+    "status": "blocked",
+    "reason": "board_snapshot is listed in blocked_sections"
+  },
+  "issues": [
+    "stock_lhb_detail_daily_sina 状态为 failed：KeyError: '股票代码'",
+    "stock_board_industry_name_em 状态为 failed：ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fields=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6%2Cf7%2Cf8%2Cf9%2Cf10%2Cf12%2Cf13%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf23%2Cf24%2Cf25%2Cf26%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf136%2Cf115%2Cf152%2Cf124%2Cf107%2Cf104%2Cf105%2Cf140%2Cf141%2Cf207%2Cf208%2Cf209%2Cf222 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))",
+    "stock_board_concept_name_em 状态为 failed：ProxyError: HTTPSConnectionPool(host='79.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m%3A90+t%3A3+f%3A%2150&fields=f2%2Cf3%2Cf4%2Cf8%2Cf12%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf24%2Cf25%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf124%2Cf107%2Cf104%2Cf105%2Cf136 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+  ],
+  "allowed_sections": [
+    "data_status",
+    "market_breadth",
+    "sentiment_and_events",
+    "risks",
+    "follow_up_questions"
+  ],
+  "forbidden_claims": [
+    "buy/sell/hold/position sizing/price target/stop-loss/take-profit/trading action advice",
+    "multi-day trend, backtest, win-rate, or prediction claims from a single daily snapshot",
+    "claiming the review is complete while data_status is partial",
+    "positive or complete conclusions about blocked section: 板块结构",
+    "positive or complete conclusions about blocked section: 龙虎榜"
+  ],
+  "facts": [
+    {
+      "section": "market_breadth",
+      "description": "主表样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 5527
+    },
+    {
+      "section": "market_breadth",
+      "description": "上涨样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 2915
+    },
+    {
+      "section": "market_breadth",
+      "description": "下跌样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 2468
+    },
+    {
+      "section": "limit_pool",
+      "description": "limit_pool_events 记录数",
+      "source": "limit_pool_events",
+      "value": 771
+    },
+    {
+      "section": "market_summary",
+      "description": "market_summary 记录数",
+      "source": "market_summary",
+      "value": 22
+    }
+  ],
+  "external_background": {
+    "status": "partial",
+    "briefing_date": "2026-06-22",
+    "source_skill": "daily-financial-briefing",
+    "input_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-22/external-background-fusion.json",
+    "core_points": [
+      {
+        "text": "美联储在2026年6月17日FOMC会议上维持联邦基金目标利率区间3.50%-3.75%不变，声明指出经济活动仍在扩张、就业变化不大、通胀相对2%目标仍偏高。这一政策立场意味着美元利率环境维持中性偏紧，全球风险资产的贴现率锚尚未下移——为A股大盘定性提供了一个「外部利率未转向宽松」的宏观约束框架。",
+        "type": "fact",
+        "a_share_relevance": "大盘定性：对应本地涨跌比2915/2468（约1.18:1）、成交37616亿的偏正但不亢奋格局。美联储维持利率不变且未释放宽松信号，从外部贴现率角度解释了A股为何未出现全面性估值扩张驱动的普涨，市场定性应落在「有限度风险偏好」区间而非全面牛市预期。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Federal Reserve issues FOMC statement",
+            "published_at": "2026-06-17",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+          }
+        ]
+      },
+      {
+        "text": "美国劳工统计局2026年6月10日发布的5月CPI数据显示，CPI-U同比上涨4.2%，仍显著高于美联储2%的通胀目标。核心通胀压力未出现趋势性缓解，下一次CPI发布时间为2026年7月14日。持续偏高的通胀读数抑制了市场对年内大幅降息的定价空间，全球风险偏好缺乏来自通胀回落-宽松预期链条的额外提振。",
+        "type": "fact",
+        "a_share_relevance": "大盘定性：对应本地极端涨跌家数（极端上涨219只 vs 极端下跌22只，极端涨跌比约10:1）和成交额37616亿。通胀偏高抑制全面宽松预期，市场表现为「极端方向集中做多、但整体宽度温和」的特征——这一定性结论与外部通胀约束下风险偏好无法全面扩张的宏观背景一致。",
+        "citations": [
+          {
+            "source_name": "Bureau of Labor Statistics",
+            "title": "Consumer Price Index Summary - 2026 M05 Results",
+            "published_at": "2026-06-10",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+          }
+        ]
+      },
+      {
+        "text": "CME FedWatch工具显示的30天联邦基金期货隐含概率表明，市场对2026年下半年美联储政策路径存在显著分歧——降息时点和幅度高度依赖后续通胀和就业数据的演变。该工具反映市场预期而非政策承诺，当前概率分布暗示市场对利率方向缺乏一致共识。",
+        "type": "market_expectation",
+        "a_share_relevance": "大盘定性：对应本地涨跌比仅1.18:1（5527只样本中2915涨/2468跌）的胶着状态。全球利率预期分歧通过外资风险偏好和人民币汇率渠道传导至A股，使得市场无法形成一致的方向性共识——大盘定性落在「震荡偏正、方向未明」区间，与外部利率预期分歧的结构一致。",
+        "citations": [
+          {
+            "source_name": "CME Group",
+            "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+            "published_at": "2026-06-19",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+          }
+        ]
+      },
+      {
+        "text": "高盛2026年展望公开页面认为中国2026年经济增长可能快于共识预期，出口韧性和制造业升级是主要驱动力。高盛在全球展望中也提到全球权益资产在利率见顶后存在结构性机会，但路径取决于通胀和央行政策节奏。高盛对中国经济的正面中期判断为A股提供了来自国际顶级投行的「基本面韧性」叙事支撑。",
+        "type": "bank_view",
+        "a_share_relevance": "大盘定性：对应本地涨跌比偏正（52.7%上涨 vs 44.7%下跌），且涨停行业集中在半导体（64只）、通用设备（49只）、汽车零部件（37只）等制造业方向。高盛对中国制造业升级和出口韧性的中期积极判断，为A股「偏正但不亢奋」的大盘定性提供了外部投行叙事层面的支持——解释了为什么市场方向不是负偏。",
+        "citations": [
+          {
+            "source_name": "Goldman Sachs",
+            "title": "China's economy is forecast to grow faster than expected in 2026",
+            "published_at": "2025-11-21",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+          },
+          {
+            "source_name": "Goldman Sachs",
+            "title": "2026 Outlooks - Global Markets and Economy",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+          }
+        ]
+      },
+      {
+        "text": "花旗2026年中国经济展望指出中国以外经济体名义GDP放缓可能压制中国出口标题增速，但中国制造商可能通过价格和质量升级维持或提升市场份额。瑞银2026-27年中国展望提到地产销售、新开工和投资仍有下降压力，但GDP拖累可能较2025年收窄。多家国际投行对中国经济中期路径存在分歧，整体倾向「韧性加结构调整」判断而非单边乐观或悲观——这一分歧结构为A股大盘定性提供了「上限有顶、下限有底」的外部判断框架。",
+        "type": "bank_view",
+        "a_share_relevance": "大盘定性：对应本地涨停行业Top分布的结构特征——半导体64只（硬科技主线）、通用设备49只和汽车零部件37只（制造业升级主线）、化学制品31只和小金属30只（资源与材料主线），呈现多主线并行而非单一风格主导。外部投行对中国经济「韧性加结构调整」的分歧性共识，解释了A股内部为何是「结构性做多」而非单边押注某一方向——定性为「多主线轮动、缺乏单一风格共识」与外部投行判断框架一致。",
+        "citations": [
+          {
+            "source_name": "Citigroup",
+            "title": "China Economics 2026 Outlook: Mind the Gap",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+          },
+          {
+            "source_name": "UBS",
+            "title": "China Outlook 2026-27: Resilience and Rebalancing",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+          }
+        ]
+      },
+      {
+        "text": "综合外部宏观与投行观点推断：美联储利率维持3.50%-3.75%高位、美国CPI仍偏高（5月同比4.2%）、利率期货市场预期分歧显著、投行对中国中期经济倾向「韧性但存结构性压力」——这一外部组合为A股提供了「有限度风险偏好」的外部宏观环境。全球流动性未扩张限制了全面估值驱动的上行空间，但高盛等投行对中国经济韧性的认可为市场提供了底部支撑叙事。在此背景下，A股大盘定性可描述为「外部约束下的结构性偏正」——偏正但不亢奋、活跃但不狂热。",
+        "type": "inference",
+        "a_share_relevance": "大盘定性：综合对应本地全部定性指标——涨跌比2915:2468（1.18:1，偏正但胶着）、极端涨跌比219:22（约10:1，极端方向集中）、成交额37616亿（放量活跃）、涨停771条（做多意愿强烈）、涨停行业集中半导体和制造业（结构性特征明显）。外部宏观组合（利率高位、通胀偏高、投行中期韧性判断）为这一定性——「有限度风险偏好下的结构性偏正行情」——提供了合理的外部宏观解释框架，不应解读为全面牛市信号，也不应解读为趋势性下行信号。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Federal Reserve issues FOMC statement",
+            "published_at": "2026-06-17",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+          },
+          {
+            "source_name": "Bureau of Labor Statistics",
+            "title": "Consumer Price Index Summary - 2026 M05 Results",
+            "published_at": "2026-06-10",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+          },
+          {
+            "source_name": "Goldman Sachs",
+            "title": "China's economy is forecast to grow faster than expected in 2026",
+            "published_at": "2025-11-21",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+          }
+        ]
+      },
+      {
+        "text": "美联储在2026年6月17日FOMC会议上维持联邦基金目标利率区间3.50%-3.75%不变。声明指出经济活动仍在扩张、就业变化不大、通胀相对2%目标仍偏高。这一立场排除了短期内激进宽松的预期，全球风险资产定价仍受制于偏紧的美元利率环境。",
+        "type": "fact",
+        "a_share_relevance": "对应本地市场宽度指标（上涨52.7%、下跌44.7%、涨跌比约1.18:1）：偏正但未过热的结构与全球利率环境稳定偏紧的背景一致——未出现宽松驱动的全面亢奋，也未出现收紧冲击引发的普跌。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Federal Reserve issues FOMC statement",
+            "published_at": "2026-06-17",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+          }
+        ]
+      },
+      {
+        "text": "美国劳工统计局（BLS）2026年6月10日发布的5月CPI数据显示，CPI-U同比上涨4.2%，通胀仍显著高于美联储2%的目标。下一次CPI发布为2026年7月14日。持续偏高的通胀使得市场对年内降息的预期受到抑制，全球风险偏好缺乏来自宽松预期的额外提振。",
+        "type": "fact",
+        "a_share_relevance": "对应本地极端涨跌家数（涨停附近219只 vs 跌停附近22只，极端涨跌比约10:1）：通胀偏高压制全面性上涨预期，市场呈现「极端做多局部活跃」的特征而非全市场共振上行，与外部宏观约束一致。",
+        "citations": [
+          {
+            "source_name": "Bureau of Labor Statistics",
+            "title": "Consumer Price Index Summary - 2026 M05 Results",
+            "published_at": "2026-06-10",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+          }
+        ]
+      },
+      {
+        "text": "CME FedWatch工具显示的30天联邦基金期货隐含概率表明，市场对2026年下半年美联储政策路径存在分歧，降息时点和幅度仍高度依赖后续通胀和就业数据。该工具反映的是市场预期而非政策承诺，当前概率分布暗示市场对利率路径缺乏一致共识。",
+        "type": "market_expectation",
+        "a_share_relevance": "对应本地市场宽度数据中的结构分化：总成交额37616.49亿元背景下，上涨与下跌家数接近（2915 vs 2468），平盘仅144只。市场缺乏方向性共识的外部映射——全球利率预期分歧可能通过外资风险偏好和人民币汇率间接影响A股参与结构。",
+        "citations": [
+          {
+            "source_name": "CME Group",
+            "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+            "published_at": "2026-06-19",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+          }
+        ]
+      },
+      {
+        "text": "高盛2026年展望公开页面认为中国2026年经济增长可能快于共识预期，出口韧性和制造业升级是主要驱动力。高盛在全球展望中也提到全球权益资产在利率见顶后存在结构性机会，但路径仍取决于通胀和央行政策节奏。",
+        "type": "bank_view",
+        "a_share_relevance": "对应本地上涨家数（2915只，52.7%）略多于下跌家数（2468只，44.7%）的偏正宽度：外部投行对中国经济的中期积极判断为A股整体偏正宽度提供了宏观叙事背景，可解释为什么宽度不是负偏。",
+        "citations": [
+          {
+            "source_name": "Goldman Sachs",
+            "title": "China's economy is forecast to grow faster than expected in 2026",
+            "published_at": "2025-11-21",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+          },
+          {
+            "source_name": "Goldman Sachs",
+            "title": "2026 Outlooks - Global Markets and Economy",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+          }
+        ]
+      },
+      {
+        "text": "花旗2026年中国经济展望指出中国以外经济体名义GDP放缓可能压制中国出口标题增速，但中国制造商可能通过价格和质量升级维持或提升市场份额。瑞银2026-27年中国展望提到地产销售、新开工和投资仍有下降压力，但GDP拖累可能较2025年收窄。多家投行对中国经济中期路径存在分歧但整体倾向「韧性+结构调整」判断，而非单边乐观或悲观。",
+        "type": "bank_view",
+        "a_share_relevance": "对应本地涨停行业集中度（半导体64只、通用设备49只、汽车零部件37只、通信设备33只等）：外部投行对中国制造业升级和出口韧性的中期判断为A股资金向制造与科技链集中提供了外部分析线索，但涨停池仅反映极端做多方向，无法替代板块整体宽度判断。",
+        "citations": [
+          {
+            "source_name": "Citigroup",
+            "title": "China Economics 2026 Outlook: Mind the Gap",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+          },
+          {
+            "source_name": "UBS",
+            "title": "China Outlook 2026-27: Resilience and Rebalancing",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+          }
+        ]
+      },
+      {
+        "text": "从外部宏观背景推断：美联储利率维持高位、通胀仍偏高、投行对中国经济中期展望偏正面但存分歧——这一组合为A股提供了「有限度风险偏好」的外部环境。极端上涨远多于极端下跌（219 vs 22）表明结构性做多意愿活跃，但总涨跌比仅1.18:1说明做多资金并未全面铺开，属于「局部进攻、整体防守」的宽度特征。由于无法获取美国可比市场宽度数据，无法验证A股当日宽度结构是否与全球风险偏好同步或背离。",
+        "type": "inference",
+        "a_share_relevance": "综合对应本地全部宽度指标：样本总数5527只、涨跌比1.18:1、极端涨跌比10:1、成交额37616.49亿元——外部宏观组合（利率高位+通胀偏高+中期经济韧性预期）为A股当前「偏正但不亢奋」的宽度格局提供了合理的外部解释框架。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Federal Reserve issues FOMC statement",
+            "published_at": "2026-06-17",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+          },
+          {
+            "source_name": "Bureau of Labor Statistics",
+            "title": "Consumer Price Index Summary - 2026 M05 Results",
+            "published_at": "2026-06-10",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+          },
+          {
+            "source_name": "Goldman Sachs",
+            "title": "China's economy is forecast to grow faster than expected in 2026",
+            "published_at": "2025-11-21",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+          }
+        ]
+      },
+      {
+        "text": "美联储在2026年6月17日FOMC会议上维持联邦基金目标利率区间3.50%-3.75%不变，声明指出通胀仍相对2%目标偏高。这一偏紧利率环境意味着全球成长/科技板块估值缺乏来自流动性宽松的额外支撑——高利率环境下，半导体、通信设备等依赖远期现金流折现的行业估值扩张受到抑制，板块表现更多依赖于盈利基本面而非估值驱动。",
+        "type": "fact",
+        "a_share_relevance": "板块与结构：对应涨停池中半导体(64只)、通信设备(33只)、元件(32只)等科技制造方向的集中封板——偏紧利率环境提示这些方向的封板活跃更可能来自行业基本面或资金博弈驱动，而非全球流动性宽松推动的板块估值系统性抬升。但由于板块分类数据缺失（行业板块和概念板块均因代理错误无法获取），无法验证科技板块整体涨跌幅是否确实处于市场前列。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Federal Reserve issues FOMC statement",
+            "published_at": "2026-06-17",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+          }
+        ]
+      },
+      {
+        "text": "美国劳工统计局2026年6月10日发布的5月CPI数据显示CPI-U同比上涨4.2%，通胀仍显著高于美联储2%目标。持续偏高的通胀压制了年内大幅降息的预期，利率敏感型行业（科技、成长股）的估值弹性受限。与此同时，通胀环境对上游资源品（有色金属、化工）可能提供价格层面的名义支撑，但高利率限制其估值扩张空间。下一次CPI发布为2026年7月14日。",
+        "type": "fact",
+        "a_share_relevance": "板块与结构：对应涨停池中小金属(30只)、化学制品(31只)等上游资源方向的集中——通胀偏高环境为资源品提供价格叙事背景，但高利率限制估值扩张。涨停池显示上游和科技制造同时获资金关注，但由于板块分类数据缺失，无法判断这两类方向在板块整体涨跌幅维度是否存在跷跷板效应或轮动关系。",
+        "citations": [
+          {
+            "source_name": "Bureau of Labor Statistics",
+            "title": "Consumer Price Index Summary - 2026 M05 Results",
+            "published_at": "2026-06-10",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+          }
+        ]
+      },
+      {
+        "text": "CME FedWatch工具显示的联邦基金期货隐含概率表明，市场对2026年下半年美联储政策路径存在分歧，降息时点和幅度高度依赖后续通胀和就业数据。利率路径的不确定性意味着全球行业轮动缺乏明确的方向性信号——在缺乏利率方向共识的环境下，板块选择更多依赖行业自身基本面和政策催化，而非自上而下的宏观风格切换（如成长vs价值的大级别轮动）。",
+        "type": "market_expectation",
+        "a_share_relevance": "板块与结构：对应涨停池中行业分布高度分散（半导体64、通用设备49、汽车零部37、通信设备33、元件32、化学制品31、小金属30、专用设备23）——这种多行业分散封板的格局与外部利率预期分歧一致：市场缺乏统一的宏观风格信号，各路资金在不同行业方向各自为战。在板块分类数据恢复前，这种「多方向分散活跃」的判断也仅仅是基于涨停池的猜测。",
+        "citations": [
+          {
+            "source_name": "CME Group",
+            "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+            "published_at": "2026-06-19",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+          }
+        ]
+      },
+      {
+        "text": "高盛2026年中国经济展望公开页面认为中国经济增长可能快于共识预期，出口韧性和制造业升级是主要驱动力。在全球展望中也提到全球权益资产在利率见顶后存在结构性机会。这一中期判断为中国制造业相关板块（通用设备、汽车零部件、专用设备、半导体等）提供了外部叙事背景——投行层面认为中国制造升级是结构性而非周期性主题。",
+        "type": "bank_view",
+        "a_share_relevance": "板块与结构：对应涨停池中通用设备(49只)、汽车零部(37只)、专用设备(23只)等制造业方向的封板集中——高盛的中期展望为制造业方向的活跃提供了外部叙事层面的解释框架。但需注意：涨停池仅反映极端做多的个股，不代表整个制造业板块的强度；板块分类数据恢复后需验证制造业板块整体涨跌幅和资金流向。",
+        "citations": [
+          {
+            "source_name": "Goldman Sachs",
+            "title": "China's economy is forecast to grow faster than expected in 2026",
+            "published_at": "2025-11-21",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+          },
+          {
+            "source_name": "Goldman Sachs",
+            "title": "2026 Outlooks - Global Markets and Economy",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+          }
+        ]
+      },
+      {
+        "text": "花旗2026年中国经济展望指出中国以外经济体名义GDP放缓可能压制中国出口标题增速，但中国制造商可通过价格和质量升级维持或提升市场份额。瑞银2026-27年中国展望提到地产销售、新开工和投资仍有下降压力，但GDP拖累可能较2025年收窄。多家投行对中国经济中期路径存在分歧但整体倾向「韧性+结构调整」判断——对A股行业配置而言，这意味着「制造升级」和「内需恢复」两条主线在不同投行框架中的权重不同，可能反映在A股板块间的资金博弈中。",
+        "type": "bank_view",
+        "a_share_relevance": "板块与结构：对应涨停池中半导体(64只)、通用设备(49只)与汽车零部(37只)同时高度集中的格局——可能反映了「制造升级」（半导体/设备）和「出口韧性」（汽车零部件/设备）两个投行叙事主题在A股涨停情绪中的映射。但由于板块分类数据缺失，无法确认除涨停品种外板块内其他个股是否同步走强，无法判断这是板块级别的系统性走强还是个股级别的局部活跃。",
+        "citations": [
+          {
+            "source_name": "Citigroup",
+            "title": "China Economics 2026 Outlook: Mind the Gap",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+          },
+          {
+            "source_name": "UBS",
+            "title": "China Outlook 2026-27: Resilience and Rebalancing",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+          }
+        ]
+      },
+      {
+        "text": "综合外部宏观和投行观点推断：美联储利率高位+通胀偏高+投行对中国制造升级中期乐观但存分歧的组合，为A股当前「科技制造方向集中封板但板块数据缺失」的局部图景提供了一个有限度的外部解释框架。涨停池中半导体(64只)、通用设备(49只)、汽车零部(37只)等方向的集中，存在与全球AI/半导体硬件周期和中国制造升级叙事的关联可能性，但这一关联在板块分类数据缺失（行业板块和概念板块整体涨跌幅均无法获取）的情况下无法验证。不能排除「个股封板活跃但板块整体表现平淡」的可能性。",
+        "type": "inference",
+        "a_share_relevance": "板块与结构：综合对应涨停池中top 8行业分布（半导体64、通用设备49、汽车零部37、通信设备33、元件32、化学制品31、小金属30、专用设备23）——外部宏观和投行背景提供了有限的叙事框架，但板块分类数据（行业板块和概念板块整体涨跌幅、板块内个股涨跌分布、板块资金流向）的完全缺失使得任何板块层面的结构性判断都缺乏本地数据基础。本推断仅作为外部背景参考，不构成对A股板块结构的结论。",
+        "citations": [
+          {
+            "source_name": "Federal Reserve",
+            "title": "Federal Reserve issues FOMC statement",
+            "published_at": "2026-06-17",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+          },
+          {
+            "source_name": "Goldman Sachs",
+            "title": "China's economy is forecast to grow faster than expected in 2026",
+            "published_at": "2025-11-21",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+          },
+          {
+            "source_name": "Citigroup",
+            "title": "China Economics 2026 Outlook: Mind the Gap",
+            "published_at": "2025-12-31",
+            "accessed_at": "2026-06-22",
+            "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+          }
+        ]
+      }
+    ],
+    "follow_up_questions": [
+      "关注2026年7月14日美国CPI（6月数据）发布——这是FOMC下次会议前最重要的通胀数据点，将直接影响市场对降息时点的定价和全球风险偏好方向。",
+      "跟踪FOMC下次会议（2026年7月底）前的美联储官员讲话和经济数据，捕捉利率路径信号变化——当前市场预期分歧显著，任何政策信号都可能触发方向性波动。",
+      "排查并修复东方财富推送服务器代理连接问题（17.push2.eastmoney.com和79.push2.eastmoney.com），恢复板块分类数据获取能力——这是A股复盘结构性分析的核心数据依赖。",
+      "修复龙虎榜sina接口的KeyError（'股票代码'），恢复双源龙虎榜数据交叉验证能力。",
+      "在板块分类数据恢复后，重新验证涨停池的行业集中度是否与板块整体涨跌幅一致——排除「个股封板活跃但板块整体平淡」的不对称风险。",
+      "监控美债收益率曲线（2Y/5Y/10Y/30Y）和10Y-2Y利差变化——这是全球风险偏好和成长/价值风格切换的关键指标，当前无法获取。",
+      "关注Morgan Stanley和J.P. Morgan是否有2026年6-7月对中国/A股市场的公开观点更新——当前仅覆盖高盛、花旗、瑞银三家投行的2025年末中期展望，时效性和覆盖广度均不足。",
+      "获取并对比全球半导体指数（SOX/费城半导体）与A股半导体涨停活跃度——验证A股半导体方向是否与全球半导体周期同步，或在独立演绎。",
+      "在获得网络权限后，为market_overview_structure、sentiment_and_events、risk_observations三个被阻塞主题重新运行$daily-financial-briefing子Agent，补充外部背景信息。"
+    ],
+    "information_gaps": [
+      "无法获取2026-06-22当日美债收益率（2Y/5Y/10Y/30Y）及10Y-2Y利差数据——来源缺口：U.S. Treasury Daily Yield Curve页面在无网络权限下不可访问",
+      "引用的投行观点（高盛、花旗、瑞银）均为2025年末至2026年初发布的中期展望，非2026-06-22当日或近一周新发布的观点——信息时效性存在缺口，当日是否有投行发布针对A股或中国资产的更新观点无法确认",
+      "缺失Morgan Stanley和J.P. Morgan在2026-06-17至2026-06-22期间关于中国/亚洲市场或全球风险偏好的公开可引用观点——仅覆盖了高盛、花旗、瑞银三家投行的中期展望",
+      "所有外部来源URL基于2026-06-19 forward test的验证记录，未在2026-06-22通过实时网络请求逐条重新验证可访问性和内容一致性",
+      "未获取VIX指数或全球风险偏好量化指标，无法将A股大盘定性与全球权益市场风险偏好水平进行量化对照",
+      "未获取2026-06-22当周美国宏观数据发布日历，无法判断当日是否有US Macro关键数据发布对全球市场产生即时影响",
+      "无法从公开免费渠道获取NYSE/NASDAQ Advance-Decline涨跌比、52周新高新低比等结构化美国市场宽度数据——此类数据通常由交易所官方或付费终端（Bloomberg/FactSet）提供",
+      "无法获取全球半导体行业指数（SOX/费城半导体指数）或全球制造业PMI等海外行业景气度数据，无法将A股涨停池的行业分布与海外同行业表现进行跨境对比",
+      "无法获取2026-06-22当日US股票市场行业涨跌分布（S&P 500 sector performance）作为A股行业结构的对照基准",
+      "3个主题（market_overview_structure、sentiment_and_events、risk_observations）因子Agent未能获取外部来源而返回blocked——这些主题的外部背景覆盖存在缺口",
+      "板块快照本地数据持续阻塞（行业板块和概念板块均ProxyError），叠加外部行业观点缺失，board_and_structure主题虽有外部投行中期展望作为背景，但本地板块数据完全盲视"
+    ],
+    "citations": [
+      {
+        "source_name": "Federal Reserve",
+        "title": "Federal Reserve issues FOMC statement",
+        "published_at": "2026-06-17",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+      },
+      {
+        "source_name": "Bureau of Labor Statistics",
+        "title": "Consumer Price Index Summary - 2026 M05 Results",
+        "published_at": "2026-06-10",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+      },
+      {
+        "source_name": "CME Group",
+        "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+        "published_at": "2026-06-19",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+      },
+      {
+        "source_name": "Goldman Sachs",
+        "title": "China's economy is forecast to grow faster than expected in 2026",
+        "published_at": "2025-11-21",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+      },
+      {
+        "source_name": "Goldman Sachs",
+        "title": "2026 Outlooks - Global Markets and Economy",
+        "published_at": "2025-12-31",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+      },
+      {
+        "source_name": "Citigroup",
+        "title": "China Economics 2026 Outlook: Mind the Gap",
+        "published_at": "2025-12-31",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+      },
+      {
+        "source_name": "UBS",
+        "title": "China Outlook 2026-27: Resilience and Rebalancing",
+        "published_at": "2025-12-31",
+        "accessed_at": "2026-06-22",
+        "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+      }
+    ],
+    "issues": [
+      "parallel_agent_market_overview_structure: blocked=true，子Agent无法获取US Macro或Investment Bank Views的可引用公开来源",
+      "parallel_agent_sentiment_and_events: blocked=true，子Agent无法获取US Macro或Investment Bank Views的可引用公开来源",
+      "parallel_agent_risk_observations: blocked=true，子Agent无法获取US Macro或Investment Bank Views的可引用公开来源",
+      "external_background_coverage: 3/6 topics blocked，fusion JSON中市场结构、情绪与事件、风险观察三个主题的外部背景覆盖不足，仅基于本地证据和从其他topic的交叉引用提供有限背景",
+      "citation_freshness: 7条去重引用中，仅2条为2026-06-10之后发布（FOMC 2026-06-17，CPI 2026-06-10）；5条投行引用均为2025年末中期展望",
+      "citation_verification: 所有URL在2026-06-22未经过实时可访问性验证，依赖forward test缓存记录和模型训练数据回忆",
+      "board_snapshot_data_blocked: 本地 board_snapshot 表0行（东方财富推送服务器ProxyError），即使外部来源可用，board_and_structure主题的本地数据基础仍然缺失",
+      "第 7 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 14 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 21 条外部融合结论缺少正文、合法类型、来源名称或 URL。"
+    ]
+  }
+}

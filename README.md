@@ -34,6 +34,7 @@ data/
   raw/               按日期和接口保存的 AKShare 原始响应
   normalized/        标准化 Parquet 表
 reports/
+  daily-jobs/        定时报告任务状态、heartbeat、摘要和阶段日志
   daily-runs/        每次采集运行的状态报告和摘要
   daily-reviews/     每日复盘 HTML、技术参考和 context
 logs/                外部接口失败 JSONL 日志
@@ -60,6 +61,12 @@ python -m a_share_info_hub daily-review \
   --trade-date 2026-06-20 \
   --llm-output reports/daily-reviews/2026-06-20/llm-review-sections.json \
   --output-format html
+
+# 本机定时任务编排入口（由 OpenClaw prompt 调用）
+.venv/bin/python scripts/run_daily_report_job.py --trade-date 2026-06-20 --send --delivery-provider openclaw_message
+
+# 预期运行后 watchdog 检查
+.venv/bin/python scripts/run_daily_report_job.py --check-latest --trade-date 2026-06-20 --send --delivery-provider openclaw_message
 ```
 
 **可选参数**：
@@ -73,17 +80,61 @@ python -m a_share_info_hub daily-review \
 | `--refresh-mode daily_update` | 复盘前先执行数据刷新 |
 | `--render-mode deterministic` | 使用确定性 fallback，适合本地测试 |
 | `--external-background` | 指定外部财经背景 JSON |
+| `--skip-external-background` | 定时任务跳过默认外部背景生成，仅使用本地 A 股 context |
+| `--delivery-provider openclaw_message` | 定时任务通过 OpenClaw `feishu` channel 发送消息；正式报告会附带 HTML 文件 |
+| `--openclaw-report-targets` | 报告消息的 OpenClaw Feishu channel routes，格式 `account:chatId`，默认发 main 和 candy 两个 channel |
+| `--openclaw-alert-targets` | 告警和 watchdog 消息的 OpenClaw Feishu channel routes，格式 `account:chatId`，默认只发 main channel |
 | `--output-format` | 复盘输出格式：`html` / `context` / `inline` / `markdown` |
+
+定时任务编排入口默认使用 `.venv/bin/python -m a_share_info_hub daily-update` 和 `daily-review`，并通过 Claude Code 非交互命令先生成 `external-background-fusion.json`，再生成 `llm-review-sections.json`。任务状态写入 `reports/daily-jobs/YYYY-MM-DD/`；发送配置必须通过本机环境变量或命令行参数提供，不能提交到仓库或写入报告产物。
+
+### 定时任务配置示例
+
+第一版不在仓库内实现长期驻留调度服务。生产推荐由 OpenClaw cron / scheduler 读取 `docs/openclaw-a-share-daily-orchestrator.prompt.md` 和 `docs/openclaw-a-share-daily-watchdog.prompt.md`，再由 OpenClaw 调用本地编排脚本。报告通过 OpenClaw `feishu` channel 附带 HTML 文件发给 main 和 candy 两个 channel，监控/告警只发给 main channel；飞书自定义机器人 webhook 仅作为本地 fallback，使用 `FEISHU_WEBHOOK_URL` 和可选 `FEISHU_WEBHOOK_SECRET`，不能提交到仓库或写入报告产物。
+
+`--timeout-seconds 7200` 是 OpenClaw agent turn 的最外层兜底，不是日报业务 SLA。业务超时由编排脚本的分阶段 hard timeout、`heartbeat.json` 和 watchdog 判断；如果后续新增脚本级 overall hard kill，应把 OpenClaw 外层 timeout 调整为脚本 overall hard timeout 加 5-10 分钟缓冲。
+
+```cron
+# OpenClaw cron 主路径
+openclaw cron add \
+  --name a-share-daily-report \
+  --agent main \
+  --session isolated \
+  --tools exec,read,write \
+  --cron "0 16 * * 1-5" \
+  --tz Asia/Shanghai \
+  --timeout-seconds 7200 \
+  --message "$(cat docs/openclaw-a-share-daily-orchestrator.prompt.md)"
+
+openclaw cron add \
+  --name a-share-daily-report-watchdog \
+  --agent main \
+  --session isolated \
+  --tools exec,read,write \
+  --cron "0 17 * * 1-5" \
+  --tz Asia/Shanghai \
+  --timeout-seconds 900 \
+  --message "$(cat docs/openclaw-a-share-daily-watchdog.prompt.md)"
+
+# 如果必须使用系统 cron，仍触发 OpenClaw prompt，不绕过 OpenClaw 调 Python 脚本
+0 16 * * 1-5 cd /path/to/a-share-info-hub && openclaw agent --agent main --message "$(cat docs/openclaw-a-share-daily-orchestrator.prompt.md)" >> logs/openclaw-a-share-daily-report.cron.log 2>&1
+
+0 17 * * 1-5 cd /path/to/a-share-info-hub && openclaw agent --agent main --message "$(cat docs/openclaw-a-share-daily-watchdog.prompt.md)" >> logs/openclaw-a-share-daily-watchdog.cron.log 2>&1
+```
+
+历史日期回放默认不会发送飞书消息；只有显式传入 `--send` 才会发送。重复发送同一 `trade_date` 会被阻止，除非显式传入 `--force-send`。
 
 ### 数据状态语义
 
 | 状态 | 含义 |
 | --- | --- |
-| `passed` | 主表和其他表均非空，DuckDB 写入成功 |
+| `passed` | 主表可用，未发生未忽略的增强接口失败，DuckDB 写入成功 |
 | `partial` | 主表可用但部分增强接口失败或缺失 |
 | `failed` | 主表不可用或交易日历验证失败 |
 | `skipped` | 目标日期非 A 股交易日，未调用行情接口 |
 | `missing` | 指定日期没有已存在的采集运行记录 |
+
+接口级 `ignored` 表示增强接口命中已知临时忽略规则；当前仅用于 Eastmoney `push2.eastmoney.com` 代理断连问题。该状态不写入失败日志、不把当日整体状态降为 `partial`，但仍会出现在 `interface-status.json` 和每日摘要中；主表接口不会被忽略。
 
 ### 运行测试
 
@@ -140,6 +191,7 @@ data/
   raw/               AKShare raw responses, per date and interface
   normalized/        Normalized Parquet tables
 reports/
+  daily-jobs/        Scheduled report job status, heartbeat, summary, and stage logs
   daily-runs/        Per-run status report and summary
   daily-reviews/     Per-date review HTML, technical notes, and context
 logs/                External interface failure JSONL log
@@ -179,17 +231,20 @@ python -m a_share_info_hub daily-review \
 | `--refresh-mode daily_update` | Run data refresh before review generation |
 | `--render-mode deterministic` | Use deterministic fallback for local testing |
 | `--external-background` | Path to external financial background JSON |
+| `--skip-external-background` | Skip scheduled-job external background generation and use local A-share context only |
 | `--output-format` | Review output: `html` / `context` / `inline` / `markdown` |
 
 ### Data Status Semantics
 
 | Status | Meaning |
 | --- | --- |
-| `passed` | Main table and all enhanced tables non-empty, DuckDB write succeeded |
+| `passed` | Main table available, no non-ignored enhanced-interface failures, DuckDB write succeeded |
 | `partial` | Main table available but some enhanced interfaces failed or missing |
 | `failed` | Main table unavailable or trading calendar verification failed |
 | `skipped` | Target date is not an A-share trading day, no market interfaces called |
 | `missing` | No existing collection run found for the specified date |
+
+Interface-level `ignored` means an enhanced interface matched a known temporary ignore rule; currently this only covers Eastmoney `push2.eastmoney.com` proxy disconnections. It is shown in `interface-status.json` and the daily summary, but it is not written to the failure log and does not downgrade the run to `partial`. Main-table failures are never ignored.
 
 ### Running Tests
 

@@ -1,0 +1,208 @@
+{
+  "alerts": [
+    {
+      "level": "warning",
+      "message": "external_background_fusion exceeded soft warning threshold.",
+      "stage": "external_background_fusion"
+    },
+    {
+      "level": "warning",
+      "message": "daily-update returned partial data.",
+      "stage": "daily_update"
+    },
+    {
+      "level": "warning",
+      "message": "one or more enhanced sources failed.",
+      "stage": "data_quality"
+    },
+    {
+      "level": "warning",
+      "message": "review context contains blocked sections.",
+      "stage": "daily_review_context"
+    }
+  ],
+  "artifacts": {
+    "daily_data_summary": "reports/daily-runs/2026-06-22/daily-data-summary.md",
+    "data_notes": "reports/daily-reviews/2026-06-22/a-share-daily-review-data-notes.md",
+    "external_background": "reports/daily-reviews/2026-06-22/external-background-fusion.json",
+    "heartbeat": "reports/daily-jobs/2026-06-22/heartbeat.json",
+    "html_report": "reports/daily-reviews/2026-06-22/a-share-daily-review.html",
+    "interface_status": "reports/daily-runs/2026-06-22/interface-status.json",
+    "job_status": "reports/daily-jobs/2026-06-22/job-status.json",
+    "job_summary": "reports/daily-jobs/2026-06-22/job-summary.md",
+    "llm_sections": "reports/daily-reviews/2026-06-22/llm-review-sections.json",
+    "review_context": "reports/daily-reviews/2026-06-22/review-context.json"
+  },
+  "context_status": "passed",
+  "daily_update_status": "passed",
+  "failure_reason": null,
+  "finished_at": "2026-06-22T17:36:39+08:00",
+  "health_level": "warning",
+  "health_status": "passed",
+  "html_status": "passed",
+  "llm_sections_status": "passed",
+  "not_investment_advice": true,
+  "overall_status": "partial",
+  "quality_metrics": {
+    "blocked_sections": [
+      "board_snapshot",
+      "lhb_events"
+    ],
+    "claude_code_exit_code": 0,
+    "claude_code_log_path": "reports/daily-jobs/2026-06-22/logs/claude_code_sections.log",
+    "consecutive_failures": 0,
+    "current_stage": "finished",
+    "current_stage_elapsed_seconds": null,
+    "current_stage_started_at": null,
+    "daily_review_context_exit_code": 0,
+    "daily_review_context_with_external_exit_code": 0,
+    "daily_review_html_exit_code": 0,
+    "daily_update_exit_code": 0,
+    "daily_update_overall_status": "partial",
+    "data_notes_exists": true,
+    "delivery_provider": "feishu_webhook",
+    "delivery_recipients": [],
+    "delivery_response_code": null,
+    "delivery_status": "skipped",
+    "duplicate_send_guard": false,
+    "expected_job_deadline": "2026-06-22T17:30:00+08:00",
+    "external_background_exists": true,
+    "external_background_exit_code": 0,
+    "external_background_generated": true,
+    "external_background_log_path": "reports/daily-jobs/2026-06-22/logs/external_background_fusion.log",
+    "external_background_path": "reports/daily-reviews/2026-06-22/external-background-fusion.json",
+    "external_background_schema": "external_background_fusion.v1",
+    "external_background_source": "daily-financial-briefing",
+    "external_background_status": "passed",
+    "external_background_topic_results": 6,
+    "failed_source_count": 3,
+    "feishu_delivery_status": "skipped",
+    "feishu_response_code": null,
+    "freshness_minutes": 96.65,
+    "heartbeat_age_seconds": 0,
+    "heartbeat_path": "reports/daily-jobs/2026-06-22/heartbeat.json",
+    "heartbeat_updated_at": "2026-06-22T17:36:39+08:00",
+    "html_exists": true,
+    "llm_sections_exists": true,
+    "llm_sections_path": "reports/daily-reviews/2026-06-22/llm-review-sections.json",
+    "llm_sections_validated": true,
+    "main_snapshot_rows": 5527,
+    "missed_run_detected": false,
+    "schema_changed_source_count": 0,
+    "stage_sla": {
+      "claude_code_sections": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "daily_review_context": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_context_with_external": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_html": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_update": {
+        "hard_timeout_seconds": 3600,
+        "soft_warning_seconds": 1500
+      },
+      "external_background_fusion": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "feishu_send": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      },
+      "watchdog_check": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      }
+    },
+    "success_empty_source_count": 0,
+    "watchdog_checked_at": null
+  },
+  "schema_version": "daily_report_job.v1",
+  "send_results": [],
+  "send_status": "skipped",
+  "stage_results": {
+    "claude_code_sections": {
+      "elapsed_seconds": 201.639,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-22T17:36:38+08:00",
+      "log_path": "reports/daily-jobs/2026-06-22/logs/claude_code_sections.log",
+      "soft_warning": false,
+      "stage": "claude_code_sections",
+      "started_at": "2026-06-22T17:33:16+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_context": {
+      "elapsed_seconds": 1.666,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-22T17:23:03+08:00",
+      "log_path": "reports/daily-jobs/2026-06-22/logs/daily_review_context.log",
+      "soft_warning": false,
+      "stage": "daily_review_context",
+      "started_at": "2026-06-22T17:23:01+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_context_with_external": {
+      "elapsed_seconds": 1.628,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-22T17:33:16+08:00",
+      "log_path": "reports/daily-jobs/2026-06-22/logs/daily_review_context_with_external.log",
+      "soft_warning": false,
+      "stage": "daily_review_context_with_external",
+      "started_at": "2026-06-22T17:33:15+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_html": {
+      "elapsed_seconds": 1.658,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-22T17:36:39+08:00",
+      "log_path": "reports/daily-jobs/2026-06-22/logs/daily_review_html.log",
+      "soft_warning": false,
+      "stage": "daily_review_html",
+      "started_at": "2026-06-22T17:36:38+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_update": {
+      "elapsed_seconds": 45.461,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-22T17:23:01+08:00",
+      "log_path": "reports/daily-jobs/2026-06-22/logs/daily_update.log",
+      "soft_warning": false,
+      "stage": "daily_update",
+      "started_at": "2026-06-22T17:22:16+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "external_background_fusion": {
+      "elapsed_seconds": 611.779,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-22T17:33:15+08:00",
+      "log_path": "reports/daily-jobs/2026-06-22/logs/external_background_fusion.log",
+      "soft_warning": true,
+      "stage": "external_background_fusion",
+      "started_at": "2026-06-22T17:23:03+08:00",
+      "status": "passed",
+      "timed_out": false
+    }
+  },
+  "started_at": "2026-06-22T17:22:16+08:00",
+  "trade_date": "2026-06-22"
+}

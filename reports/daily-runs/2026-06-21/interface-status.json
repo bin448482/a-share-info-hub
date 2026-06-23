@@ -1,0 +1,22 @@
+{
+  "duckdb_failure_reason": null,
+  "duckdb_status": "skipped",
+  "generated_at": "2026-06-21T19:55:19.685228+08:00",
+  "overall_status": "skipped",
+  "sources": [],
+  "table_row_counts": {
+    "board_snapshot": 0,
+    "daily_stock_snapshot": 0,
+    "lhb_events": 0,
+    "limit_pool_events": 0,
+    "market_summary": 0
+  },
+  "trade_date": "2026-06-21",
+  "trading_day_check": {
+    "checked_at": "2026-06-21T19:55:19.679968+08:00",
+    "is_trading_day": false,
+    "reason": "weekend is not an A-share trading day",
+    "source": "weekday",
+    "status": "success"
+  }
+}

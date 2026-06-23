@@ -1,0 +1,32 @@
+{
+  "attempts": 1,
+  "columns": [
+    "序号",
+    "代码",
+    "名称",
+    "涨跌幅",
+    "最新价",
+    "成交额",
+    "流通市值",
+    "总市值",
+    "动态市盈率",
+    "换手率",
+    "封单资金",
+    "最后封板时间",
+    "板上成交额",
+    "连续跌停",
+    "开板次数",
+    "所属行业"
+  ],
+  "elapsed_seconds": 0.194,
+  "failure_reason": null,
+  "fetched_at": "2026-06-22T17:22:35.859291+08:00",
+  "function_name": "stock_zt_pool_dtgc_em",
+  "params": {
+    "date": "20260622"
+  },
+  "raw_path": "/mnt/tool/2-projects/a-share-info-hub/data/raw/2026-06-22/stock_zt_pool_dtgc_em/response.json",
+  "row_count": 4,
+  "source": "akshare.stock_zt_pool_dtgc_em",
+  "status": "success"
+}

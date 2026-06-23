@@ -1,0 +1,105 @@
+{
+  "alerts": [],
+  "artifacts": {
+    "daily_data_summary": "reports/daily-runs/2026-06-21/daily-data-summary.md",
+    "data_notes": "reports/daily-reviews/2026-06-21/a-share-daily-review-data-notes.md",
+    "heartbeat": "reports/daily-jobs/2026-06-21/heartbeat.json",
+    "html_report": "reports/daily-reviews/2026-06-21/a-share-daily-review.html",
+    "interface_status": "reports/daily-runs/2026-06-21/interface-status.json",
+    "job_status": "reports/daily-jobs/2026-06-21/job-status.json",
+    "job_summary": "reports/daily-jobs/2026-06-21/job-summary.md",
+    "llm_sections": "reports/daily-reviews/2026-06-21/llm-review-sections.json",
+    "review_context": "reports/daily-reviews/2026-06-21/review-context.json"
+  },
+  "context_status": "skipped",
+  "daily_update_status": "passed",
+  "failure_reason": null,
+  "finished_at": "2026-06-21T19:55:19+08:00",
+  "health_level": "info",
+  "health_status": "passed",
+  "html_status": "skipped",
+  "llm_sections_status": "skipped",
+  "not_investment_advice": true,
+  "overall_status": "skipped",
+  "quality_metrics": {
+    "blocked_sections": [],
+    "claude_code_exit_code": null,
+    "claude_code_log_path": null,
+    "consecutive_failures": 0,
+    "current_stage": "finished",
+    "current_stage_elapsed_seconds": null,
+    "current_stage_started_at": null,
+    "daily_review_context_exit_code": null,
+    "daily_review_html_exit_code": null,
+    "daily_update_exit_code": 0,
+    "daily_update_overall_status": "skipped",
+    "data_notes_exists": false,
+    "delivery_provider": "openclaw_agent",
+    "delivery_recipients": [],
+    "delivery_response_code": null,
+    "delivery_status": "skipped",
+    "duplicate_send_guard": false,
+    "expected_job_deadline": "2026-06-21T17:30:00+08:00",
+    "failed_source_count": 0,
+    "feishu_delivery_status": "skipped",
+    "feishu_response_code": null,
+    "freshness_minutes": 235.317,
+    "heartbeat_age_seconds": 0,
+    "heartbeat_path": "reports/daily-jobs/2026-06-21/heartbeat.json",
+    "heartbeat_updated_at": "2026-06-21T19:55:19+08:00",
+    "html_exists": false,
+    "llm_sections_exists": false,
+    "llm_sections_path": null,
+    "llm_sections_validated": false,
+    "main_snapshot_rows": 0,
+    "missed_run_detected": false,
+    "schema_changed_source_count": 0,
+    "stage_sla": {
+      "claude_code_sections": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "daily_review_context": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_html": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_update": {
+        "hard_timeout_seconds": 3600,
+        "soft_warning_seconds": 1500
+      },
+      "feishu_send": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      },
+      "watchdog_check": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      }
+    },
+    "success_empty_source_count": 0,
+    "watchdog_checked_at": null
+  },
+  "schema_version": "daily_report_job.v1",
+  "send_results": [],
+  "send_status": "skipped",
+  "stage_results": {
+    "daily_update": {
+      "elapsed_seconds": 1.546,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-21T19:55:19+08:00",
+      "log_path": "reports/daily-jobs/2026-06-21/logs/daily_update.log",
+      "soft_warning": false,
+      "stage": "daily_update",
+      "started_at": "2026-06-21T19:55:18+08:00",
+      "status": "passed",
+      "timed_out": false
+    }
+  },
+  "started_at": "2026-06-21T19:55:18+08:00",
+  "trade_date": "2026-06-21"
+}

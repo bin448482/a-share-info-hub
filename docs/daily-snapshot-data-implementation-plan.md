@@ -175,12 +175,13 @@ CLI 的 `daily-update` 子命令负责一次完整每日运行。内部可以复
 
 - `success`：调用成功，返回非空且字段可解析。
 - `success_empty`：调用成功但自然无事件或返回空。
+- `ignored`：增强接口命中已知临时忽略规则；当前仅用于 Eastmoney `push2.eastmoney.com` 代理断连问题。
 - `failed`：接口调用失败、网络失败或上游错误。
 - `schema_changed`：调用成功但缺少必需字段或字段无法映射。
 
 当日整体状态：
 
-- `passed`：主表成功非空，标准化和 DuckDB 写入成功，增强接口状态全部可解释。
+- `passed`：主表成功非空，标准化和 DuckDB 写入成功，增强接口状态全部可解释；`ignored` 不降低整体状态。
 - `partial`：主表成功，但一个或多个增强接口失败或字段变化。
 - `skipped`：目标日期已验证为非交易日；未调用行情接口，未写入原始行情、标准化表或 DuckDB。
 - `failed`：主表失败、主表为空、主表关键字段缺失，或标准化主表无法写入。
@@ -195,6 +196,7 @@ CLI 的 `daily-update` 子命令负责一次完整每日运行。内部可以复
 - 失败接口必须记录 `function_name`、`params`、异常类型、异常摘要、重试次数和 `fetched_at`。
 - 如果调用前已经创建了原始目录但没有有效响应文件，`metadata.json` 必须写明 `raw_path: null` 或等价字段。
 - 主表接口失败时，当日整体状态为 `failed`；增强接口失败时，当日整体状态最高只能是 `partial`。
+- 增强接口命中 Eastmoney `push2.eastmoney.com` 代理断连时，接口状态记为 `ignored`，不写入外部接口失败日志，也不把整体状态降级；主表接口即使命中同类错误也不能忽略。
 
 ### 交易日验证异常
 

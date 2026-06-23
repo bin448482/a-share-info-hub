@@ -13,6 +13,7 @@ from scripts.collect_daily_snapshot import (
     DUCKDB_SKIPPED,
     DUCKDB_WRITTEN,
     FAILED,
+    IGNORED,
     OVERALL_PASSED,
     OVERALL_SKIPPED,
     SUCCESS,
@@ -65,6 +66,17 @@ def test_failure_log_writes_jsonl(tmp_path: Path) -> None:
     assert payload["function_name"] == "stock_lhb_detail_em"
     assert payload["failure_type"] == FAILED
     assert payload["raw_path"] is None
+
+
+def test_ignored_interface_does_not_write_failure_log(tmp_path: Path) -> None:
+    """临时忽略的接口不应写入外部接口失败日志。"""
+
+    log_path = tmp_path / "logs" / "external-interface-failures.jsonl"
+    record = make_record("stock_board_industry_name_em", "board_snapshot", IGNORED, 0)
+
+    append_status_log(log_path, record, TRADE_DATE)
+
+    assert not log_path.exists()
 
 
 def test_raw_artifacts_write_response_and_metadata(tmp_path: Path) -> None:
@@ -290,6 +302,126 @@ def test_collect_daily_snapshot_with_mock_module_reaches_passed(tmp_path: Path) 
     assert Path(outputs.output_paths["interface_status"]).exists()
     assert Path(outputs.output_paths["daily_summary"]).exists()
     assert Path(outputs.output_paths["duckdb"]).exists()
+
+
+def test_collect_daily_snapshot_ignores_eastmoney_push2_proxy_failure(tmp_path: Path) -> None:
+    """Eastmoney push2 代理断连增强接口应记录为 ignored 且不降级整体状态。"""
+
+    class MockAk:
+        """提供板块接口代理断连、其他接口成功或自然空的 mock。"""
+
+        @staticmethod
+        def tool_trade_date_hist_sina() -> pd.DataFrame:
+            """返回包含目标日期的交易日历 fixture。"""
+
+            return pd.DataFrame([{"trade_date": "2026-06-18"}])
+
+        @staticmethod
+        def stock_zh_a_spot() -> pd.DataFrame:
+            """返回主表成功 fixture。"""
+
+            return pd.DataFrame(
+                [
+                    {
+                        "代码": "000001",
+                        "名称": "平安银行",
+                        "最新价": 10.5,
+                        "涨跌额": 0.1,
+                        "涨跌幅": 0.96,
+                        "买入": 10.49,
+                        "卖出": 10.5,
+                        "昨收": 10.4,
+                        "今开": 10.42,
+                        "最高": 10.6,
+                        "最低": 10.3,
+                        "成交量": 100000,
+                        "成交额": 1050000,
+                        "时间戳": "2026-06-18 15:00:00",
+                    }
+                ]
+            )
+
+        @staticmethod
+        def stock_zt_pool_em(date: str) -> pd.DataFrame:
+            """返回涨停池空事件集。"""
+
+            return pd.DataFrame()
+
+        stock_zt_pool_previous_em = stock_zt_pool_em
+        stock_zt_pool_strong_em = stock_zt_pool_em
+        stock_zt_pool_sub_new_em = stock_zt_pool_em
+        stock_zt_pool_zbgc_em = stock_zt_pool_em
+        stock_zt_pool_dtgc_em = stock_zt_pool_em
+
+        @staticmethod
+        def stock_lhb_detail_daily_sina(date: str) -> pd.DataFrame:
+            """返回龙虎榜空事件集。"""
+
+            return pd.DataFrame()
+
+        @staticmethod
+        def stock_lhb_detail_em(start_date: str, end_date: str) -> pd.DataFrame:
+            """返回龙虎榜空事件集。"""
+
+            return pd.DataFrame()
+
+        stock_lhb_jgmmtj_em = stock_lhb_detail_em
+
+        @staticmethod
+        def stock_sse_deal_daily(date: str) -> pd.DataFrame:
+            """返回上交所市场摘要。"""
+
+            return pd.DataFrame([{"单日情况": "成交概况", "股票": "A股"}])
+
+        @staticmethod
+        def stock_szse_summary(date: str) -> pd.DataFrame:
+            """返回深交所市场摘要。"""
+
+            return pd.DataFrame([{"证券类别": "股票", "数量": 1}])
+
+        @staticmethod
+        def stock_board_industry_name_em() -> pd.DataFrame:
+            """模拟 Eastmoney push2 代理断连。"""
+
+            raise RuntimeError(
+                "ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', "
+                "port=443): Max retries exceeded (Caused by ProxyError('Unable to "
+                "connect to proxy', RemoteDisconnected('Remote end closed connection "
+                "without response')))"
+            )
+
+        stock_board_concept_name_em = stock_board_industry_name_em
+
+    outputs = collect_daily_snapshot(
+        trade_date=TRADE_DATE,
+        output_root=tmp_path,
+        ak_module=MockAk,
+        max_retries=1,
+        retry_sleep=0,
+        skip_duckdb=False,
+        min_main_rows=1,
+    )
+
+    status = json.loads(Path(outputs.output_paths["interface_status"]).read_text(encoding="utf-8"))
+    summary = Path(outputs.output_paths["daily_summary"]).read_text(encoding="utf-8")
+    ignored = [source for source in status["sources"] if source["status"] == IGNORED]
+    assert outputs.overall_status == OVERALL_PASSED
+    assert status["overall_status"] == OVERALL_PASSED
+    assert {source["source_key"] for source in ignored} == {
+        "stock_board_industry_name_em",
+        "stock_board_concept_name_em",
+    }
+    assert status["table_row_counts"]["board_snapshot"] == 0
+    assert "`ignored`" in summary
+    log_path = tmp_path / "logs" / "external-interface-failures.jsonl"
+    logged = [
+        json.loads(line)
+        for line in log_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert all(item["failure_type"] != IGNORED for item in logged)
+    assert all(item["function_name"] != "stock_board_industry_name_em" for item in logged)
+    assert all(item["function_name"] != "stock_board_concept_name_em" for item in logged)
 
 
 def test_collect_daily_snapshot_skips_weekend_without_source_calls(tmp_path: Path) -> None:

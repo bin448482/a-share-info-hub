@@ -109,6 +109,9 @@ FORBIDDEN_OUTPUT_TERMS = (
     "强烈看空",
 )
 
+PUBLIC_NOT_INVESTMENT_ADVICE_NOTE = "本报告仅用于研究复盘，不构成投资建议。"
+PUBLIC_DATA_BOUNDARY_NOTE = "本报告仅引用已生成的复盘证据包；详细数据状态和接口说明见同目录技术参考文件。"
+
 BLOCKED_SECTION_FORBIDDEN_TERMS = {
     "board_snapshot": ("板块主线", "领涨板块", "板块确认", "结构主线"),
     "limit_pool_events": ("涨停情绪确认", "连板主线", "情绪强势确认"),
@@ -306,6 +309,8 @@ class ExternalBackgroundFusionFinding(BaseModel):
     report_usage: str = ""
     local_relevance: str = ""
     citations: list[ExternalBackgroundRawCitation] = Field(default_factory=list)
+    external_findings: list["ExternalBackgroundFusionFinding"] = Field(default_factory=list)
+    information_gaps: list[str] = Field(default_factory=list)
 
 
 class ExternalBackgroundFusionInput(BaseModel):
@@ -318,8 +323,8 @@ class ExternalBackgroundFusionInput(BaseModel):
     trade_date: str
     not_investment_advice: Literal[True]
     topic_findings: list[ExternalBackgroundFusionFinding] = Field(default_factory=list)
-    risk_candidates: list[str] = Field(default_factory=list)
-    follow_up_candidates: list[str] = Field(default_factory=list)
+    risk_candidates: list[str | dict[str, Any]] = Field(default_factory=list)
+    follow_up_candidates: list[str | dict[str, Any]] = Field(default_factory=list)
     citations: list[ExternalBackgroundRawCitation] = Field(default_factory=list)
     information_gaps: list[str] = Field(default_factory=list)
     issues: list[str] = Field(default_factory=list)
@@ -1104,7 +1109,8 @@ def load_external_background_fusion_context(
         )
     accepted_points: list[ExternalBackgroundCorePoint] = []
     rejected_reasons: list[str] = list(parsed.issues)
-    for index, finding in enumerate(parsed.topic_findings, start=1):
+    flattened_findings = flatten_external_fusion_findings(parsed.topic_findings)
+    for index, finding in enumerate(flattened_findings, start=1):
         converted = coerce_external_fusion_finding(finding)
         if converted is None:
             rejected_reasons.append(f"第 {index} 条外部融合结论缺少正文、合法类型、来源名称或 URL。")
@@ -1119,7 +1125,9 @@ def load_external_background_fusion_context(
         status = EXTERNAL_STATUS_PARTIAL
         rejected_reasons.append(f"外部背景融合包日期 {parsed.trade_date} 与复盘交易日 {trade_date} 不一致，只能作为非当日背景。")
         information_gaps.append("仍需用当日 A 股行情、板块和情绪数据验证非当日外部背景。")
-    if not accepted_points and not parsed.risk_candidates and not parsed.follow_up_candidates:
+    risk_candidates = normalize_external_candidate_texts(parsed.risk_candidates)
+    follow_up_candidates = normalize_external_candidate_texts(parsed.follow_up_candidates)
+    if not accepted_points and not risk_candidates and not follow_up_candidates:
         status = EXTERNAL_STATUS_INVALID
         if not rejected_reasons:
             rejected_reasons.append("外部背景融合包没有可用主题结论、风险候选或待验证问题。")
@@ -1134,11 +1142,42 @@ def load_external_background_fusion_context(
         source_skill=parsed.source_skill,
         input_path=str(path),
         core_points=accepted_points,
-        follow_up_questions=parsed.follow_up_candidates,
+        follow_up_questions=follow_up_candidates,
         information_gaps=information_gaps,
         citations=citations,
         issues=rejected_reasons,
     )
+
+
+def flatten_external_fusion_findings(
+    findings: list[ExternalBackgroundFusionFinding],
+) -> list[ExternalBackgroundFusionFinding]:
+    """把 topic result 容器和直接 finding 统一展开为外部结论列表。"""
+
+    flattened: list[ExternalBackgroundFusionFinding] = []
+    for finding in findings:
+        if finding.external_findings:
+            flattened.extend(finding.external_findings)
+        else:
+            flattened.append(finding)
+    return flattened
+
+
+def normalize_external_candidate_texts(items: list[str | dict[str, Any]]) -> list[str]:
+    """把字符串或带 text 字段的候选项统一转换为文本列表。"""
+
+    normalized: list[str] = []
+    for item in items:
+        if isinstance(item, str):
+            text = item.strip()
+        elif isinstance(item, dict):
+            raw_text = item.get("text", "")
+            text = raw_text.strip() if isinstance(raw_text, str) else ""
+        else:
+            text = ""
+        if text:
+            normalized.append(text)
+    return normalized
 
 
 def coerce_external_fusion_finding(
@@ -1212,14 +1251,15 @@ def flatten_external_citations(points: list[ExternalBackgroundCorePoint]) -> lis
 def coerce_external_core_point(point: ExternalBackgroundRawCorePoint) -> ExternalBackgroundCorePoint | None:
     """把原始外部背景核心点转换为带完整引用的受控对象。"""
 
-    if point.type not in {"fact", "market_expectation", "bank_view", "inference"}:
+    point_type = "fact" if point.type == "macro_fact" else point.type
+    if point_type not in {"fact", "market_expectation", "bank_view", "inference"}:
         return None
     citations = coerce_external_citations(point.citations)
     if not point.text.strip() or not citations:
         return None
     return ExternalBackgroundCorePoint(
         text=point.text.strip(),
-        type=point.type,  # type: ignore[arg-type]
+        type=point_type,  # type: ignore[arg-type]
         a_share_relevance=point.a_share_relevance.strip(),
         citations=citations,
     )
@@ -1450,8 +1490,8 @@ def build_deterministic_sections(context: ReviewContext, focus: str | None = Non
         external_background_risks=render_external_background_risks(context),
         external_background_follow_up_questions=render_external_background_follow_up_questions(context),
         external_background_boundary_note=render_external_background_boundary_note(context),
-        data_boundary_note="本报告只引用已生成的复盘证据包；详细数据状态和接口说明见同目录技术参考文件。",
-        not_investment_advice_note="本报告仅用于研究复盘，不构成投资建议。",
+        data_boundary_note=PUBLIC_DATA_BOUNDARY_NOTE,
+        not_investment_advice_note=PUBLIC_NOT_INVESTMENT_ADVICE_NOTE,
     )
 
 
@@ -1628,7 +1668,7 @@ def build_validated_report(
 
 
 def prepare_sections_for_public_report(context: ReviewContext, sections: LlmReviewSections) -> LlmReviewSections:
-    """把兼容的外部背景字段融合进主报告 section，并清空旧独立字段。"""
+    """把 LLM sections 规范化为可进入公共报告的安全文本。"""
 
     validate_external_background_sections(context, sections)
     background = context.external_background
@@ -1637,6 +1677,8 @@ def prepare_sections_for_public_report(context: ReviewContext, sections: LlmRevi
         "external_background_risks": [],
         "external_background_follow_up_questions": [],
         "external_background_boundary_note": "",
+        "data_boundary_note": PUBLIC_DATA_BOUNDARY_NOTE,
+        "not_investment_advice_note": PUBLIC_NOT_INVESTMENT_ADVICE_NOTE,
     }
     if background.status not in {EXTERNAL_STATUS_PASSED, EXTERNAL_STATUS_PARTIAL}:
         return sections.model_copy(update=clear_external_fields)
@@ -1801,7 +1843,20 @@ def claims_external_background_overrides_local_data(text: str) -> bool:
 def describes_blocked_or_limited_data(text: str) -> bool:
     """判断一段 blocked section 文本是否只是在说明数据缺口。"""
 
-    allowed_markers = ("受限", "缺失", "不能", "不可用", "未获取", "不足", "不补推断")
+    allowed_markers = (
+        "受限",
+        "缺失",
+        "不能",
+        "无法",
+        "不可用",
+        "未获取",
+        "不足",
+        "不补推断",
+        "不将",
+        "不构成",
+        "暂不上升",
+        "误读为",
+    )
     return any(marker in text for marker in allowed_markers)
 
 
