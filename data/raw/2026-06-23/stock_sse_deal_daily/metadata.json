@@ -1,0 +1,15 @@
+{
+  "attempts": 2,
+  "columns": [],
+  "elapsed_seconds": 2.093,
+  "failure_reason": "ValueError: Length mismatch: Expected axis has 1 elements, new values have 6 elements",
+  "fetched_at": "2026-06-23T16:27:15.709013+08:00",
+  "function_name": "stock_sse_deal_daily",
+  "params": {
+    "date": "20260623"
+  },
+  "raw_path": null,
+  "row_count": 0,
+  "source": "akshare.stock_sse_deal_daily",
+  "status": "failed"
+}

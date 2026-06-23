@@ -1,0 +1,15 @@
+{
+  "attempts": 2,
+  "columns": [],
+  "elapsed_seconds": 1.326,
+  "failure_reason": "KeyError: '股票代码'",
+  "fetched_at": "2026-06-23T16:27:13.812968+08:00",
+  "function_name": "stock_lhb_detail_daily_sina",
+  "params": {
+    "date": "20260623"
+  },
+  "raw_path": null,
+  "row_count": 0,
+  "source": "akshare.stock_lhb_detail_daily_sina",
+  "status": "failed"
+}

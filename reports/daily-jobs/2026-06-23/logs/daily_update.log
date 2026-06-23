@@ -1,0 +1,102 @@
+stage: daily_update
+started_at: 2026-06-23T16:26:56+08:00
+finished_at: 2026-06-23T16:27:43+08:00
+elapsed_seconds: 47.478
+exit_code: 0
+status: passed
+soft_warning: false
+timed_out: false
+command: .venv/bin/python -m a_share_info_hub daily-update --trade-date 2026-06-23 --output-root /mnt/tool/2-projects/a-share-info-hub --ignore-proxy
+
+## stdout
+Daily snapshot status: partial
+raw_root: /mnt/tool/2-projects/a-share-info-hub/data/raw/2026-06-23
+normalized_root: /mnt/tool/2-projects/a-share-info-hub/data/normalized
+failure_log: /mnt/tool/2-projects/a-share-info-hub/logs/external-interface-failures.jsonl
+interface_status: /mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-23/interface-status.json
+daily_summary: /mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-23/daily-data-summary.md
+duckdb: /mnt/tool/2-projects/a-share-info-hub/market.duckdb
+
+
+## stderr
+
+Please wait for a moment:   0%|          | 0/70 [00:00<?, ?it/s]
+Please wait for a moment:   1%|▏         | 1/70 [00:00<00:13,  5.19it/s]
+Please wait for a moment:   3%|▎         | 2/70 [00:00<00:12,  5.53it/s]
+Please wait for a moment:   4%|▍         | 3/70 [00:00<00:12,  5.42it/s]
+Please wait for a moment:   6%|▌         | 4/70 [00:00<00:12,  5.32it/s]
+Please wait for a moment:   7%|▋         | 5/70 [00:00<00:11,  5.42it/s]
+Please wait for a moment:   9%|▊         | 6/70 [00:01<00:11,  5.62it/s]
+Please wait for a moment:  10%|█         | 7/70 [00:01<00:11,  5.54it/s]
+Please wait for a moment:  11%|█▏        | 8/70 [00:01<00:17,  3.49it/s]
+Please wait for a moment:  13%|█▎        | 9/70 [00:01<00:15,  4.02it/s]
+Please wait for a moment:  14%|█▍        | 10/70 [00:02<00:13,  4.48it/s]
+Please wait for a moment:  16%|█▌        | 11/70 [00:02<00:12,  4.88it/s]
+Please wait for a moment:  17%|█▋        | 12/70 [00:02<00:11,  5.25it/s]
+Please wait for a moment:  19%|█▊        | 13/70 [00:02<00:10,  5.40it/s]
+Please wait for a moment:  20%|██        | 14/70 [00:02<00:09,  5.63it/s]
+Please wait for a moment:  21%|██▏       | 15/70 [00:02<00:09,  5.51it/s]
+Please wait for a moment:  23%|██▎       | 16/70 [00:03<00:09,  5.58it/s]
+Please wait for a moment:  24%|██▍       | 17/70 [00:03<00:09,  5.61it/s]
+Please wait for a moment:  26%|██▌       | 18/70 [00:03<00:09,  5.35it/s]
+Please wait for a moment:  27%|██▋       | 19/70 [00:03<00:09,  5.59it/s]
+Please wait for a moment:  29%|██▊       | 20/70 [00:03<00:08,  5.68it/s]
+Please wait for a moment:  30%|███       | 21/70 [00:04<00:08,  5.68it/s]
+Please wait for a moment:  31%|███▏      | 22/70 [00:04<00:08,  5.59it/s]
+Please wait for a moment:  33%|███▎      | 23/70 [00:04<00:08,  5.54it/s]
+Please wait for a moment:  34%|███▍      | 24/70 [00:04<00:08,  5.58it/s]
+Please wait for a moment:  36%|███▌      | 25/70 [00:04<00:08,  5.34it/s]
+Please wait for a moment:  37%|███▋      | 26/70 [00:04<00:07,  5.50it/s]
+Please wait for a moment:  39%|███▊      | 27/70 [00:05<00:07,  5.65it/s]
+Please wait for a moment:  40%|████      | 28/70 [00:05<00:07,  5.52it/s]
+Please wait for a moment:  41%|████▏     | 29/70 [00:05<00:07,  5.46it/s]
+Please wait for a moment:  43%|████▎     | 30/70 [00:05<00:10,  3.67it/s]
+Please wait for a moment:  44%|████▍     | 31/70 [00:06<00:09,  4.19it/s]
+Please wait for a moment:  46%|████▌     | 32/70 [00:06<00:08,  4.37it/s]
+Please wait for a moment:  47%|████▋     | 33/70 [00:06<00:10,  3.40it/s]
+Please wait for a moment:  49%|████▊     | 34/70 [00:06<00:09,  3.90it/s]
+Please wait for a moment:  50%|█████     | 35/70 [00:07<00:08,  4.37it/s]
+Please wait for a moment:  51%|█████▏    | 36/70 [00:07<00:07,  4.57it/s]
+Please wait for a moment:  53%|█████▎    | 37/70 [00:07<00:06,  4.73it/s]
+Please wait for a moment:  54%|█████▍    | 38/70 [00:07<00:06,  5.05it/s]
+Please wait for a moment:  56%|█████▌    | 39/70 [00:07<00:05,  5.37it/s]
+Please wait for a moment:  57%|█████▋    | 40/70 [00:08<00:08,  3.52it/s]
+Please wait for a moment:  59%|█████▊    | 41/70 [00:08<00:07,  4.01it/s]
+Please wait for a moment:  60%|██████    | 42/70 [00:08<00:06,  4.33it/s]
+Please wait for a moment:  61%|██████▏   | 43/70 [00:08<00:06,  4.40it/s]
+Please wait for a moment:  63%|██████▎   | 44/70 [00:09<00:05,  4.77it/s]
+Please wait for a moment:  64%|██████▍   | 45/70 [00:09<00:04,  5.06it/s]
+Please wait for a moment:  66%|██████▌   | 46/70 [00:09<00:04,  5.33it/s]
+Please wait for a moment:  67%|██████▋   | 47/70 [00:09<00:04,  5.50it/s]
+Please wait for a moment:  69%|██████▊   | 48/70 [00:09<00:03,  5.71it/s]
+Please wait for a moment:  70%|███████   | 49/70 [00:10<00:05,  3.51it/s]
+Please wait for a moment:  71%|███████▏  | 50/70 [00:10<00:05,  3.84it/s]
+Please wait for a moment:  73%|███████▎  | 51/70 [00:10<00:04,  4.22it/s]
+Please wait for a moment:  74%|███████▍  | 52/70 [00:10<00:03,  4.65it/s]
+Please wait for a moment:  76%|███████▌  | 53/70 [00:11<00:03,  4.95it/s]
+Please wait for a moment:  77%|███████▋  | 54/70 [00:11<00:03,  5.07it/s]
+Please wait for a moment:  79%|███████▊  | 55/70 [00:11<00:04,  3.46it/s]
+Please wait for a moment:  80%|████████  | 56/70 [00:11<00:03,  3.84it/s]
+Please wait for a moment:  81%|████████▏ | 57/70 [00:12<00:05,  2.31it/s]
+Please wait for a moment:  83%|████████▎ | 58/70 [00:12<00:04,  2.76it/s]
+Please wait for a moment:  84%|████████▍ | 59/70 [00:13<00:03,  3.29it/s]
+Please wait for a moment:  86%|████████▌ | 60/70 [00:13<00:02,  3.80it/s]
+Please wait for a moment:  87%|████████▋ | 61/70 [00:13<00:02,  4.30it/s]
+Please wait for a moment:  89%|████████▊ | 62/70 [00:13<00:01,  4.68it/s]
+Please wait for a moment:  90%|█████████ | 63/70 [00:13<00:01,  4.98it/s]
+Please wait for a moment:  91%|█████████▏| 64/70 [00:14<00:01,  3.34it/s]
+Please wait for a moment:  93%|█████████▎| 65/70 [00:14<00:01,  3.75it/s]
+Please wait for a moment:  94%|█████████▍| 66/70 [00:14<00:00,  4.25it/s]
+Please wait for a moment:  96%|█████████▌| 67/70 [00:14<00:00,  4.46it/s]
+Please wait for a moment:  97%|█████████▋| 68/70 [00:15<00:00,  4.88it/s]
+Please wait for a moment:  99%|█████████▊| 69/70 [00:15<00:00,  5.21it/s]
+Please wait for a moment: 100%|██████████| 70/70 [00:15<00:00,  4.17it/s]
+                                                                         
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:00<00:00,  9.52it/s]
+                                             
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [00:00<00:00,  6.43it/s]
+                                             

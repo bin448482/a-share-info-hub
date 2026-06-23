@@ -1,0 +1,23 @@
+{
+  "started_at": "2026-06-23T16:39:32+08:00",
+  "finished_at": "2026-06-23T16:39:38+08:00",
+  "elapsed_seconds": 6.099,
+  "status": "passed",
+  "results": [
+    {
+      "message_kind": "alert",
+      "level": "critical",
+      "title": "2026-06-23 A 股日报任务告警",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a"
+      ],
+      "media_path": null,
+      "status": "passed",
+      "provider": "openclaw_message",
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6c902a6a50a8b343b80d650b3d6\",\n    \"chatId\": \"oc",
+      "failure_reason": null
+    }
+  ]
+}

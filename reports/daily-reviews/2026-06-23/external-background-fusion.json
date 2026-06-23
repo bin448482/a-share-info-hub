@@ -1,0 +1,558 @@
+{
+  "schema_version": "external_background_fusion.v1",
+  "source_skill": "daily-financial-briefing",
+  "trade_date": "2026-06-23",
+  "not_investment_advice": true,
+  "topic_findings": [
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "该主题因子Agent因网络访问工具（WebSearch、WebFetch）权限未授予而完全阻塞，无法获取任何US Macro或Investment Bank Views公开来源。2026-06-23当日A股大盘定性仍完全依赖本地证据包（涨跌比2764:2643、成交额34656.65亿、涨停776条），无外部宏观或投行观点可供融合。",
+      "type": "inference",
+      "local_relevance": "大盘定性：对应本地市场宽度数据（上涨2764/下跌2643/平盘120，极端上涨141/极端下跌76）。外部背景完全缺失意味着大盘定性仅能基于本地涨跌分布和涨停情绪进行有限推断，无法将A股表现置于当日全球风险偏好或宏观事件的参照系中。",
+      "citations": []
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "text": "美联储在2026年6月17日FOMC会议上维持联邦基金目标利率区间3.50%-3.75%不变，声明指出经济活动仍在扩张、通胀相对2%目标仍偏高。这一偏紧利率环境意味着全球风险资产的贴现率锚尚未下移——A股市场结构无法获得来自流动性宽松驱动的全面估值扩张，行业表现更依赖自身基本面和政策催化而非自上而下的宏观风格切换。",
+      "type": "macro_fact",
+      "local_relevance": "大盘结构：对应本地涨跌比2764:2643（约1.045:1，接近1:1的均衡状态）和成交额34656.65亿元。偏紧利率环境解释了为何市场结构呈现「高成交、近均分」特征——活跃但不亢奋，做多资金未形成全面压倒性优势，与外部利率未转向宽松的宏观约束一致。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "text": "美国劳工统计局2026年6月10日发布的5月CPI数据显示，CPI-U同比上涨4.2%，仍显著高于美联储2%的通胀目标。持续偏高的通胀读数抑制了市场对年内大幅降息的定价空间。通胀偏高叠加利率高位，对上游资源品（有色金属、化工）提供名义价格层面的叙事背景，但对利率敏感型成长行业（半导体、通信设备）的估值扩张形成约束——行业表现的分化更多取决于盈利基本面而非宽松驱动的估值抬升。下一次CPI发布时间为2026年7月14日。",
+      "type": "macro_fact",
+      "local_relevance": "大盘结构：对应本地强势涨停324只中行业分布的「上游+科技」双主线特征（半导体68只、化学制品40只、小金属29只）。通胀偏高环境为资源品方向提供了价格叙事，但高利率限制科技方向估值扩张——涨停池中的多行业分散分布反映了通胀-利率组合对不同行业方向的正反两面影响。需注意涨停池仅反映极端做多个股，不能替代板块整体结构判断。",
+      "citations": [
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - 2026 M05 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "text": "CME FedWatch工具显示的30天联邦基金期货隐含概率表明，市场对2026年下半年美联储政策路径存在显著分歧——降息时点和幅度高度依赖后续通胀和就业数据的演变。利率路径的不确定性意味着全球行业轮动缺乏明确的方向性信号：在缺乏利率方向共识的环境下，市场结构呈现多方向分散活跃而非单一风格（成长或价值）主导，各路资金在不同行业方向各自为战。",
+      "type": "market_expectation",
+      "local_relevance": "大盘结构：对应本地涨停池行业分布高度分散——半导体68只、化学制品40只、通用设备39只、汽车零部33只、小金属29只、通信设备25只、化学原料23只、化学制药22只，呈现多行业分散封板、无单一行业绝对主导的格局。外部利率预期分歧为这种「多主线并行、缺乏单一风格共识」的市场结构提供了宏观层面的解释。",
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+          "published_at": "2026-06-19",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "text": "高盛2026年中国经济展望公开页面认为中国经济增长可能快于共识预期，出口韧性和制造业升级是主要驱动力。其在全球展望中也提到全球权益资产在利率见顶后存在结构性机会，但路径取决于通胀和央行政策节奏。这一中期判断为中国制造业相关板块（通用设备、汽车零部件、半导体、通信设备等）的结构性偏正提供了外部叙事层面的解释框架。",
+      "type": "bank_view",
+      "local_relevance": "大盘结构：对应本地涨停池中制造业相关方向的集中——半导体68只（硬科技制造）、通用设备39只（装备制造）、汽车零部33只（先进制造）。高盛的中期展望为制造业方向在涨停情绪中的突出表现提供了外部叙事层面的支撑。但涨停池仅反映极端做多个股，在板块快照数据完全缺失的情况下，无法判断制造业板块整体是否确实强于其他方向。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's economy is forecast to grow faster than expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks - Global Markets and Economy",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "text": "花旗2026年中国经济展望指出中国以外经济体名义GDP放缓可能压制中国出口标题增速，但中国制造商可通过价格和质量升级维持或提升市场份额。瑞银2026-27年中国展望提到地产销售、新开工和投资仍有下降压力，但GDP拖累可能较2025年收窄。多家国际投行对中国经济中期路径存在分歧但整体倾向「韧性加结构调整」判断——这一分歧性共识为A股市场结构提供了「上限有顶、下限有底」的外部判断框架。",
+      "type": "bank_view",
+      "local_relevance": "大盘结构：对应本地涨跌比2764:2643（接近1:1）和强势涨停324只同时存在的「矛盾」结构——整体涨跌均分但局部做多活跃。外部投行对「韧性加结构调整」的分歧性共识解释了为何市场呈现「整体均衡、局部激进」的结构特征：底部有韧性叙事支撑（无普跌），顶部缺乏一致乐观驱动（无普涨），资金在不同行业方向各自寻找结构性机会。",
+      "citations": [
+        {
+          "source_name": "Citigroup",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        },
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "text": "综合外部宏观与投行观点推断：美联储利率维持3.50%-3.75%高位、CPI仍偏高（5月同比4.2%）、利率期货市场预期分歧显著、投行对中国中期经济倾向「韧性但存结构性压力」——这一外部组合为A股当前市场结构提供了「外部约束下的多方向分散活跃」的宏观解释框架。在此背景下：涨跌比接近1:1（无全面方向性）、强势涨停324只（局部做多意愿强烈且行业分布分散）、成交额34656.65亿元（交投活跃）——这一结构组合反映了「有限度风险偏好环境下的结构性行情」。在板块快照数据缺失（行业/概念板块接口因代理连接中断失败）的情况下，对行业层面结构特征的任何判断均需等待本地数据恢复后再做验证。",
+      "type": "inference",
+      "local_relevance": "大盘结构：综合对应本地全部结构指标——涨跌比2764:2643（约1.045:1）、强势涨停324只（前一交易日134只，环比大幅增加）、涨停行业Top分布（半导体68、化学制品40、通用设备39、汽车零部33、小金属29）、成交额34656.65亿元。外部宏观组合为这一定性——「外部约束下的多方向分散活跃、整体均衡但局部积极」的市场结构——提供了合理的外部宏观解释框架。在板块快照数据恢复前，这一判断仅基于涨停池推测，行业层面的结构性结论需保持审慎。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - 2026 M05 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's economy is forecast to grow faster than expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_breadth",
+      "text": "该主题因子Agent因网络访问工具权限未授予而完全阻塞，无法获取美股市场宽度数据（NYSE涨跌比、S&P 500成分股分布等）或跨市场对比数据。2026-06-23 A股市场宽度（涨2764/跌2643/平120，极端涨141/极端跌76）仅能以本地数据独立解读，无法置于全球市场宽度背景中进行相对强弱判断。",
+      "type": "inference",
+      "local_relevance": "市场宽度：对应本地5527样本的涨跌分布。外部对比数据（美股AD line、全球主要股指日内宽度）缺失意味着无法判断A股当日的市场宽度表现是否超越或落后于全球主要市场，也无法识别跨市场联动或背离信号。",
+      "citations": []
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "text": "美联储在2026年6月17日FOMC会议上维持联邦基金目标利率区间3.50%-3.75%不变，声明指出通胀相对2%目标仍偏高、经济活动仍在扩张、就业变化不大。这一利率立场意味着全球风险资产的贴现率锚尚未下移，美元流动性环境维持中性偏紧——为A股情绪提供了一个「外部利率约束仍在、但未进一步收紧」的宏观框架。",
+      "type": "macro_fact",
+      "local_relevance": "情绪与事件：对应涨停池776条记录（强势涨停324只、涨停96只）的积极做多情绪，以及极端上涨141只明显多于极端下跌76只的偏正格局。美联储维持利率不变且未释放宽松信号，解释了A股情绪为何表现为「积极做多但未全面亢奋」——涨停活跃但涨跌比仅约1.05:1（2764涨 vs 2643跌），做多资金集中在涨停方向而非全面铺开。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "text": "美国劳工统计局2026年6月10日发布的5月CPI数据显示，CPI-U同比上涨4.2%，仍显著高于美联储2%的通胀目标。持续偏高的通胀读数抑制了市场对年内大幅降息的定价空间，全球风险偏好缺乏来自「通胀回落-宽松预期」链条的额外提振。下一次CPI发布时间为2026年7月14日。",
+      "type": "macro_fact",
+      "local_relevance": "情绪与事件：对应本地破板50只和跌停39只所反映的抛压——通胀偏高抑制了全面宽松预期，市场在通胀数据未出现趋势性改善前难以形成一致的方向性共识，部分资金在涨停方向获利了结（破板）或避险退出（跌停）。同时极端上涨141只远超极端下跌76只，说明通胀偏高并未触发系统性恐慌，做多情绪仍占上风。",
+      "citations": [
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - 2026 M05 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "text": "CME FedWatch工具显示的30天联邦基金期货隐含概率表明，市场对2026年下半年美联储政策路径存在显著分歧——降息时点和幅度高度依赖后续通胀和就业数据的演变。该工具反映的是市场预期而非政策承诺，当前概率分布暗示市场对利率方向缺乏一致共识。",
+      "type": "market_expectation",
+      "local_relevance": "情绪与事件：对应涨停池行业分布高度分散——半导体68只、化学制品40只、通用设备39只、汽车零部33只、小金属29只、通信设备25只、化学原料23只、化学制药22只，前8大集中行业无明显单一主线。全球利率预期分歧使得A股缺乏统一的宏观风格信号，各路资金在不同行业方向各自为战，情绪呈现「多方向分散活跃」而非单一主题驱动。",
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+          "published_at": "2026-06-19",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "text": "高盛2026年展望公开页面认为中国2026年经济增长可能快于共识预期，出口韧性和制造业升级是主要驱动力。高盛在全球展望中也提到全球权益资产在利率见顶后存在结构性机会。这一中期积极判断为中国资产提供了来自国际顶级投行的「基本面韧性」叙事支撑。",
+      "type": "bank_view",
+      "local_relevance": "情绪与事件：对应涨停池中半导体（68只）、通用设备（39只）、汽车零部（33只）等制造业方向的高度集中——高盛对中国制造业升级和出口韧性的中期积极判断，为A股资金向制造业和科技方向集中提供了外部叙事层面的情绪催化剂。但由于龙虎榜数据完全缺失（新浪接口KeyError、东方财富接口TypeError），无法验证机构资金是否实际参与了这些方向的封板。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's economy is forecast to grow faster than expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks - Global Markets and Economy",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        }
+      ]
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "text": "花旗2026年中国经济展望指出中国以外经济体名义GDP放缓可能压制中国出口标题增速，但中国制造商可通过价格和质量升级维持或提升市场份额。瑞银2026-27年中国展望提到地产销售、新开工和投资仍有下降压力，但GDP拖累可能较2025年收窄。多家投行对中国经济中期路径存在分歧但整体倾向「韧性+结构调整」判断，而非单边乐观或悲观——这一分歧性共识为A股提供了「上限有顶、下限有底」的外部情绪框架。",
+      "type": "bank_view",
+      "local_relevance": "情绪与事件：对应涨停池行业Top 8的分散格局——既有半导体和通用设备等制造业方向（对应制造升级叙事），也有化学制品和化学原料等资源方向（对应通胀/价格叙事），还有汽车零部（对应出口韧性叙事）。外部投行对中国经济「韧性但存结构性分歧」的判断，解释了A股涨停情绪为何呈现多主线并行而非单边押注某一方向。板块快照数据因代理连接中断而缺失，无法验证板块整体情绪是否与涨停集中方向一致。",
+      "citations": [
+        {
+          "source_name": "Citigroup",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        },
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "text": "综合外部宏观与投行观点推断：美联储维持利率3.50%-3.75%高位、CPI仍偏高（5月同比4.2%）、利率期货市场预期分歧显著、投行对中国中期经济倾向「韧性但存结构性压力」——这一外部组合为A股提供了一个「积极但伴抛压」的外部情绪解释框架。做多情绪旺盛（涨停776条、强势涨停324只）但存在分歧（破板50只、跌停39只），极端上涨（141只）明显多于极端下跌（76只）但涨跌比接近1:1（2764:2643），表明做多资金集中于涨停方向但未形成全市场共振。由于龙虎榜数据完全缺失（三个接口均失败），无法从机构买卖力量验证涨停情绪的驱动因素；由于板块快照缺失，无法判断行业情绪的整体分布。外部背景仅提供有限度的叙事框架，不替代缺失的本地数据。",
+      "type": "inference",
+      "local_relevance": "情绪与事件：综合对应本地情绪全部指标——涨停776条（活跃）、强势涨停324只（高质量做多）、破板50只（抛压信号）、跌停39只（恐慌有限）、极端涨跌比141:76（约1.86:1，偏正）、涨跌比2764:2643（约1.05:1，接近均衡）。外部宏观组合（利率高位稳定+通胀偏高+投行中期韧性判断）为这一定性——「积极但伴抛压、做多集中但未扩散」——提供了合理的外部情绪解释。核心缺口：龙虎榜缺失使涨停情绪的机构参与度无法验证，板块快照缺失使行业级别情绪分布无法判断。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - 2026 M05 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's economy is forecast to grow faster than expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        }
+      ]
+    },
+    {
+      "topic_key": "board_and_structure",
+      "text": "该主题因子Agent因网络访问工具权限未授予而完全阻塞。本主题本地板块快照数据已阻塞（board_snapshot 0行，行业/概念板块接口ConnectionError），外部公开信息同样不可达。前向已验证的投行引用（高盛制造业展望、花旗/瑞银中国展望）已在market_overview_structure和sentiment_and_events主题中覆盖了宏观产业结构叙事，但无法提供板块轮动、行业景气度或全球产业链结构性分析。",
+      "type": "inference",
+      "local_relevance": "板块与结构：对应本地涨停池行业Top 8（半导体68、化学制品40、通用设备39、汽车零部33、小金属29、通信设备25、化学原料23、化学制药22）。本主题在本地和外部均为双重阻塞状态——本地板块快照缺失导致无法获取行业整体涨跌幅和资金流向，外部产业信息来源亦不可达。涨停池的行业分布仅反映极端做多个股层面，不能作为板块结构判断的依据。",
+      "citations": []
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "美联储在2026年6月17日FOMC会议上维持联邦基金目标利率区间3.50%-3.75%不变，声明指出通胀相对2%目标仍偏高。利率维持高位意味着全球风险资产贴现率锚尚未下移，利率敏感型成长方向（如半导体）面临持续的估值约束风险，且偏紧的美元流动性环境可能通过汇率和北向资金渠道对A股形成外部压力传导。",
+      "type": "macro_fact",
+      "local_relevance": "风险观察：对应本地半导体板块涨停集中68条（行业集中度最高）——高利率环境对该方向估值扩张构成外部约束；同时对应涨跌比接近1:1的弱平衡格局，外部利率未转向宽松解释了为何市场缺乏全面方向性驱动。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "美国劳工统计局2026年6月10日发布的5月CPI数据显示，CPI-U同比上涨4.2%，仍显著高于美联储2%的通胀目标。持续偏高的通胀读数抑制了市场对年内大幅降息的定价空间，全球风险偏好缺乏来自「通胀回落-宽松预期」链条的额外提振。下一次CPI发布时间为2026年7月14日，该数据将成为检验通胀趋势和利率预期走向的关键节点。",
+      "type": "macro_fact",
+      "local_relevance": "风险观察：对应本地极端上涨141只明显多于极端下跌76只（约1.86:1）但涨跌比接近1:1的结构——通胀偏高抑制全面宽松预期，做多情绪集中在涨停方向而非全面扩散，市场在通胀数据未出现趋势性改善前难以形成一致的方向性共识。",
+      "citations": [
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - 2026 M05 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "CME FedWatch工具显示的联邦基金期货隐含概率表明，市场对2026年下半年美联储政策路径存在显著分歧——降息时点和幅度高度依赖后续通胀和就业数据演变。利率预期的高度不确定性意味着全球风险偏好可能因宏观数据发布出现阶段性波动，通过外部情绪传导对A股产生影响。",
+      "type": "market_expectation",
+      "local_relevance": "风险观察：对应本地炸板50条（追涨资金被套）和跌停39条（局部风险释放）——全球利率预期分歧增加了A股情绪的脆弱性，市场在缺乏明确宏观方向信号时，涨停方向的一致性较弱，部分资金可能在情绪波动中选择获利了结或避险退出。",
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+          "published_at": "2026-06-19",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "瑞银2026-27年中国展望公开页面指出，中国地产销售、新开工和投资仍有下降压力，但GDP拖累可能较2025年收窄。花旗2026年中国经济展望指出中国以外经济体名义GDP放缓可能压制中国出口标题增速。多家国际投行对中国经济中期路径存在分歧，整体倾向「韧性加结构调整」判断而非单边乐观——地产链条持续调整和外部需求放缓是投行视角中的主要结构性风险。",
+      "type": "bank_view",
+      "local_relevance": "风险观察：对应本地数据质量风险（4个接口失败、板块快照和上证汇总缺失）——在投行指出地产和外部需求存在结构性风险的背景下，本地板块快照数据缺失使得无法验证A股地产链相关板块（建材、家居、银行）的实际表现，增加了风险判断的信息盲区。同时化学制品40条涨停是否包含地产链上游化工品也需要板块数据验证。",
+      "citations": [
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        },
+        {
+          "source_name": "Citigroup",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "高盛2026年中国经济展望公开页面认为中国经济增长可能快于共识预期，出口韧性和制造业升级是主要驱动力。但其全球展望也提到全球权益资产路径取决于通胀和央行政策节奏——这一条件性乐观意味着中国增长预期的实现依赖于外部宏观环境（全球利率、贸易政策、地缘政治）不发生重大负面变化，外部假设的脆弱性是A股的潜在风险来源。",
+      "type": "bank_view",
+      "local_relevance": "风险观察：对应本地极端上涨141只远超极端下跌76只的偏正格局——高盛的「条件性乐观」框架意味着当前A股做多情绪建立在外部环境不发生重大恶化的假设之上。如果美联储政策路径因通胀数据超预期转鹰、或中美贸易/科技政策出现新的摩擦，当前偏正的情绪结构可能面临外部冲击的考验。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's economy is forecast to grow faster than expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks - Global Markets and Economy",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        }
+      ]
+    }
+  ],
+  "risk_candidates": [
+    {
+      "description": "美联储利率维持高位（3.50%-3.75%）且CPI偏高（5月同比4.2%），外部流动性环境未转向宽松——A股结构性行情缺乏宏观宽松驱动的全面估值扩张条件，需关注利率敏感型成长方向的估值压力",
+      "source_topics": ["market_overview_structure", "sentiment_and_events", "risk_observations"],
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - 2026 M05 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "description": "半导体板块涨停集中度最高（68只），在全球利率高企且通胀未明显回落的背景下，需关注该方向是否出现估值过热或情绪透支；同时美国半导体出口管制政策的任何变化均可能对相关板块产生外部冲击",
+      "source_topics": ["board_and_structure", "market_overview_structure", "risk_observations"],
+      "citations": []
+    },
+    {
+      "description": "多家国际投行提到中国地产销售、新开工和投资仍有下降压力（瑞银2026-27年中国展望），地产链条的持续调整可能对相关上下游板块形成拖累",
+      "source_topics": ["market_overview_structure", "risk_observations"],
+      "citations": [
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "description": "CME FedWatch显示市场对美联储下半年政策路径存在显著分歧——利率预期的高度不确定性可能引发全球风险偏好的阶段性波动，对A股情绪产生外部传导效应",
+      "source_topics": ["market_overview_structure", "sentiment_and_events", "risk_observations"],
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+          "published_at": "2026-06-19",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "description": "龙虎榜数据完全缺失（三个接口均失败），无法获取机构/游资的买卖动向和资金流向，涨停情绪背后的驱动力量无法验证——存在情绪与资金面背离的信息盲区风险",
+      "source_topics": ["sentiment_and_events", "risk_observations"],
+      "citations": []
+    },
+    {
+      "description": "高盛对中国经济的乐观判断存在「条件性」前提——全球利率、贸易政策、地缘政治不发生重大负面变化。若外部假设被打破，当前偏正情绪结构可能面临外部冲击考验",
+      "source_topics": ["risk_observations"],
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks - Global Markets and Economy",
+          "published_at": "2025-12-31",
+          "accessed_at": "2026-06-23",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        }
+      ]
+    }
+  ],
+  "follow_up_candidates": [
+    {
+      "question": "美联储下一次FOMC会议（预计2026年7月底）的点阵图和利率决议是否会释放更明确的政策信号？当前利率期货市场预期分歧何时收敛？",
+      "source_topics": ["market_overview_structure", "sentiment_and_events", "risk_observations"]
+    },
+    {
+      "question": "2026年7月14日发布的6月CPI数据是否会延续4.2%的高位还是出现回落迹象？这将是影响下半年全球利率预期的关键变量",
+      "source_topics": ["market_overview_structure", "sentiment_and_events", "risk_observations"]
+    },
+    {
+      "question": "全球半导体产业链是否存在新的出口管制或供应链政策变化？这直接影响A股半导体板块（涨停池中集中度最高的行业）的外部环境",
+      "source_topics": ["board_and_structure", "risk_observations"]
+    },
+    {
+      "question": "在龙虎榜数据恢复后，涨停板（尤其是半导体68只、化学制品40只）背后的机构参与度如何？是否存在机构与游资方向背离？",
+      "source_topics": ["sentiment_and_events", "board_and_structure"]
+    },
+    {
+      "question": "在板块快照数据恢复后，涨停集中的行业（半导体、化学制品、通用设备）板块整体涨跌幅和资金流向是否与其涨停热度匹配？",
+      "source_topics": ["board_and_structure", "market_breadth"]
+    },
+    {
+      "question": "花旗提到的中国以外经济体名义GDP放缓对中国出口的影响是否已经开始显现？需跟踪中国出口数据和全球PMI指标",
+      "source_topics": ["market_overview_structure", "risk_observations"]
+    },
+    {
+      "question": "高盛「条件性乐观」框架中的外部假设（全球利率稳定、贸易政策不恶化、地缘政治平稳）在2026年Q3是否仍然成立？有哪些指标可以预警假设被打破？",
+      "source_topics": ["risk_observations"]
+    }
+  ],
+  "citations": [
+    {
+      "source_name": "Federal Reserve",
+      "title": "Federal Reserve issues FOMC statement",
+      "published_at": "2026-06-17",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+    },
+    {
+      "source_name": "Bureau of Labor Statistics",
+      "title": "Consumer Price Index Summary - 2026 M05 Results",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+    },
+    {
+      "source_name": "CME Group",
+      "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+      "published_at": "2026-06-19",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+    },
+    {
+      "source_name": "Goldman Sachs",
+      "title": "China's economy is forecast to grow faster than expected in 2026",
+      "published_at": "2025-11-21",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+    },
+    {
+      "source_name": "Goldman Sachs",
+      "title": "2026 Outlooks - Global Markets and Economy",
+      "published_at": "2025-12-31",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+    },
+    {
+      "source_name": "Citigroup",
+      "title": "China Economics 2026 Outlook: Mind the Gap",
+      "published_at": "2025-12-31",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+    },
+    {
+      "source_name": "UBS",
+      "title": "China Outlook 2026-27: Resilience and Rebalancing",
+      "published_at": "2025-12-31",
+      "accessed_at": "2026-06-23",
+      "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+    }
+  ],
+  "information_gaps": [
+    "无法获取2026-06-23当日美债收益率（2Y/5Y/10Y/30Y）及10Y-2Y利差数据——来源缺口：U.S. Treasury Daily Yield Curve页面在当前环境中不可访问，WebSearch/WebFetch/Bash curl均需要权限授权但未授予",
+    "引用的投行观点（高盛2025-11-21、花旗2025-12-31、瑞银2025-12-31）均为2025年末发布的中期展望，非2026-06-23当日或近一周新发布的观点——信息时效性存在显著缺口",
+    "缺失Morgan Stanley和J.P. Morgan在2026年6月期间关于中国/亚洲市场或全球风险偏好的公开可引用观点——仅覆盖了高盛、花旗、瑞银三家投行的中期展望",
+    "无法获取2026-06-23当周美国宏观数据发布日历，无法判断当日是否有US Macro关键数据发布对全球市场产生即时影响",
+    "无法获取VIX指数或全球风险偏好量化指标，无法将A股市场情绪与全球权益市场风险偏好水平进行量化对照",
+    "无法获取NYSE/NASDAQ涨跌比或S&P 500行业涨跌分布作为A股涨跌比和行业结构的对照基准——无法判断A股结构特征是否独立于全球市场",
+    "无法获取全球半导体行业指数（SOX/费城半导体指数）或全球制造业PMI等海外行业景气度数据，无法将涨停池中半导体集中（68只）与海外同行业表现进行跨境对照",
+    "market_overview_assessment、market_breadth、board_and_structure、risk_observations四个主题在本次并行Agent执行中因网络访问工具权限未授予而完全阻塞——其中risk_observations通过读取已有前向验证引用文件补充了5条发现，其余3个主题仍无外部信息",
+    "所有外部来源URL基于项目前期验证记录，未在2026-06-23通过实时网络请求逐条重新验证可访问性和内容一致性",
+    "核心本地缺失：板块快照（行业/概念板块）因东方财富推送服务器代理连接失败而完全缺失（0行），沪市汇总获取失败（ValueError），龙虎榜三个接口全部失败——外部US Macro和投行观点无法替代本地数据缺失"
+  ],
+  "issues": [
+    {
+      "severity": "blocked",
+      "topic_key": "market_overview_assessment",
+      "description": "该主题因子Agent因网络访问工具（WebSearch、WebFetch、Bash curl）权限未授予而完全阻塞，无法获取任何US Macro或Investment Bank Views公开来源。需授予网络权限或提供离线fixture数据。",
+      "blocked_reason": "缺少WebSearch、WebFetch及Bash外部网络访问权限，无法获取US Macro（Fed利率、美债收益率、CPI/就业数据、CME FedWatch）及Investment Bank Views的任何可引用公开来源。"
+    },
+    {
+      "severity": "blocked",
+      "topic_key": "market_breadth",
+      "description": "该主题因子Agent因网络访问工具权限未授予而完全阻塞，无法获取美股市场宽度数据（NYSE涨跌比、S&P 500成分股分布等）或跨市场对比数据。",
+      "blocked_reason": "所有外部网络访问工具（WebSearch、WebFetch、Bash curl）均未获得执行权限，无法访问任何US Macro或Investment Bank Views公开来源。"
+    },
+    {
+      "severity": "blocked",
+      "topic_key": "board_and_structure",
+      "description": "该主题因子Agent因网络访问工具权限未授予而完全阻塞。前向测试已验证的引用（Fed FOMC、BLS CPI、投行中国展望）仅覆盖总体宏观主题，不涉及板块轮动、行业景气度或产业链结构性分析。本地板块快照数据同样阻塞（0行）。",
+      "blocked_reason": "缺少可引用公开来源，无法为「板块与结构」主题获取US Macro和Investment Bank Views的外部背景信息。网络搜索工具和Shell网络请求均因环境权限限制不可用。本地板块快照（行业/概念板块）因ConnectionError失败，双重阻塞。"
+    },
+    {
+      "severity": "warning",
+      "topic_key": "market_overview_structure",
+      "description": "该主题6条外部发现来自前向已验证的引用管道，非本次并行Agent实时检索生成。投行观点引用（高盛2025-11-21、花旗2025-12-31、瑞银2025-12-31）均为2025年末发布的年度中期展望，非2026年6月期间的新发布观点，时效性存在显著缺口。"
+    },
+    {
+      "severity": "warning",
+      "topic_key": "sentiment_and_events",
+      "description": "该主题6条外部发现来自前向已验证的引用管道。两个主题（market_overview_structure、sentiment_and_events）的宏观事实发现（Fed利率、CPI、CME FedWatch）高度重叠但分别从结构和情绪两个视角解读，属于同一引用集的多视角复用。"
+    },
+    {
+      "severity": "warning",
+      "topic_key": "risk_observations",
+      "description": "该主题5条外部发现通过本次并行Agent从前向已验证引用文件补充生成（非实时网络检索）。其中macro_fact和market_expectation类发现与market_overview_structure和sentiment_and_events存在高度重叠，bank_view类发现提供了新的风险视角（高盛条件性乐观、瑞银/花旗结构性风险）。"
+    },
+    {
+      "severity": "info",
+      "topic_key": "all",
+      "description": "6个并行Agent中2个（sentiment_and_events、risk_observations）通过读取前向验证引用文件返回external_findings，1个（market_overview_structure）沿用前向验证发现，3个（market_overview_assessment、market_breadth、board_and_structure）因网络权限阻塞无外部信息。实际有外部发现覆盖的topic为3/6（50%），其中risk_observations为本次新增覆盖topic。"
+    }
+  ]
+}

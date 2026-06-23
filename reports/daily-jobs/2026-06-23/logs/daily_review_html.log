@@ -1,0 +1,26 @@
+stage: daily_review_html
+started_at: 2026-06-23T16:25:57+08:00
+finished_at: 2026-06-23T16:25:59+08:00
+elapsed_seconds: 1.453
+exit_code: 1
+status: failed
+soft_warning: false
+timed_out: false
+command: .venv/bin/python -m a_share_info_hub daily-review --trade-date 2026-06-23 --output-root /mnt/tool/2-projects/a-share-info-hub --llm-output /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-23/llm-review-sections.json --output-format html --external-background /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-23/external-background-fusion.json
+
+## stdout
+analysis_mode: research_only
+not_investment_advice: true
+trade_date: 2026-06-23
+data_status: failed
+context_artifact: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-23/review-context.json
+report_artifact: null
+
+已阻断完整市场复盘。
+阻断原因：
+- 主表失败、缺失或指定日期无记录。
+
+可先运行：python -m a_share_info_hub daily-update --trade-date 2026-06-23
+
+
+## stderr
