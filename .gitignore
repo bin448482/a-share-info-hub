@@ -51,5 +51,8 @@ htmlcov/
 .coverage.*
 *.cover
 
+# Database files
+*.duckdb
+
 # Git
 .gitattributes
