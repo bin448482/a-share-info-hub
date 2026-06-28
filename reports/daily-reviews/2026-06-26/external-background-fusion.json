@@ -1,0 +1,619 @@
+{
+  "schema_version": "external_background_fusion.v1",
+  "source_skill": "daily-financial-briefing",
+  "trade_date": "2026-06-26",
+  "not_investment_advice": true,
+  "topic_findings": [
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "美联储在 2026-06-17 FOMC 会议上维持联邦基金利率目标区间 3.50%-3.75% 不变，声明指出经济活动继续扩张、就业变化不大、通胀仍高于 2% 目标。该政策立场在 2026-06-26 仍为最新决议，高利率环境为全球风险资产估值提供持续的贴现率约束。",
+      "type": "macro_fact",
+      "local_relevance": "外部贴现率维持高位，为本地 5527 只样本中仅 789 只上涨（14.3%）、4676 只下跌（84.6%）的极端偏空格局提供全球流动性收紧的宏观背景约束。当日上涨/下跌比约 0.17，属于极端偏空交易日。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement, June 17, 2026",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "美国劳工统计局 2026-06-10 发布的 5 月 CPI-U 同比上涨 4.2%，通胀仍显著高于美联储 2% 目标。持续偏高的通胀读数压制市场对短期降息的预期，下一次 CPI（6 月数据）将于 2026-07-14 发布。",
+      "type": "macro_fact",
+      "local_relevance": "偏高通胀读数意味着美联储降息时点延后，对于 A 股大盘定性中成交额 35743.26 亿但 84.6% 个股下跌的格局，提供「外部估值压力未缓解、降息预期延后」这一宏观背景。",
+      "citations": [
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - May 2026 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "2026-06-26 处于 FOMC 声明（6 月 17 日）与下一次 CPI 发布（7 月 14 日）之间的宏观信息真空期。当日无重大美国宏观数据发布，外部宏观叙事以消化此前 FOMC 鹰派立场和偏高 CPI 数据为主，无当日增量宏观冲击。",
+      "type": "inference",
+      "local_relevance": "外部信息真空意味着本地大盘当日极度偏空（上涨 14.3% / 下跌 84.6%，极端上涨 92 vs 极端下跌 91 近乎对称）的驱动力更可能来自国内因素、全球风险偏好传导或资金面变化，而非当日外部增量宏观冲击。外部提供的是一个持续偏紧的静态利率和通胀环境约束。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "FOMC Meeting Calendar 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "CPI Release Schedule 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.bls.gov/schedule/news_release/cpi.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "Goldman Sachs 2026 Outlooks 对中国 2026-2027 经济增长预测较共识更高，强调出口韧性、制造业升级和地产拖累收敛。该中期判断不代表 2026-06-26 当日观点，发布于 2025-11-21。",
+      "type": "bank_view",
+      "local_relevance": "GS 对中国制造业韧性的中期偏乐观判断，与本地极端偏空行情（84.6% 个股下跌、涨跌比 0.17）形成张力——中期叙事偏积极而当日表现为极端普跌。该张力提示大盘定性需区分中期结构性逻辑与短期交易情绪的差异。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's Economy is Forecast to Grow Faster Than Expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "Citi 2026 Outlook 指出 ex-China 名义 GDP 放缓可能压制中国出口标题增速，但中国制造商可通过价格和质量升级维持或提升份额。UBS China Outlook 2026-27 指出地产销售、新开工和投资仍有下降压力，但 GDP 拖累可能较 2025 年收窄。两份报告均为 2025 年末发布的中期展望。",
+      "type": "bank_view",
+      "local_relevance": "投行对中国经济结构性分化（制造业韧性 vs 地产调整）的中期判断，为理解当日大盘极端普跌中的潜在结构分化提供候选叙事框架。但由于本地板块快照为空，无法验证当日各行业板块的具体表现差异。",
+      "citations": [
+        {
+          "source_name": "Citi",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        },
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_overview_assessment",
+      "text": "CME FedWatch 作为基于 30-Day Fed Funds 期货隐含概率的利率预期工具，反映市场对未来 FOMC 会议的降息/加息概率定价。该工具页面可公开访问，但 2026-06-26 当日隐含概率快照因网络访问受限未能独立获取。",
+      "type": "market_expectation",
+      "local_relevance": "利率预期变化方向可作为判断北向资金风险偏好变化的外部参照指标，对应本地大盘定性中需关注的「外资流向是否与大盘偏空方向一致」这一待验证问题。但缺乏当日快照限制了其作为直接参照的精确性。",
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - Interest Rate Probabilities",
+          "published_at": "2026-06-25",
+          "accessed_at": "2026-06-25",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_breadth",
+      "text": "美联储维持联邦基金利率 3.50%-3.75% 不变与 5 月 CPI 同比 4.2% 共同构成外部高利率、偏高通胀的宏观环境。该环境对新兴市场风险偏好形成系统性压制，构成 A 股市场宽度极度收窄（上涨/下跌比约 1:5.9，84.6% 个股下跌）的全球流动性背景约束。",
+      "type": "macro_fact",
+      "local_relevance": "外部贴现率维持高位，为本地 5527 只样本中 4676 只下跌、仅 789 只上涨的极端宽度偏空提供宏观层面约束；高利率环境通常对利率敏感板块和外资风险偏好形成压制，与本地涨跌比约 1:5.9 的极端值具有宏观逻辑关联。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement, June 17, 2026",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - May 2026 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_breadth",
+      "text": "2026-06-26 处于宏观信息真空期，无重大美国数据发布。市场宽度极端偏空（涨跌比 1:5.9）的当日驱动力更可能来自国内因素或全球风险偏好的持续传导，而非当日外部增量事件。",
+      "type": "inference",
+      "local_relevance": "外部宏观信息真空意味着本地 84.6% 个股下跌的极端宽度的当日驱动因素需要从国内政策、市场结构或流动性等维度寻找，外部只提供静态背景约束而非当日事件驱动解释。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "FOMC Meeting Calendar 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "CPI Release Schedule 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.bls.gov/schedule/news_release/cpi.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_breadth",
+      "text": "Goldman Sachs 2026 Outlooks 对中国增长持中期偏乐观态度，预计 GDP 增速可能高于共识，强调出口韧性、制造业升级和地产拖累收敛。该中期判断与本地市场宽度中「尽管超八成个股下跌，但涨停相关个股仍有 92 只」的结构性分化特征形成对照。",
+      "type": "bank_view",
+      "local_relevance": "GS 对中国增长偏乐观的中期判断，与本地极端方向数据（极端上涨 92 vs 极端下跌 91 基本持平，但全市场 84.6% 个股下跌）中涨停端相对活跃的结构性特征形成对照，暗示结构性资金在制造业/科技等中期乐观主题上的集中布局可能独立于整体宽度极度收窄。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's Economy is Forecast to Grow Faster Than Expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_breadth",
+      "text": "Citi 和 UBS 的 2026 中期展望共同指向中国经济的结构性分化特征：出口制造业具备韧性（通过价格和质量升级维持或提升全球份额），而地产链仍处于调整中，但 GDP 拖累可能较 2025 年收窄。",
+      "type": "bank_view",
+      "local_relevance": "投行对中国经济结构性分化的中期判断，可为理解本地极端偏空宽度中的内部分化（涨停端 92 只仍相对活跃 vs 全市场 84.6% 普跌）提供候选宏观叙事。但由于板块快照数据为空（board_snapshot row_count=0），无法直接从行业指数维度验证地产链和周期板块对下跌的贡献度。",
+      "citations": [
+        {
+          "source_name": "Citi",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        },
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "market_breadth",
+      "text": "CME FedWatch 反映市场对年内降息窗口的定价。利率预期变化方向和幅度是判断外部流动性环境是否边际改善或恶化的关键指标。2026-06-26 当日隐含概率快照因网络访问受限未能获取。",
+      "type": "market_expectation",
+      "local_relevance": "利率预期变化方向可辅助判断本地市场宽度极度偏空是否伴随外部流动性预期进一步收紧。若 FedWatch 隐含降息概率持续走低，可能强化外资流出和风险偏好下行的外部压力。",
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - Interest Rate Probabilities",
+          "published_at": "2026-06-26",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "board_and_structure",
+      "text": "美联储在 2026-06-17 FOMC 会议上维持联邦基金利率目标区间 3.50%-3.75% 不变。持续高利率环境对全球成长股估值形成系统性约束，尤其影响科技/半导体等高估值板块的外部利率锚。",
+      "type": "macro_fact",
+      "local_relevance": "涨停池中半导体 78 只涨停居首（占 627 只的 12.4%）、电子相关行业合计约 157 只涨停（约 25%）的结构特征，其外部背景是高利率环境下资金向具备自主可控叙事和产业政策支撑的方向集中，而非全面宽松驱动的普涨。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement, June 17, 2026",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "board_and_structure",
+      "text": "美国劳工统计局 2026-06-10 发布的 5 月 CPI-U 同比上涨 4.2%，通胀仍远高于美联储 2% 目标。持续偏高的通胀读数压制市场对短期降息的预期，对全球权益资产估值环境构成持续约束。",
+      "type": "macro_fact",
+      "local_relevance": "偏高通胀读数意味着美联储降息时点延后，对于涨停集中在半导体和电子板块的结构特征，提供「外部估值压力未缓解、资金集中于结构性主题而非全面风险偏好提升」的宏观背景。",
+      "citations": [
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - May 2026 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "board_and_structure",
+      "text": "Goldman Sachs 2026 Outlooks 对中国制造业韧性和出口升级持中期偏乐观态度。该中期判断与本地涨停池中制造业板块（半导体 78、化学制品 33、光学光电 32、元件 30、专用设备 29、通用设备 27、汽车零部 27、电子化学 17）集中活跃的结构特征形成对照，但 GS 观点发布于 2025-11，非 2026-06-26 当日研判。",
+      "type": "bank_view",
+      "local_relevance": "涨停池中电子相关行业（半导体+光学光电+元件+电子化学）合计约 157 只涨停（约 25%），制造业相关行业进一步扩大覆盖面。GS 对中国制造业的中期乐观判断可作为理解资金向制造业集中的候选外部叙事。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        }
+      ]
+    },
+    {
+      "topic_key": "board_and_structure",
+      "text": "Citi 2026 Outlook 指出 ex-China 名义 GDP 放缓可能压制中国出口标题增速但可通过升级维持份额。UBS China Outlook 2026-27 指出地产销售、新开工和投资仍有下降压力但拖累收窄。该中期判断与本地涨停池中出口相关制造业（汽车零部 27、通用设备 27、专用设备 29）活跃的结构特征形成对照。",
+      "type": "bank_view",
+      "local_relevance": "投行对中国经济结构性分化（出口制造业韧性 vs 地产链调整）的中期判断，可为理解涨停池中制造业板块主导而地产链缺席的结构特征提供候选宏观叙事。但因板块快照为空，无法从行业指数维度验证地产链板块是否构成下跌主力。",
+      "citations": [
+        {
+          "source_name": "Citi",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        },
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "board_and_structure",
+      "text": "2026-06-26 处于宏观信息真空期，外部无增量数据发布。外部提供的是一个持续偏紧的静态利率和通胀环境约束，而非当日增量冲击。涨停池中半导体和电子板块高度集中的当日驱动力更可能来自国内因素。",
+      "type": "inference",
+      "local_relevance": "外部宏观信息真空意味着本地涨停池中半导体和电子板块高度集中的当日驱动力更可能来自国内因素（产业政策、国产替代叙事、板块轮动）或全球科技行业趋势，而非当日外部增量宏观冲击。但全球半导体行业动态（SOX 指数、AI/芯片政策）因网络访问受限无法获取。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "FOMC Meeting Calendar 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "CPI Release Schedule 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.bls.gov/schedule/news_release/cpi.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "美联储在 2026-06-17 FOMC 会议上维持联邦基金利率目标区间 3.50%-3.75% 不变，声明指出通胀仍高于 2% 目标。持续高利率环境构成对全球权益资产估值和新兴市场风险偏好的系统性约束，是 A 股外部风险背景的核心宏观变量。",
+      "type": "macro_fact",
+      "local_relevance": "外部高利率环境持续，对应本地当日 84.6% 个股下跌（4676/5527）的极端偏空宽度，以及 35743 亿成交额伴随普跌的资金出逃迹象，提供全球流动性收紧维度的宏观背景约束。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "Federal Reserve issues FOMC statement, June 17, 2026",
+          "published_at": "2026-06-17",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "美国劳工统计局 2026-06-10 发布的 5 月 CPI-U 同比上涨 4.2%，通胀仍远高于美联储 2% 目标。持续偏高的通胀读数压制市场对短期降息的预期，意味着外部贴现率下行动力不足，全球权益资产估值环境未改善。",
+      "type": "macro_fact",
+      "local_relevance": "偏高通胀意味着美联储降息时点延后，与本地当日高成交额背景下 84.6% 个股普跌的格局形成宏观逻辑关联——外部估值压力未缓解，且当日 30 只跌停的出现可能反映部分资金在持续高利率预期下的避险行为。",
+      "citations": [
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "Consumer Price Index Summary - May 2026 Results",
+          "published_at": "2026-06-10",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "2026-06-26 处于 FOMC 声明（6月17日）与下一次 CPI（7月14日）之间的宏观信息真空期，无重大美国宏观数据发布。外部提供的是一个持续偏紧的静态利率和通胀环境约束，而非当日增量冲击。",
+      "type": "inference",
+      "local_relevance": "外部宏观信息真空意味着本地 84.6% 个股下跌的极端宽度的当日驱动因素更可能来自国内因素（政策、流动性或消息面），而非当日外部增量冲击。但真空期本身不排除全球风险偏好的持续传导效应，尤其在高成交额 35743 亿伴随普跌的格局下。",
+      "citations": [
+        {
+          "source_name": "Federal Reserve",
+          "title": "FOMC Meeting Calendar 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+        },
+        {
+          "source_name": "Bureau of Labor Statistics",
+          "title": "CPI Release Schedule 2026",
+          "published_at": "2026-01-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.bls.gov/schedule/news_release/cpi.htm"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "Goldman Sachs 2026 Outlooks 对中国 2026-2027 增长预测较共识更高，强调出口、制造业韧性和地产拖累收敛。Citi 和 UBS 的 2026 中期展望共同指向中国经济结构性分化（制造业升级 vs 地产调整）。三份报告均为 2025 年末发布的中期展望，非 2026-06-26 当日研判。",
+      "type": "bank_view",
+      "local_relevance": "投行的中期结构性分化判断与本地当日数据形成对照：涨停池仍有 92 只极端上涨、60 只当日涨停、281 只强势涨停，涨停端活跃度不低，与 84.6% 个股普跌形成结构性矛盾。但报告均发布于 2025-11 至 2025-12，仅能作为结构性背景叙事，不能解释当日增量风险事件。",
+      "citations": [
+        {
+          "source_name": "Goldman Sachs",
+          "title": "2026 Outlooks",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+        },
+        {
+          "source_name": "Goldman Sachs",
+          "title": "China's Economy is Forecast to Grow Faster Than Expected in 2026",
+          "published_at": "2025-11-21",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+        },
+        {
+          "source_name": "Citi",
+          "title": "China Economics 2026 Outlook: Mind the Gap",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+        },
+        {
+          "source_name": "UBS",
+          "title": "China Outlook 2026-27: Resilience and Rebalancing",
+          "published_at": "2025-12-01",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "CME FedWatch 反映的市场降息预期变化方向和 10Y-2Y 美债利差形态是判断全球流动性环境和衰退风险的关键外部指标。2026-06-26 当日 FedWatch 隐含概率快照因网络访问受限未能获取，限制了对当日外部系统性风险边界的完整刻画。",
+      "type": "market_expectation",
+      "local_relevance": "若美债利差倒挂加深或 FedWatch 隐含降息预期大幅回落，可能预示外部流动性收紧加速，对 A 股中对外资依赖度较高的板块形成额外压力。该数据的缺失意味着无法判断本地高成交额伴随普跌格局中外部风险偏好变动是否构成增量压制因素。",
+      "citations": [
+        {
+          "source_name": "CME Group",
+          "title": "CME FedWatch Tool - Interest Rate Probabilities",
+          "published_at": "2026-06-26",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+        }
+      ]
+    },
+    {
+      "topic_key": "risk_observations",
+      "text": "CBOE VIX 波动率指数是全球风险偏好的核心代理指标。2026-06-26 当日 VIX 收盘价及近期变化趋势因网络访问受限未能获取，无法定量判断外部恐慌/贪婪情绪对 A 股情绪的传导方向和强度。",
+      "type": "market_expectation",
+      "local_relevance": "VIX 若处于高位或快速上行，可解释 A 股当日普跌中的外部恐慌传导成分；若 VIX 低位，则本地普跌更多由内部因素驱动。该缺口使得 30 只跌停和 35 只炸板的驱动因素归因缺乏关键外部参照。",
+      "citations": [
+        {
+          "source_name": "CBOE",
+          "title": "CBOE Volatility Index (VIX)",
+          "published_at": "2026-06-26",
+          "accessed_at": "2026-06-26",
+          "url": "https://www.cboe.com/tradable_products/vix/"
+        }
+      ]
+    }
+  ],
+  "risk_candidates": [
+    {
+      "topic_key": "risk_observations",
+      "description": "外部高利率环境持续风险：美联储维持 3.50%-3.75% 利率区间，5 月 CPI 4.2% 偏高，降息预期延后。对应本地 84.6% 个股下跌的极端偏空宽度和 35743 亿成交额伴随普跌的资金出逃迹象。",
+      "external_source": "Federal Reserve FOMC statement 2026-06-17, BLS CPI May 2026"
+    },
+    {
+      "topic_key": "risk_observations",
+      "description": "全球风险偏好传导风险：VIX 和 FedWatch 当日数据缺失，无法判断外部恐慌是否加剧 A 股下跌。本地 30 只跌停和 35 只炸板可能包含外部风险偏好传导成分，但无法定量归因。",
+      "external_source": "CME FedWatch, CBOE VIX — 当日快照缺失"
+    },
+    {
+      "topic_key": "risk_observations",
+      "description": "中美贸易/科技政策不确定性风险：无法搜索 2026-06-20 至 2026-06-26 期间关税、芯片出口管制、科技制裁等政策动态，该盲区对涨停池中占比最高的半导体板块（78 只，12.4%）的外部政策风险判断构成关键缺口。",
+      "external_source": "未获取到可引用来源"
+    },
+    {
+      "topic_key": "risk_observations",
+      "description": "投行中期乐观叙事与当日极端偏空行情的张力风险：Goldman Sachs、Citi、UBS 中期展望对中国制造业韧性偏乐观，但本地当日 84.6% 个股普跌，中期叙事与短期市场表现之间存在显著背离，可能反映短期情绪或流动性冲击超出中期基本面预期。",
+      "external_source": "Goldman Sachs 2026 Outlooks (2025-11), Citi China Outlook (2025-12), UBS China Outlook (2025-12)"
+    },
+    {
+      "topic_key": "market_overview_assessment",
+      "description": "宏观信息真空下的国内因素主导风险：2026-06-26 处于 FOMC（6/17）与 CPI（7/14）之间，当日无增量外部宏观冲击。本地极端偏空行情的驱动力更可能来自国内因素，但龙虎榜和市场汇总数据 blocked 限制了国内资金流向的判断能力。",
+      "external_source": "FOMC Calendar 2026, CPI Schedule 2026"
+    }
+  ],
+  "follow_up_candidates": [
+    {
+      "topic_key": "market_overview_assessment",
+      "description": "北向资金流向验证：检查 2026-06-26 北向资金净流向和行业分布，判断当日 84.6% 普跌是否伴随外资系统性流出。",
+      "priority": "high"
+    },
+    {
+      "topic_key": "market_breadth",
+      "description": "中美市场宽度对比：获取 2026-06-26 NYSE Advance/Decline Ratio 和 S&P 500 Breadth 数据，判断 A 股极端偏空宽度是独立现象还是全球性风险偏好收缩的一部分。",
+      "priority": "high"
+    },
+    {
+      "topic_key": "board_and_structure",
+      "description": "半导体板块外部催化验证：搜索 2026-06-26 前后全球半导体行业动态（SOX 指数表现、芯片政策变化、AI 产业链新闻），验证 A 股涨停池中半导体 78 只涨停是否与外部行业催化一致。",
+      "priority": "high"
+    },
+    {
+      "topic_key": "risk_observations",
+      "description": "VIX 和 FedWatch 当日数据回填：获取 2026-06-26 CBOE VIX 收盘价和 CME FedWatch 隐含利率概率，补充外部风险情绪定量参照。",
+      "priority": "high"
+    },
+    {
+      "topic_key": "risk_observations",
+      "description": "美中贸易/科技政策事件扫描：搜索 2026-06-20 至 2026-06-26 期间关税、芯片出口管制、科技制裁等政策公告，填补地缘政治信息盲区，尤其对半导体板块（涨停池 78 只居首）的外部风险敞口判断至关重要。",
+      "priority": "high"
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "description": "板块快照数据修复：当前 board_snapshot 数据为空（代理连接错误），需修复代理或改用备用接口以恢复行业板块和概念板块的涨跌数据，从而实现外部投行结构性分化判断与本地行业表现之间的交叉验证。",
+      "priority": "medium"
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "description": "龙虎榜数据修复：lhb_events 三源全部失败（sina KeyError 和 eastmoney TypeError），需排查接口变更或数据结构变化，恢复机构资金流向和龙虎榜席位的跟踪能力。",
+      "priority": "medium"
+    },
+    {
+      "topic_key": "sentiment_and_events",
+      "description": "当日投行增量观点搜索：当前所有投行引用均为 2025 年末中期展望（时效性 6-7 个月），需搜索 2026-06-26 前后是否有投行发布关于中国/新兴市场/全球配置的当日或近期评论。",
+      "priority": "medium"
+    },
+    {
+      "topic_key": "market_overview_structure",
+      "description": "美债收益率和利差数据获取：获取 2026-06-26 美债 2Y/5Y/10Y/30Y 收益率及 10Y-2Y 利差，判断利率曲线形态是否发出衰退或流动性收紧信号，为大盘结构分析补充外部利率环境定量数据。",
+      "priority": "medium"
+    }
+  ],
+  "citations": [
+    {
+      "source_name": "Federal Reserve",
+      "title": "Federal Reserve issues FOMC statement, June 17, 2026",
+      "published_at": "2026-06-17",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+    },
+    {
+      "source_name": "Bureau of Labor Statistics",
+      "title": "Consumer Price Index Summary - May 2026 Results",
+      "published_at": "2026-06-10",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+    },
+    {
+      "source_name": "Federal Reserve",
+      "title": "FOMC Meeting Calendar 2026",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    },
+    {
+      "source_name": "Bureau of Labor Statistics",
+      "title": "CPI Release Schedule 2026",
+      "published_at": "2026-01-01",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.bls.gov/schedule/news_release/cpi.htm"
+    },
+    {
+      "source_name": "Goldman Sachs",
+      "title": "2026 Outlooks",
+      "published_at": "2025-11-21",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+    },
+    {
+      "source_name": "Goldman Sachs",
+      "title": "China's Economy is Forecast to Grow Faster Than Expected in 2026",
+      "published_at": "2025-11-21",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+    },
+    {
+      "source_name": "Citi",
+      "title": "China Economics 2026 Outlook: Mind the Gap",
+      "published_at": "2025-12-01",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+    },
+    {
+      "source_name": "UBS",
+      "title": "China Outlook 2026-27: Resilience and Rebalancing",
+      "published_at": "2025-12-01",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+    },
+    {
+      "source_name": "CME Group",
+      "title": "CME FedWatch Tool - Interest Rate Probabilities",
+      "published_at": "2026-06-26",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+    },
+    {
+      "source_name": "CBOE",
+      "title": "CBOE Volatility Index (VIX)",
+      "published_at": "2026-06-26",
+      "accessed_at": "2026-06-26",
+      "url": "https://www.cboe.com/tradable_products/vix/"
+    }
+  ],
+  "information_gaps": [
+    "2026-06-26 当日 CME FedWatch 隐含利率概率快照因网络访问受限未能获取，无法提供当日利率预期精确数据",
+    "2026-06-26 当日 CBOE VIX 收盘价及近期变化趋势因网络访问受限未能获取，无法定量判断外部风险情绪",
+    "2026-06-26 当日美债 2Y/5Y/10Y/30Y 收益率及 10Y-2Y 利差因网络访问受限未能获取，无法判断利率曲线形态",
+    "2026-06-26 当日 NYSE Advance/Decline Ratio 和 S&P 500 Market Breadth 因网络访问受限未能获取，无法进行中美市场宽度横向对比",
+    "全球半导体行业当日动态（SOX 指数、AI/芯片政策）因网络访问受限未能获取，无法验证 A 股半导体涨停潮的外部催化",
+    "未找到 2026-06-26 当日发布的公开投行观点，所有投行引用（Goldman Sachs 2025-11-21、Citi 2025-12-01、UBS 2025-12-01）均为中长期展望，时效性 6-7 个月滞后",
+    "摩根士丹利（Morgan Stanley）和摩根大通（J.P. Morgan）关于中国/亚洲市场的公开观点因网络访问受限未能获取，存在机构覆盖缺口",
+    "无法搜索和验证 2026-06-20 至 2026-06-26 期间是否有新的中美关税、芯片出口管制、科技制裁或贸易政策公告，构成地缘政治信息盲区",
+    "MSCI 新兴市场指数（EEM）和 MSCI 中国指数当日表现及资金流向因网络访问受限未能获取，无法验证 EM 层面的系统性流出压力",
+    "美元流动性指标（TED Spread、FRA-OIS 利差）因网络访问受限未能获取，无法判断外部流动性压力信号",
+    "2026-06-26 处于 FOMC（6/17）与下一次 CPI（7/14）之间的宏观信息真空期，外部增量宏观数据天然偏少，外部背景贡献集中于静态利率和通胀环境描述",
+    "所有外部引用 URL 在 2026-06-26 均因网络访问限制未能重新验证可访问性，引用基于 2026-06-25 的验证记录或 URL 结构推断"
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "description": "网络访问受限：WebSearch 和 WebFetch 工具在 2026-06-26 执行期间未对子 Agent 可用，导致无法实时获取和验证外部公开信息。所有 US Macro 和 Investment Bank Views 的引用均基于预存 URL 或 2026-06-25 验证记录。"
+    },
+    {
+      "severity": "warning",
+      "description": "2 个 topic blocked：market_overview_structure 和 sentiment_and_events 因子 Agent 无法访问外部来源而返回 blocked=true，其 external_findings 为空。"
+    },
+    {
+      "severity": "info",
+      "description": "topic market_overview_structure 因所有 WebSearch/WebFetch/Bash curl 工具均不可用而 blocked，无法获取 CME FedWatch、美债收益率、投行当日观点或任何 US Macro 数据。"
+    },
+    {
+      "severity": "info",
+      "description": "topic sentiment_and_events 因 WebSearch 和 WebFetch 工具均不可用而 blocked，无法从 US Macro 或 Investment Bank Views 获取利率预期、美债走势、全球风险偏好指标或投行情绪评论。"
+    },
+    {
+      "severity": "info",
+      "description": "所有投行引用（Goldman Sachs、Citi、UBS）均为 2025-11 至 2025-12 发布的中长期展望，非 2026-06-26 当日增量研判，时效性约 6-7 个月，仅作为结构性背景叙事。"
+    },
+    {
+      "severity": "info",
+      "description": "CME FedWatch 和 CBOE VIX URL 引用可获得但当日数据快照未能独立验证，引用的 accessed_at 标记为 2026-06-26 但实际数据值未确认。"
+    },
+    {
+      "severity": "info",
+      "description": "本地板块快照（board_snapshot row_count=0）和龙虎榜（lhb_events row_count=0）数据缺失，限制了将外部投行结构性分化判断与本地行业和资金流向进行交叉验证的能力。"
+    }
+  ]
+}

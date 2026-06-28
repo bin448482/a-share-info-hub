@@ -1,0 +1,313 @@
+{
+  "schema_version": "daily_review_context.v1",
+  "analysis_mode": "research_only",
+  "not_investment_advice": true,
+  "trade_date": "2026-06-26",
+  "data_status": "partial",
+  "data_sources_used": [
+    "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-26/interface-status.json",
+    "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-26/daily-data-summary.md",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/daily_stock_snapshot.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/limit_pool_events.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/lhb_events.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/market_summary.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/board_snapshot.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/market.duckdb"
+  ],
+  "blocked_sections": [
+    "lhb_events",
+    "market_summary"
+  ],
+  "source_health": {
+    "interface_status": {
+      "name": "interface-status.json",
+      "category": "run_status",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-26/interface-status.json",
+      "issue": null
+    },
+    "daily_data_summary": {
+      "name": "daily-data-summary.md",
+      "category": "run_summary",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-26/daily-data-summary.md",
+      "issue": null
+    },
+    "trading_day_check": {
+      "name": "trading_day_check",
+      "category": "run_status",
+      "status": "success",
+      "row_count": null,
+      "source_path": null,
+      "issue": "trade date is listed in AKShare trading calendar"
+    },
+    "stock_zh_a_spot": {
+      "name": "stock_zh_a_spot",
+      "category": "main",
+      "status": "success",
+      "row_count": 5527,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_em": {
+      "name": "stock_zt_pool_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 60,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_previous_em": {
+      "name": "stock_zt_pool_previous_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 86,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_strong_em": {
+      "name": "stock_zt_pool_strong_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 281,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_sub_new_em": {
+      "name": "stock_zt_pool_sub_new_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 135,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_zbgc_em": {
+      "name": "stock_zt_pool_zbgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 35,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_dtgc_em": {
+      "name": "stock_zt_pool_dtgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 30,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_detail_daily_sina": {
+      "name": "stock_lhb_detail_daily_sina",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "KeyError: '股票代码'"
+    },
+    "stock_lhb_detail_em": {
+      "name": "stock_lhb_detail_em",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "TypeError: 'NoneType' object is not subscriptable"
+    },
+    "stock_lhb_jgmmtj_em": {
+      "name": "stock_lhb_jgmmtj_em",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "TypeError: 'NoneType' object is not subscriptable"
+    },
+    "stock_sse_deal_daily": {
+      "name": "stock_sse_deal_daily",
+      "category": "market_summary",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ValueError: Length mismatch: Expected axis has 1 elements, new values have 6 elements"
+    },
+    "stock_szse_summary": {
+      "name": "stock_szse_summary",
+      "category": "market_summary",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "AttributeError: 'float' object has no attribute 'replace'"
+    },
+    "stock_board_industry_name_em": {
+      "name": "stock_board_industry_name_em",
+      "category": "board_snapshot",
+      "status": "ignored",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fields=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6%2Cf7%2Cf8%2Cf9%2Cf10%2Cf12%2Cf13%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf23%2Cf24%2Cf25%2Cf26%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf136%2Cf115%2Cf152%2Cf124%2Cf107%2Cf104%2Cf105%2Cf140%2Cf141%2Cf207%2Cf208%2Cf209%2Cf222 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    },
+    "stock_board_concept_name_em": {
+      "name": "stock_board_concept_name_em",
+      "category": "board_snapshot",
+      "status": "ignored",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ProxyError: HTTPSConnectionPool(host='79.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m%3A90+t%3A3+f%3A%2150&fields=f2%2Cf3%2Cf4%2Cf8%2Cf12%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf24%2Cf25%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf124%2Cf107%2Cf104%2Cf105%2Cf136 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    },
+    "table:daily_stock_snapshot": {
+      "name": "daily_stock_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 5527,
+      "source_path": "data/normalized/daily_stock_snapshot.parquet",
+      "issue": null
+    },
+    "table:limit_pool_events": {
+      "name": "limit_pool_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 627,
+      "source_path": "data/normalized/limit_pool_events.parquet",
+      "issue": null
+    },
+    "table:lhb_events": {
+      "name": "lhb_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/lhb_events.parquet",
+      "issue": null
+    },
+    "table:market_summary": {
+      "name": "market_summary",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/market_summary.parquet",
+      "issue": null
+    },
+    "table:board_snapshot": {
+      "name": "board_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/board_snapshot.parquet",
+      "issue": null
+    },
+    "duckdb": {
+      "name": "market.duckdb",
+      "category": "storage",
+      "status": "passed",
+      "row_count": null,
+      "source_path": null,
+      "issue": null
+    }
+  },
+  "market_breadth": {
+    "status": "available",
+    "sample_count": 5527,
+    "up_count": 789,
+    "down_count": 4676,
+    "flat_count": 62,
+    "extreme_up_count": 92,
+    "extreme_down_count": 91,
+    "total_amount": 3574326310488.0,
+    "total_amount_display": "35743.26 亿"
+  },
+  "limit_pool": {
+    "status": "available",
+    "row_count": 627,
+    "pool_type_counts": {
+      "strong_limit_up": 281,
+      "sub_new_limit_up": 135,
+      "previous_limit_up": 86,
+      "limit_up": 60,
+      "broken_board": 35,
+      "limit_down": 30
+    },
+    "top_industries": {
+      "半导体": 78,
+      "化学制品": 33,
+      "光学光电": 32,
+      "元件": 30,
+      "专用设备": 29,
+      "通用设备": 27,
+      "汽车零部": 27,
+      "电子化学": 17
+    }
+  },
+  "lhb": {
+    "status": "blocked",
+    "reason": "lhb_events is listed in blocked_sections"
+  },
+  "market_summary": {
+    "status": "blocked",
+    "reason": "market_summary is listed in blocked_sections"
+  },
+  "board_snapshot": {
+    "status": "empty",
+    "row_count": 0
+  },
+  "issues": [
+    "stock_lhb_detail_daily_sina 状态为 failed：KeyError: '股票代码'",
+    "stock_lhb_detail_em 状态为 failed：TypeError: 'NoneType' object is not subscriptable",
+    "stock_lhb_jgmmtj_em 状态为 failed：TypeError: 'NoneType' object is not subscriptable",
+    "stock_sse_deal_daily 状态为 failed：ValueError: Length mismatch: Expected axis has 1 elements, new values have 6 elements",
+    "stock_szse_summary 状态为 failed：AttributeError: 'float' object has no attribute 'replace'"
+  ],
+  "allowed_sections": [
+    "data_status",
+    "market_breadth",
+    "sentiment_and_events",
+    "risks",
+    "follow_up_questions",
+    "board_and_structure"
+  ],
+  "forbidden_claims": [
+    "buy/sell/hold/position sizing/price target/stop-loss/take-profit/trading action advice",
+    "multi-day trend, backtest, win-rate, or prediction claims from a single daily snapshot",
+    "claiming the review is complete while data_status is partial",
+    "positive or complete conclusions about blocked section: 龙虎榜",
+    "positive or complete conclusions about blocked section: 市场汇总"
+  ],
+  "facts": [
+    {
+      "section": "market_breadth",
+      "description": "主表样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 5527
+    },
+    {
+      "section": "market_breadth",
+      "description": "上涨样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 789
+    },
+    {
+      "section": "market_breadth",
+      "description": "下跌样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 4676
+    },
+    {
+      "section": "limit_pool",
+      "description": "limit_pool_events 记录数",
+      "source": "limit_pool_events",
+      "value": 627
+    }
+  ],
+  "external_background": {
+    "status": "invalid",
+    "briefing_date": null,
+    "source_skill": null,
+    "input_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-26/external-background-fusion.json",
+    "core_points": [],
+    "follow_up_questions": [],
+    "information_gaps": [],
+    "citations": [],
+    "issues": [
+      "外部背景融合包结构校验失败：7 validation errors for ExternalBackgroundFusionInput\nissues.0\n  Input should be a valid string [type=string_type, input_value={'severity': 'warning', '...-06-25 验证记录。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type\nissues.1\n  Input should be a valid string [type=string_type, input_value={'severity': 'warning', '...nal_findings 为空。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type\nissues.2\n  Input should be a valid string [type=string_type, input_value={'severity': 'info', 'des...何 US Macro 数据。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type\nissues.3\n  Input should be a valid string [type=string_type, input_value={'severity': 'info', 'des...投行情绪评论。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type\nissues.4\n  Input should be a valid string [type=string_type, input_value={'severity': 'info', 'des...构性背景叙事。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type\nissues.5\n  Input should be a valid string [type=string_type, input_value={'severity': 'info', 'des...数据值未确认。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type\nissues.6\n  Input should be a valid string [type=string_type, input_value={'severity': 'info', 'des...叉验证的能力。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type"
+    ]
+  }
+}

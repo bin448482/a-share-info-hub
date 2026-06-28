@@ -1,0 +1,32 @@
+{
+  "attempts": 1,
+  "columns": [
+    "序号",
+    "代码",
+    "名称",
+    "涨跌幅",
+    "最新价",
+    "涨停价",
+    "成交额",
+    "流通市值",
+    "总市值",
+    "转手率",
+    "开板几日",
+    "开板日期",
+    "上市日期",
+    "是否新高",
+    "涨停统计",
+    "所属行业"
+  ],
+  "elapsed_seconds": 0.091,
+  "failure_reason": null,
+  "fetched_at": "2026-06-25T16:25:30.141791+08:00",
+  "function_name": "stock_zt_pool_sub_new_em",
+  "params": {
+    "date": "20260625"
+  },
+  "raw_path": "/mnt/tool/2-projects/a-share-info-hub/data/raw/2026-06-25/stock_zt_pool_sub_new_em/response.json",
+  "row_count": 134,
+  "source": "akshare.stock_zt_pool_sub_new_em",
+  "status": "success"
+}

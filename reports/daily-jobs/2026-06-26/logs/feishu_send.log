@@ -1,0 +1,39 @@
+{
+  "started_at": "2026-06-26T16:16:50+08:00",
+  "finished_at": "2026-06-26T16:17:12+08:00",
+  "elapsed_seconds": 21.534,
+  "status": "passed",
+  "results": [
+    {
+      "message_kind": "alert",
+      "level": "warning",
+      "title": "2026-06-26 A 股日报任务告警",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a"
+      ],
+      "media_path": null,
+      "status": "passed",
+      "provider": "openclaw_message",
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6cd7194bb8a0b2afb725c8fa56b\",\n    \"chatId\": \"oc",
+      "failure_reason": null
+    },
+    {
+      "message_kind": "report",
+      "level": "warning",
+      "title": "2026-06-26 A 股每日复盘（数据维度不完整）",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a",
+        "candy:oc_17f6cf4c298256bda98b2dcc571135f2"
+      ],
+      "media_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-26/a-share-daily-review.html",
+      "status": "passed",
+      "provider": "openclaw_message",
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6cd716cfe190b34a0cccf3d4cb0\",\n    \"chatId\": \"oc; candy:oc_17f6cf4c298256bda98b2dcc571135f2: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"m",
+      "failure_reason": null
+    }
+  ]
+}

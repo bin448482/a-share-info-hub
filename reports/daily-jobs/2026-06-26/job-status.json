@@ -1,0 +1,256 @@
+{
+  "alerts": [
+    {
+      "level": "warning",
+      "message": "external_background_fusion exceeded soft warning threshold.",
+      "stage": "external_background_fusion"
+    },
+    {
+      "level": "warning",
+      "message": "daily-update returned partial data.",
+      "stage": "daily_update"
+    },
+    {
+      "level": "warning",
+      "message": "one or more enhanced sources failed.",
+      "stage": "data_quality"
+    },
+    {
+      "level": "warning",
+      "message": "review context contains blocked sections.",
+      "stage": "daily_review_context"
+    }
+  ],
+  "artifacts": {
+    "daily_data_summary": "reports/daily-runs/2026-06-26/daily-data-summary.md",
+    "data_notes": "reports/daily-reviews/2026-06-26/a-share-daily-review-data-notes.md",
+    "external_background": "reports/daily-reviews/2026-06-26/external-background-fusion.json",
+    "heartbeat": "reports/daily-jobs/2026-06-26/heartbeat.json",
+    "html_report": "reports/daily-reviews/2026-06-26/a-share-daily-review.html",
+    "interface_status": "reports/daily-runs/2026-06-26/interface-status.json",
+    "job_status": "reports/daily-jobs/2026-06-26/job-status.json",
+    "job_summary": "reports/daily-jobs/2026-06-26/job-summary.md",
+    "llm_sections": "reports/daily-reviews/2026-06-26/llm-review-sections.json",
+    "review_context": "reports/daily-reviews/2026-06-26/review-context.json"
+  },
+  "context_status": "passed",
+  "daily_update_status": "passed",
+  "failure_reason": null,
+  "finished_at": "2026-06-26T16:17:12+08:00",
+  "health_level": "warning",
+  "health_status": "passed",
+  "html_status": "passed",
+  "llm_sections_status": "passed",
+  "not_investment_advice": true,
+  "overall_status": "partial",
+  "quality_metrics": {
+    "blocked_sections": [
+      "lhb_events",
+      "market_summary"
+    ],
+    "claude_code_exit_code": 0,
+    "claude_code_log_path": "reports/daily-jobs/2026-06-26/logs/claude_code_sections.log",
+    "consecutive_failures": 0,
+    "current_stage": "finished",
+    "current_stage_elapsed_seconds": null,
+    "current_stage_started_at": null,
+    "daily_review_context_exit_code": 0,
+    "daily_review_context_with_external_exit_code": 0,
+    "daily_review_html_exit_code": 0,
+    "daily_update_exit_code": 0,
+    "daily_update_overall_status": "partial",
+    "data_notes_exists": true,
+    "delivery_provider": "openclaw_message",
+    "delivery_recipients": [
+      "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a",
+      "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a",
+      "candy:oc_17f6cf4c298256bda98b2dcc571135f2"
+    ],
+    "delivery_response_code": 0,
+    "delivery_status": "passed",
+    "duplicate_send_guard": false,
+    "expected_job_deadline": "2026-06-26T17:30:00+08:00",
+    "external_background_exists": true,
+    "external_background_exit_code": 0,
+    "external_background_generated": true,
+    "external_background_log_path": "reports/daily-jobs/2026-06-26/logs/external_background_fusion.log",
+    "external_background_path": "reports/daily-reviews/2026-06-26/external-background-fusion.json",
+    "external_background_schema": "external_background_fusion.v1",
+    "external_background_source": "daily-financial-briefing",
+    "external_background_status": "passed",
+    "external_background_topic_results": 22,
+    "failed_source_count": 5,
+    "feishu_delivery_status": "passed",
+    "feishu_response_code": 0,
+    "freshness_minutes": 17.2,
+    "heartbeat_age_seconds": 0,
+    "heartbeat_path": "reports/daily-jobs/2026-06-26/heartbeat.json",
+    "heartbeat_updated_at": "2026-06-26T16:17:12+08:00",
+    "html_exists": true,
+    "llm_sections_exists": true,
+    "llm_sections_path": "reports/daily-reviews/2026-06-26/llm-review-sections.json",
+    "llm_sections_validated": true,
+    "main_snapshot_rows": 5527,
+    "missed_run_detected": false,
+    "schema_changed_source_count": 0,
+    "stage_sla": {
+      "claude_code_sections": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "daily_review_context": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_context_with_external": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_html": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_update": {
+        "hard_timeout_seconds": 3600,
+        "soft_warning_seconds": 1500
+      },
+      "external_background_fusion": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "feishu_send": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      },
+      "watchdog_check": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      }
+    },
+    "success_empty_source_count": 0,
+    "watchdog_checked_at": null
+  },
+  "schema_version": "daily_report_job.v1",
+  "send_results": [
+    {
+      "failure_reason": null,
+      "level": "warning",
+      "media_path": null,
+      "message_kind": "alert",
+      "provider": "openclaw_message",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a"
+      ],
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6cd7194bb8a0b2afb725c8fa56b\",\n    \"chatId\": \"oc",
+      "status": "passed",
+      "title": "2026-06-26 A 股日报任务告警"
+    },
+    {
+      "failure_reason": null,
+      "level": "warning",
+      "media_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-26/a-share-daily-review.html",
+      "message_kind": "report",
+      "provider": "openclaw_message",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a",
+        "candy:oc_17f6cf4c298256bda98b2dcc571135f2"
+      ],
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6cd716cfe190b34a0cccf3d4cb0\",\n    \"chatId\": \"oc; candy:oc_17f6cf4c298256bda98b2dcc571135f2: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"m",
+      "status": "passed",
+      "title": "2026-06-26 A 股每日复盘（数据维度不完整）"
+    }
+  ],
+  "send_status": "passed",
+  "stage_results": {
+    "claude_code_sections": {
+      "elapsed_seconds": 95.81,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:16:49+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/claude_code_sections.log",
+      "soft_warning": false,
+      "stage": "claude_code_sections",
+      "started_at": "2026-06-26T16:15:13+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_context": {
+      "elapsed_seconds": 1.527,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:01:06+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/daily_review_context.log",
+      "soft_warning": false,
+      "stage": "daily_review_context",
+      "started_at": "2026-06-26T16:01:05+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_context_with_external": {
+      "elapsed_seconds": 1.464,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:15:13+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/daily_review_context_with_external.log",
+      "soft_warning": false,
+      "stage": "daily_review_context_with_external",
+      "started_at": "2026-06-26T16:15:11+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_html": {
+      "elapsed_seconds": 1.452,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:16:50+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/daily_review_html.log",
+      "soft_warning": false,
+      "stage": "daily_review_html",
+      "started_at": "2026-06-26T16:16:49+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_update": {
+      "elapsed_seconds": 47.854,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:01:05+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/daily_update.log",
+      "soft_warning": false,
+      "stage": "daily_update",
+      "started_at": "2026-06-26T16:00:17+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "external_background_fusion": {
+      "elapsed_seconds": 844.987,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:15:11+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/external_background_fusion.log",
+      "soft_warning": true,
+      "stage": "external_background_fusion",
+      "started_at": "2026-06-26T16:01:06+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "feishu_send": {
+      "elapsed_seconds": 21.534,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-26T16:17:12+08:00",
+      "log_path": "reports/daily-jobs/2026-06-26/logs/feishu_send.log",
+      "soft_warning": false,
+      "stage": "feishu_send",
+      "started_at": "2026-06-26T16:16:50+08:00",
+      "status": "passed",
+      "timed_out": false
+    }
+  },
+  "started_at": "2026-06-26T16:00:17+08:00",
+  "trade_date": "2026-06-26"
+}

@@ -1,0 +1,27 @@
+stage: daily_review_html
+started_at: 2026-06-25T16:26:58+08:00
+finished_at: 2026-06-25T16:26:59+08:00
+elapsed_seconds: 1.505
+exit_code: 0
+status: passed
+soft_warning: false
+timed_out: false
+command: .venv/bin/python -m a_share_info_hub daily-review --trade-date 2026-06-25 --output-root /mnt/tool/2-projects/a-share-info-hub --llm-output /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/llm-review-sections.json --output-format html --external-background /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/external-background-fusion.json
+
+## stdout
+analysis_mode: research_only
+not_investment_advice: true
+trade_date: 2026-06-25
+data_status: partial
+context_artifact: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/review-context.json
+blocked_sections: ["lhb_events", "market_summary"]
+report_artifact: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/a-share-daily-review.html
+data_notes_artifact: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/a-share-daily-review-data-notes.md
+render_mode: llm
+
+HTML report: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/a-share-daily-review.html
+Data notes: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/a-share-daily-review-data-notes.md
+本报告是研究复盘，不构成投资建议。
+
+
+## stderr

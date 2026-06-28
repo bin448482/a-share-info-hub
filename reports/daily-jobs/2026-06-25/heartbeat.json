@@ -1,0 +1,11 @@
+{
+  "current_stage": "finished",
+  "current_stage_elapsed_seconds": null,
+  "current_stage_started_at": null,
+  "last_log_path": "reports/daily-jobs/2026-06-25/logs/feishu_send.log",
+  "last_log_updated_at": "2026-06-25T16:27:21+08:00",
+  "pid": null,
+  "trade_date": "2026-06-25",
+  "updated_at": "2026-06-25T16:38:30+08:00",
+  "status": "finished"
+}

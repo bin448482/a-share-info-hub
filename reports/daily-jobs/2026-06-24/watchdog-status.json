@@ -1,0 +1,26 @@
+{
+  "alerts": [],
+  "artifacts": {
+    "heartbeat": "reports/daily-jobs/2026-06-24/heartbeat.json",
+    "job_status": "reports/daily-jobs/2026-06-24/job-status.json",
+    "watchdog_status": "reports/daily-jobs/2026-06-24/watchdog-status.json"
+  },
+  "checked_at": "2026-06-24T17:00:11+08:00",
+  "failure_reason": null,
+  "health_level": "info",
+  "not_investment_advice": true,
+  "overall_status": "passed",
+  "quality_metrics": {
+    "current_stage": "finished",
+    "current_stage_elapsed_seconds": null,
+    "expected_job_deadline": "2026-06-24T17:30:00+08:00",
+    "heartbeat_age_seconds": 2936.907,
+    "heartbeat_updated_at": "2026-06-24T16:11:14+08:00",
+    "missed_run_detected": false,
+    "stale_heartbeat_detected": false,
+    "watchdog_checked_at": "2026-06-24T17:00:11+08:00"
+  },
+  "schema_version": "daily_report_watchdog.v1",
+  "send_status": "skipped",
+  "trade_date": "2026-06-24"
+}

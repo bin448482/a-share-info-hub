@@ -1,0 +1,388 @@
+{
+  "schema_version": "daily_review_context.v1",
+  "analysis_mode": "research_only",
+  "not_investment_advice": true,
+  "trade_date": "2026-06-24",
+  "data_status": "partial",
+  "data_sources_used": [
+    "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-24/interface-status.json",
+    "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-24/daily-data-summary.md",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/daily_stock_snapshot.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/limit_pool_events.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/lhb_events.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/market_summary.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/data/normalized/board_snapshot.parquet",
+    "/mnt/tool/2-projects/a-share-info-hub/market.duckdb"
+  ],
+  "blocked_sections": [
+    "lhb_events",
+    "market_summary"
+  ],
+  "source_health": {
+    "interface_status": {
+      "name": "interface-status.json",
+      "category": "run_status",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-24/interface-status.json",
+      "issue": null
+    },
+    "daily_data_summary": {
+      "name": "daily-data-summary.md",
+      "category": "run_summary",
+      "status": "readable",
+      "row_count": null,
+      "source_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-runs/2026-06-24/daily-data-summary.md",
+      "issue": null
+    },
+    "trading_day_check": {
+      "name": "trading_day_check",
+      "category": "run_status",
+      "status": "success",
+      "row_count": null,
+      "source_path": null,
+      "issue": "trade date is listed in AKShare trading calendar"
+    },
+    "stock_zh_a_spot": {
+      "name": "stock_zh_a_spot",
+      "category": "main",
+      "status": "success",
+      "row_count": 5528,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_em": {
+      "name": "stock_zt_pool_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 98,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_previous_em": {
+      "name": "stock_zt_pool_previous_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 96,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_strong_em": {
+      "name": "stock_zt_pool_strong_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 259,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_sub_new_em": {
+      "name": "stock_zt_pool_sub_new_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 134,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_zbgc_em": {
+      "name": "stock_zt_pool_zbgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 23,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_zt_pool_dtgc_em": {
+      "name": "stock_zt_pool_dtgc_em",
+      "category": "limit_pool",
+      "status": "success",
+      "row_count": 12,
+      "source_path": null,
+      "issue": null
+    },
+    "stock_lhb_detail_daily_sina": {
+      "name": "stock_lhb_detail_daily_sina",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "KeyError: '股票代码'"
+    },
+    "stock_lhb_detail_em": {
+      "name": "stock_lhb_detail_em",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "TypeError: 'NoneType' object is not subscriptable"
+    },
+    "stock_lhb_jgmmtj_em": {
+      "name": "stock_lhb_jgmmtj_em",
+      "category": "lhb",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "TypeError: 'NoneType' object is not subscriptable"
+    },
+    "stock_sse_deal_daily": {
+      "name": "stock_sse_deal_daily",
+      "category": "market_summary",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ValueError: Length mismatch: Expected axis has 1 elements, new values have 6 elements"
+    },
+    "stock_szse_summary": {
+      "name": "stock_szse_summary",
+      "category": "market_summary",
+      "status": "failed",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "AttributeError: 'float' object has no attribute 'replace'"
+    },
+    "stock_board_industry_name_em": {
+      "name": "stock_board_industry_name_em",
+      "category": "board_snapshot",
+      "status": "ignored",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ProxyError: HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fields=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6%2Cf7%2Cf8%2Cf9%2Cf10%2Cf12%2Cf13%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf23%2Cf24%2Cf25%2Cf26%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf136%2Cf115%2Cf152%2Cf124%2Cf107%2Cf104%2Cf105%2Cf140%2Cf141%2Cf207%2Cf208%2Cf209%2Cf222 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    },
+    "stock_board_concept_name_em": {
+      "name": "stock_board_concept_name_em",
+      "category": "board_snapshot",
+      "status": "ignored",
+      "row_count": 0,
+      "source_path": null,
+      "issue": "ProxyError: HTTPSConnectionPool(host='79.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m%3A90+t%3A3+f%3A%2150&fields=f2%2Cf3%2Cf4%2Cf8%2Cf12%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf24%2Cf25%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf124%2Cf107%2Cf104%2Cf105%2Cf136 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    },
+    "table:daily_stock_snapshot": {
+      "name": "daily_stock_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 5528,
+      "source_path": "data/normalized/daily_stock_snapshot.parquet",
+      "issue": null
+    },
+    "table:limit_pool_events": {
+      "name": "limit_pool_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 622,
+      "source_path": "data/normalized/limit_pool_events.parquet",
+      "issue": null
+    },
+    "table:lhb_events": {
+      "name": "lhb_events",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/lhb_events.parquet",
+      "issue": null
+    },
+    "table:market_summary": {
+      "name": "market_summary",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/market_summary.parquet",
+      "issue": null
+    },
+    "table:board_snapshot": {
+      "name": "board_snapshot",
+      "category": "normalized_table",
+      "status": "readable",
+      "row_count": 0,
+      "source_path": "data/normalized/board_snapshot.parquet",
+      "issue": null
+    },
+    "duckdb": {
+      "name": "market.duckdb",
+      "category": "storage",
+      "status": "passed",
+      "row_count": null,
+      "source_path": null,
+      "issue": null
+    }
+  },
+  "market_breadth": {
+    "status": "available",
+    "sample_count": 5528,
+    "up_count": 1433,
+    "down_count": 4034,
+    "flat_count": 61,
+    "extreme_up_count": 162,
+    "extreme_down_count": 20,
+    "total_amount": 3306504213436.0,
+    "total_amount_display": "33065.04 亿"
+  },
+  "limit_pool": {
+    "status": "available",
+    "row_count": 622,
+    "pool_type_counts": {
+      "strong_limit_up": 259,
+      "sub_new_limit_up": 134,
+      "limit_up": 98,
+      "previous_limit_up": 96,
+      "broken_board": 23,
+      "limit_down": 12
+    },
+    "top_industries": {
+      "半导体": 72,
+      "化学制品": 32,
+      "汽车零部": 32,
+      "通用设备": 28,
+      "自动化设": 22,
+      "元件": 22,
+      "化学制药": 21,
+      "专用设备": 21
+    }
+  },
+  "lhb": {
+    "status": "blocked",
+    "reason": "lhb_events is listed in blocked_sections"
+  },
+  "market_summary": {
+    "status": "blocked",
+    "reason": "market_summary is listed in blocked_sections"
+  },
+  "board_snapshot": {
+    "status": "empty",
+    "row_count": 0
+  },
+  "issues": [
+    "stock_lhb_detail_daily_sina 状态为 failed：KeyError: '股票代码'",
+    "stock_lhb_detail_em 状态为 failed：TypeError: 'NoneType' object is not subscriptable",
+    "stock_lhb_jgmmtj_em 状态为 failed：TypeError: 'NoneType' object is not subscriptable",
+    "stock_sse_deal_daily 状态为 failed：ValueError: Length mismatch: Expected axis has 1 elements, new values have 6 elements",
+    "stock_szse_summary 状态为 failed：AttributeError: 'float' object has no attribute 'replace'"
+  ],
+  "allowed_sections": [
+    "data_status",
+    "market_breadth",
+    "sentiment_and_events",
+    "risks",
+    "follow_up_questions",
+    "board_and_structure"
+  ],
+  "forbidden_claims": [
+    "buy/sell/hold/position sizing/price target/stop-loss/take-profit/trading action advice",
+    "multi-day trend, backtest, win-rate, or prediction claims from a single daily snapshot",
+    "claiming the review is complete while data_status is partial",
+    "positive or complete conclusions about blocked section: 龙虎榜",
+    "positive or complete conclusions about blocked section: 市场汇总"
+  ],
+  "facts": [
+    {
+      "section": "market_breadth",
+      "description": "主表样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 5528
+    },
+    {
+      "section": "market_breadth",
+      "description": "上涨样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 1433
+    },
+    {
+      "section": "market_breadth",
+      "description": "下跌样本数量",
+      "source": "daily_stock_snapshot",
+      "value": 4034
+    },
+    {
+      "section": "limit_pool",
+      "description": "limit_pool_events 记录数",
+      "source": "limit_pool_events",
+      "value": 622
+    }
+  ],
+  "external_background": {
+    "status": "partial",
+    "briefing_date": "2026-06-24",
+    "source_skill": "daily-financial-briefing",
+    "input_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-24/external-background-fusion.json",
+    "core_points": [],
+    "follow_up_questions": [
+      "关注2026年7月14日即将发布的美国6月CPI数据——当前CPI 4.2%偏高，若数据回落至4%以下可能触发市场宽松预期重定价，影响A股情绪方向。",
+      "关注CME FedWatch利率概率的边际变化——若市场对下半年降息概率重新定价，可能通过美债收益率和美元流动性的渠道影响A股整体风险偏好，进而改变当前涨跌比和涨停情绪结构。",
+      "修复龙虎榜三个失败接口（stock_lhb_detail_daily_sina / stock_lhb_detail_em / stock_lhb_jgmmtj_em），获取机构/游资资金流向数据，以验证半导体等方向的涨停是否为机构主导，以及炸板方向是否存在机构集中撤离。",
+      "修复板块快照接口代理连接问题（stock_board_industry_name_em / stock_board_concept_name_em），获取行业和概念板块的实际涨跌数据，以验证涨停集中的行业（半导体、化学制品、汽车零部件等）是否整体跑赢大盘，还是仅个别强势股活跃。",
+      "在可联网环境下重新执行 market_overview_assessment / market_overview_structure / market_breadth / board_and_structure / risk_observations 五个主题的外部信息检索，当前因网络工具不可用而全部 blocked，缺少当日美国股指表现、美债收益率变动、投行当日观点等实时外部背景。"
+    ],
+    "information_gaps": [
+      "无法获取2026-06-24当日的美国国债收益率数据（2Y/5Y/10Y/30Y）及10Y-2Y利差——WebSearch/WebFetch工具不可用",
+      "无法获取2026-06-24当日的美国主要股指表现（S&P 500/Dow/Nasdaq）和VIX指数——WebSearch/WebFetch工具不可用",
+      "无法获取2026-06-24当日任何投行发布的公开研报、市场评论或策略更新——Goldman Sachs/Citigroup/UBS引用均为年度展望（2025年底发布），非当日观点",
+      "无法获取2026-06-24当日CME FedWatch最新隐含概率数据——引用依赖2026-06-19快照，可能存在概率分布变化",
+      "无法获取高盛/摩根士丹利/摩根大通/花旗以外的投行（如摩根大通、巴克莱、汇丰等）公开观点——WebSearch工具不可用",
+      "5个外部主题（market_overview_assessment / market_overview_structure / market_breadth / board_and_structure / risk_observations）因网络工具不可用而完全blocked，缺乏对应维度的外部宏观与投行背景信息",
+      "本地龙虎榜数据完全缺失（三个接口均失败），外部投行观点无法弥补A股机构/游资资金流向的本地信息缺口",
+      "本地板块快照数据缺失（行业/概念板块接口ProxyError），外部投行的行业判断无法替代A股板块层级的实际涨跌和资金流向数据"
+    ],
+    "citations": [
+      {
+        "source_name": "Federal Reserve",
+        "title": "Federal Reserve issues FOMC statement",
+        "published_at": "2026-06-17",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm"
+      },
+      {
+        "source_name": "Bureau of Labor Statistics",
+        "title": "Consumer Price Index Summary - 2026 M05 Results",
+        "published_at": "2026-06-10",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.bls.gov/news.release/cpi.nr0.htm"
+      },
+      {
+        "source_name": "CME Group",
+        "title": "CME FedWatch Tool - 30-Day Fed Funds Futures Implied Probabilities",
+        "published_at": "2026-06-19",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+      },
+      {
+        "source_name": "Goldman Sachs",
+        "title": "China's economy is forecast to grow faster than expected in 2026",
+        "published_at": "2025-11-21",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.goldmansachs.com/insights/articles/chinas-economy-is-forecast-to-grow-faster-than-expected-in-2026"
+      },
+      {
+        "source_name": "Goldman Sachs",
+        "title": "2026 Outlooks - Global Markets and Economy",
+        "published_at": "2025-12-31",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.goldmansachs.com/insights/outlooks/2026-outlooks"
+      },
+      {
+        "source_name": "Citigroup",
+        "title": "China Economics 2026 Outlook: Mind the Gap",
+        "published_at": "2025-12-31",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.citigroup.com/global/insights/china-economics-2026-outlook-mind-the-gap"
+      },
+      {
+        "source_name": "UBS",
+        "title": "China Outlook 2026-27: Resilience and Rebalancing",
+        "published_at": "2025-12-31",
+        "accessed_at": "2026-06-24",
+        "url": "https://www.ubs.com/global/en/investment-bank/insights-and-data/articles/china-outlook.html"
+      }
+    ],
+    "issues": [
+      "5 of 6 parallel agents returned blocked results due to WebSearch/WebFetch tool unavailability in current session — only sentiment_and_events produced usable external findings",
+      "All Investment Bank View citations are from year-end 2025 outlooks, not 2026-06-24 same-day views — external background has a 6-month staleness risk",
+      "CME FedWatch citation is from 2026-06-19 snapshot, 5 days before trade date — probability distribution may have shifted",
+      "No real-time US Treasury yield, equity index, or VIX data available — cross-market correlation context missing",
+      "3 of 5 information gaps from the sentiment_and_events agent note WebSearch/WebFetch limitations rather than genuine source unavailability — external background coverage is severely constrained by tool permissions",
+      "第 1 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 2 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 3 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 4 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 5 条外部融合结论缺少正文、合法类型、来源名称或 URL。",
+      "第 6 条外部融合结论缺少正文、合法类型、来源名称或 URL。"
+    ]
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "alerts": [],
+  "artifacts": {
+    "daily_data_summary": "reports/daily-runs/2026-06-25/daily-data-summary.md",
+    "data_notes": "reports/daily-reviews/2026-06-25/a-share-daily-review-data-notes.md",
+    "external_background": "reports/daily-reviews/2026-06-25/external-background-fusion.json",
+    "heartbeat": "reports/daily-jobs/2026-06-25/heartbeat.json",
+    "html_report": "reports/daily-reviews/2026-06-25/a-share-daily-review.html",
+    "interface_status": "reports/daily-runs/2026-06-25/interface-status.json",
+    "job_status": "reports/daily-jobs/2026-06-25/job-status.json",
+    "job_summary": "reports/daily-jobs/2026-06-25/job-summary.md",
+    "llm_sections": "reports/daily-reviews/2026-06-25/llm-review-sections.json",
+    "review_context": "reports/daily-reviews/2026-06-25/review-context.json"
+  },
+  "context_status": "passed",
+  "daily_update_status": "passed",
+  "failure_reason": null,
+  "finished_at": "2026-06-25T16:27:21+08:00",
+  "health_level": "warning",
+  "health_status": "warning",
+  "html_status": "passed",
+  "llm_sections_status": "passed",
+  "not_investment_advice": true,
+  "overall_status": "partial",
+  "quality_metrics": {
+    "blocked_sections": [
+      "lhb_events",
+      "market_summary"
+    ],
+    "claude_code_exit_code": 0,
+    "claude_code_log_path": "reports/daily-jobs/2026-06-25/logs/claude_code_sections.log",
+    "consecutive_failures": 0,
+    "current_stage": "claude_code_sections",
+    "current_stage_elapsed_seconds": null,
+    "current_stage_started_at": "2026-06-25T16:34:07+08:00",
+    "daily_review_context_exit_code": 0,
+    "daily_review_context_with_external_exit_code": 0,
+    "daily_review_html_exit_code": 0,
+    "daily_update_exit_code": 0,
+    "daily_update_overall_status": "partial",
+    "data_notes_exists": false,
+    "delivery_provider": "openclaw_message",
+    "delivery_recipients": [
+      "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a",
+      "candy:oc_17f6cf4c298256bda98b2dcc571135f2"
+    ],
+    "delivery_response_code": null,
+    "delivery_status": "sent",
+    "duplicate_send_guard": false,
+    "expected_job_deadline": "2026-06-25T17:30:00+08:00",
+    "external_background_exists": true,
+    "external_background_exit_code": 0,
+    "external_background_generated": true,
+    "external_background_log_path": "reports/daily-jobs/2026-06-25/logs/external_background_fusion.log",
+    "external_background_path": "reports/daily-reviews/2026-06-25/external-background-fusion.json",
+    "external_background_schema": "external_background_fusion.v1",
+    "external_background_source": "daily-financial-briefing",
+    "external_background_status": "passed",
+    "external_background_topic_results": 19,
+    "failed_source_count": 3,
+    "feishu_delivery_status": "sent",
+    "feishu_response_code": null,
+    "freshness_minutes": null,
+    "heartbeat_age_seconds": null,
+    "heartbeat_path": "reports/daily-jobs/2026-06-25/heartbeat.json",
+    "heartbeat_updated_at": "2026-06-25T16:34:07+08:00",
+    "html_exists": true,
+    "llm_sections_exists": true,
+    "llm_sections_path": "reports/daily-reviews/2026-06-25/llm-review-sections.json",
+    "llm_sections_validated": true,
+    "main_snapshot_rows": 5528,
+    "missed_run_detected": false,
+    "schema_changed_source_count": 0,
+    "stage_sla": {
+      "claude_code_sections": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "daily_review_context": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_context_with_external": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_review_html": {
+        "hard_timeout_seconds": 600,
+        "soft_warning_seconds": 180
+      },
+      "daily_update": {
+        "hard_timeout_seconds": 3600,
+        "soft_warning_seconds": 1500
+      },
+      "external_background_fusion": {
+        "hard_timeout_seconds": 1800,
+        "soft_warning_seconds": 600
+      },
+      "feishu_send": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      },
+      "watchdog_check": {
+        "hard_timeout_seconds": 120,
+        "soft_warning_seconds": 30
+      }
+    },
+    "success_empty_source_count": 0,
+    "watchdog_checked_at": null
+  },
+  "schema_version": "daily_report_job.v1",
+  "send_results": [
+    {
+      "message_kind": "alert",
+      "level": "warning",
+      "title": "2026-06-25 A 股日报任务告警",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a"
+      ],
+      "media_path": null,
+      "status": "passed",
+      "provider": "openclaw_message",
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6cfa2b53d0e8b114ef8ae8f624b\",\n    \"chatId\": \"oc",
+      "failure_reason": null
+    },
+    {
+      "message_kind": "report",
+      "level": "warning",
+      "title": "2026-06-25 A 股每日复盘（数据维度不完整）",
+      "recipients": [
+        "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a",
+        "candy:oc_17f6cf4c298256bda98b2dcc571135f2"
+      ],
+      "media_path": "/mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-25/a-share-daily-review.html",
+      "status": "passed",
+      "provider": "openclaw_message",
+      "response_code": 0,
+      "response_status_code": null,
+      "response_status_message": "main:oc_d0fc6f1a86e4fad2a43f7b35acaf951a: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"messageId\": \"om_x100b6cfa28d5a4a0b49bc5fa338c63c\",\n    \"chatId\": \"oc; candy:oc_17f6cf4c298256bda98b2dcc571135f2: {\n  \"action\": \"send\",\n  \"channel\": \"feishu\",\n  \"dryRun\": false,\n  \"handledBy\": \"plugin\",\n  \"payload\": {\n    \"ok\": true,\n    \"channel\": \"feishu\",\n    \"action\": \"send\",\n    \"m",
+      "failure_reason": null
+    }
+  ],
+  "send_status": "passed",
+  "stage_results": {
+    "daily_review_context": {
+      "elapsed_seconds": 1.531,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-25T16:26:01+08:00",
+      "log_path": "reports/daily-jobs/2026-06-25/logs/daily_review_context.log",
+      "soft_warning": false,
+      "stage": "daily_review_context",
+      "started_at": "2026-06-25T16:25:59+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_review_context_with_external": {
+      "elapsed_seconds": 1.454,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-25T16:34:07+08:00",
+      "log_path": "reports/daily-jobs/2026-06-25/logs/daily_review_context_with_external.log",
+      "soft_warning": false,
+      "stage": "daily_review_context_with_external",
+      "started_at": "2026-06-25T16:34:06+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "daily_update": {
+      "elapsed_seconds": 48.446,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-25T16:25:59+08:00",
+      "log_path": "reports/daily-jobs/2026-06-25/logs/daily_update.log",
+      "soft_warning": false,
+      "stage": "daily_update",
+      "started_at": "2026-06-25T16:25:11+08:00",
+      "status": "passed",
+      "timed_out": false
+    },
+    "external_background_fusion": {
+      "elapsed_seconds": 484.733,
+      "exit_code": 0,
+      "failure_reason": null,
+      "finished_at": "2026-06-25T16:34:06+08:00",
+      "log_path": "reports/daily-jobs/2026-06-25/logs/external_background_fusion.log",
+      "soft_warning": false,
+      "stage": "external_background_fusion",
+      "started_at": "2026-06-25T16:26:01+08:00",
+      "status": "passed",
+      "timed_out": false
+    }
+  },
+  "started_at": "2026-06-25T16:25:11+08:00",
+  "trade_date": "2026-06-25",
+  "llm_sections_validated": true
+}

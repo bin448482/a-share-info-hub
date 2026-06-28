@@ -1,0 +1,20 @@
+stage: daily_review_context_with_external
+started_at: 2026-06-24T16:08:27+08:00
+finished_at: 2026-06-24T16:08:29+08:00
+elapsed_seconds: 1.460
+exit_code: 0
+status: passed
+soft_warning: false
+timed_out: false
+command: .venv/bin/python -m a_share_info_hub daily-review --trade-date 2026-06-24 --output-root /mnt/tool/2-projects/a-share-info-hub --output-format context --external-background /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-24/external-background-fusion.json
+
+## stdout
+analysis_mode: research_only
+not_investment_advice: true
+trade_date: 2026-06-24
+data_status: partial
+context_artifact: /mnt/tool/2-projects/a-share-info-hub/reports/daily-reviews/2026-06-24/review-context.json
+report_artifact: null
+
+
+## stderr
